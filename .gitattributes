@@ -1,0 +1,8 @@
+# Byte-exact files: their SHA-256 is published (modelVersionHash, fixture hashes).
+model/artefacts/** -text
+data/** -text
+# Everything else is LF in the repo and in checkouts (bash scripts break on CRLF).
+* text=auto eol=lf
+*.png binary
+*.webp binary
+*.ico binary
