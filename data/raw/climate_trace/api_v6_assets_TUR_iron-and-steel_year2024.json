@@ -1,0 +1,4560 @@
+{
+ "bbox": [
+  26.9290116293903,
+  36.6856423936233,
+  36.4404842723864,
+  41.5656427206916
+ ],
+ "assets": [
+  {
+   "Id": 1567071,
+   "Name": "Isdemir Payas steel plant",
+   "NativeId": "TZSTL2403000000726",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "BF/BOF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 5124683.021835924,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 5799999.999999998,
+     "CapacityFactor": 0.8835660382475734,
+     "EmissionsFactor": 1.9,
+     "EmissionsQuantity": 9736897.741488256
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000130877",
+     "CompanyName": "Iskenderun Demir ve Celik AŞ"
+    },
+    {
+     "CompanyId": "E100000130877",
+     "CompanyName": "Iskenderun Demir ve Celik AŞ"
+    },
+    {
+     "CompanyId": "E100000130877",
+     "CompanyName": "Iskenderun Demir ve Celik AŞ"
+    },
+    {
+     "CompanyId": "E100000130877",
+     "CompanyName": "Iskenderun Demir ve Celik AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2026": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 62,
+    "2022": 87,
+    "2023": 90,
+    "2024": 66,
+    "2025": 73,
+    "2026": 73
+   },
+   "Centroid": {
+    "Geometry": [
+     36.2094834824266,
+     36.735732350892
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567073,
+   "Name": "Kardemir Merkez steel plant",
+   "NativeId": "TZSTL2403000000728",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "BF/BOF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 3061909.9708366357,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 3501000,
+     "CapacityFactor": 0.8745815397990961,
+     "EmissionsFactor": 1.8999999999999995,
+     "EmissionsQuantity": 5817628.9445896065
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100001000598",
+     "CompanyName": "Kardemir Karabuk Demir Çelik Sanayi Ve Ticaret AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2022": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 137,
+    "2022": 157,
+    "2023": 170,
+    "2024": 135,
+    "2025": 141,
+    "2026": 141
+   },
+   "Centroid": {
+    "Geometry": [
+     32.6308377888502,
+     41.1853066102838
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567067,
+   "Name": "Erdemir Eregli steel plant",
+   "NativeId": "TZSTL2403000000722",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "BF/BOF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 2754224.8257638253,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 3801000.000000001,
+     "CapacityFactor": 0.7246053211691199,
+     "EmissionsFactor": 1.8999999999999997,
+     "EmissionsQuantity": 5233027.168951267
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000130751",
+     "CompanyName": "Eregli Demir ve Celik Fabrikalari AŞ"
+    },
+    {
+     "CompanyId": "E100000130751",
+     "CompanyName": "Eregli Demir ve Celik Fabrikalari AŞ"
+    },
+    {
+     "CompanyId": "E100000130751",
+     "CompanyName": "Eregli Demir ve Celik Fabrikalari AŞ"
+    },
+    {
+     "CompanyId": "E100000130751",
+     "CompanyName": "Eregli Demir ve Celik Fabrikalari AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2025": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "medium",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "medium",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "medium",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "medium",
+       "total_co2e_20yrgwp": "medium"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 143,
+    "2022": 143,
+    "2023": 153,
+    "2024": 154,
+    "2025": 152,
+    "2026": 152
+   },
+   "Centroid": {
+    "Geometry": [
+     31.4258724870855,
+     41.261467963656
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567068,
+   "Name": "Habas Aliaga steel plant",
+   "NativeId": "TZSTL2403000000723",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 2722330.5252767205,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 4500000,
+     "CapacityFactor": 0.6049623389503823,
+     "EmissionsFactor": 0.2732,
+     "EmissionsQuantity": 743740.6995056
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100001000568",
+     "CompanyName": "Habas Industrial and Medical Gases Production Industries AŞ"
+    },
+    {
+     "CompanyId": "E100001000568",
+     "CompanyName": "Habas Industrial and Medical Gases Production Industries AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 421,
+    "2022": 427,
+    "2023": 432,
+    "2024": 420,
+    "2025": 406,
+    "2026": 406
+   },
+   "Centroid": {
+    "Geometry": [
+     26.9503193645367,
+     38.7507940801235
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567063,
+   "Name": "Colakoglu Metallurgical Dilovasi steel plant",
+   "NativeId": "TZSTL2403000000718",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 2722330.5252767205,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 4500000,
+     "CapacityFactor": 0.6049623389503823,
+     "EmissionsFactor": 0.2548,
+     "EmissionsQuantity": 693649.8178405084
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000002151",
+     "CompanyName": "Çolakoğlu Metalürji AŞ"
+    },
+    {
+     "CompanyId": "E100000002151",
+     "CompanyName": "Çolakoğlu Metalürji AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 456,
+    "2022": 462,
+    "2023": 451,
+    "2024": 425,
+    "2025": 410,
+    "2026": 410
+   },
+   "Centroid": {
+    "Geometry": [
+     29.530363436516,
+     40.7695296150915
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567076,
+   "Name": "MMK Türkiye Metallurgical Payas steel plant",
+   "NativeId": "TZSTL2403000000731",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 1391413.3795858794,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 2300000,
+     "CapacityFactor": 0.6049623389503823,
+     "EmissionsFactor": 0.4875,
+     "EmissionsQuantity": 678314.0225481162
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100001010269",
+     "CompanyName": "MMK Metalurji Sanayi Ticaret ve Liman Isletmeciligi AŞ"
+    },
+    {
+     "CompanyId": "E100001010269",
+     "CompanyName": "MMK Metalurji Sanayi Ticaret ve Liman Isletmeciligi AŞ"
+    },
+    {
+     "CompanyId": "E100001010269",
+     "CompanyName": "MMK Metalurji Sanayi Ticaret ve Liman Isletmeciligi AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 431,
+    "2022": 433,
+    "2023": 442,
+    "2024": 430,
+    "2025": 413,
+    "2026": 413
+   },
+   "Centroid": {
+    "Geometry": [
+     36.2056452039363,
+     36.7814103000801
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567069,
+   "Name": "İÇDAŞ Biga steel plant",
+   "NativeId": "TZSTL2403000000724",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 3024811.694751912,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 5000000,
+     "CapacityFactor": 0.6049623389503823,
+     "EmissionsFactor": 0.09840000000000002,
+     "EmissionsQuantity": 297641.47076358815
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000130879",
+     "CompanyName": "Içdaş Çelik Enerji Tersane Ve Ulaşim Sanayi AŞ"
+    },
+    {
+     "CompanyId": "E100000130879",
+     "CompanyName": "Içdaş Çelik Enerji Tersane Ve Ulaşim Sanayi AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 504,
+    "2022": 511,
+    "2023": 515,
+    "2024": 506,
+    "2025": 486,
+    "2026": 486
+   },
+   "Centroid": {
+    "Geometry": [
+     27.1378719691625,
+     40.4431217826032
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567065,
+   "Name": "Ege Steel Aliaga plant",
+   "NativeId": "TZSTL2403000000720",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 967939.7423206118,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 1600000.0000000002,
+     "CapacityFactor": 0.6049623389503823,
+     "EmissionsFactor": 0.28005030385793145,
+     "EmissionsQuantity": 271071.8189530552
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000130876",
+     "CompanyName": "Ege Celik Endustrisi Sanayi ve Ticaret AŞ"
+    },
+    {
+     "CompanyId": "E100000130876",
+     "CompanyName": "Ege Celik Endustrisi Sanayi ve Ticaret AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 508,
+    "2022": 517,
+    "2023": 531,
+    "2024": 515,
+    "2025": 500,
+    "2026": 500
+   },
+   "Centroid": {
+    "Geometry": [
+     26.9399494141561,
+     38.7278344582328
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567189,
+   "Name": "Toscelik Iskenderun steel plant",
+   "NativeId": "TZSTL2406000000026",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 2419849.3558015297,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 3999999.9999999995,
+     "CapacityFactor": 0.6049623389503825,
+     "EmissionsFactor": 0.0892,
+     "EmissionsQuantity": 215850.56253749644
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000130880",
+     "CompanyName": "Toscelik Profil ve Sac Endustrisi AS"
+    },
+    {
+     "CompanyId": "E100000130880",
+     "CompanyName": "Toscelik Profil ve Sac Endustrisi AS"
+    }
+   ],
+   "Confidence": [
+    {
+     "2021": [
+      {
+       "activity": "very low",
+       "asset_type": "very low",
+       "capacity": "very low",
+       "capacity_factor": "very low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "very low",
+       "co2_emissions_factor": "very low",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "very low",
+       "total_co2e_20yrgwp": "very low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 966,
+    "2022": 844,
+    "2023": 613,
+    "2024": 555,
+    "2025": 532,
+    "2026": 532
+   },
+   "Centroid": {
+    "Geometry": [
+     36.2136192934017,
+     36.686515924459
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567086,
+   "Name": "Kardemir Celik Sanayi Izmir steel plant",
+   "NativeId": "TZSTL2403000000741",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 756202.923687978,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 1250000,
+     "CapacityFactor": 0.6049623389503823,
+     "EmissionsFactor": 0.2800503038579314,
+     "EmissionsQuantity": 211774.85855707433
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100001000598",
+     "CompanyName": "Kardemir Karabuk Demir Çelik Sanayi Ve Ticaret AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "very low",
+       "asset_type": "very low",
+       "capacity": "very low",
+       "capacity_factor": "very low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "very low",
+       "co2_emissions_factor": "very low",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "very low",
+       "total_co2e_20yrgwp": "very low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 966,
+    "2022": 709,
+    "2023": 563,
+    "2024": 557,
+    "2025": 534,
+    "2026": 534
+   },
+   "Centroid": {
+    "Geometry": [
+     26.961168735701,
+     38.7424970005737
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567078,
+   "Name": "Ozkan Iron and Steel Aliaga plant",
+   "NativeId": "TZSTL2403000000733",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 725954.8067404588,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 1199999.9999999998,
+     "CapacityFactor": 0.6049623389503824,
+     "EmissionsFactor": 0.28005030385793145,
+     "EmissionsQuantity": 203303.8642147914
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000130878",
+     "CompanyName": "Ozkan Demir Celik Sanayi AŞ"
+    },
+    {
+     "CompanyId": "E100000130878",
+     "CompanyName": "Ozkan Demir Celik Sanayi AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 539,
+    "2022": 557,
+    "2023": 575,
+    "2024": 565,
+    "2025": 541,
+    "2026": 541
+   },
+   "Centroid": {
+    "Geometry": [
+     26.9427844970206,
+     38.7376046415455
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567074,
+   "Name": "Koc Metallurgical Toprakkale steel plant",
+   "NativeId": "TZSTL2403000000729",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 725954.8067404589,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 1199999.9999999998,
+     "CapacityFactor": 0.6049623389503825,
+     "EmissionsFactor": 0.28005030385793134,
+     "EmissionsQuantity": 203303.86421479136
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000131090",
+     "CompanyName": "Koc Metalurji AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 539,
+    "2022": 558,
+    "2023": 575,
+    "2024": 566,
+    "2025": 542,
+    "2026": 542
+   },
+   "Centroid": {
+    "Geometry": [
+     36.1063625862528,
+     37.0140274095328
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567190,
+   "Name": "Aba Iron and Steel Payas plant",
+   "NativeId": "TZSTL2406000000027",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 665458.5728454207,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 1100000,
+     "CapacityFactor": 0.6049623389503824,
+     "EmissionsFactor": 0.2800503038579314,
+     "EmissionsQuantity": 186361.87553022543
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000131190",
+     "CompanyName": "ABA Çelik Demir LŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 551,
+    "2022": 575,
+    "2023": 595,
+    "2024": 580,
+    "2025": 562,
+    "2026": 562
+   },
+   "Centroid": {
+    "Geometry": [
+     36.2258343787167,
+     36.7486636852051
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567077,
+   "Name": "Mescier Iron and Steel Bartin plant",
+   "NativeId": "TZSTL2403000000732",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 604962.3389503825,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 1000000,
+     "CapacityFactor": 0.6049623389503825,
+     "EmissionsFactor": 0.28005030385793134,
+     "EmissionsQuantity": 169419.8868456595
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000131123",
+     "CompanyName": "Mescier Demir Celik AŞ"
+    },
+    {
+     "CompanyId": "E100000131123",
+     "CompanyName": "Mescier Demir Celik AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 576,
+    "2022": 595,
+    "2023": 609,
+    "2024": 596,
+    "2025": 579,
+    "2026": 579
+   },
+   "Centroid": {
+    "Geometry": [
+     32.4292890647179,
+     41.5656427206916
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567070,
+   "Name": "İDÇ Izdemir Aliaga steel plant",
+   "NativeId": "TZSTL2403000000725",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 1400950.9991529435,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 2329234.972677595,
+     "CapacityFactor": 0.6014640066744603,
+     "EmissionsFactor": 0.11680000000000004,
+     "EmissionsQuantity": 163631.07670106387
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000130752",
+     "CompanyName": "Izmir Demir Celik Sanayi AŞ"
+    },
+    {
+     "CompanyId": "E100000130752",
+     "CompanyName": "Izmir Demir Celik Sanayi AŞ"
+    },
+    {
+     "CompanyId": "E100000130752",
+     "CompanyName": "Izmir Demir Celik Sanayi AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 660,
+    "2022": 678,
+    "2023": 695,
+    "2024": 604,
+    "2025": 527,
+    "2026": 527
+   },
+   "Centroid": {
+    "Geometry": [
+     26.9290116293903,
+     38.7400416920799
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567085,
+   "Name": "Cebitas steel plant",
+   "NativeId": "TZSTL2403000000740",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 520267.61149732885,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 860000,
+     "CapacityFactor": 0.6049623389503824,
+     "EmissionsFactor": 0.2800503038579314,
+     "EmissionsQuantity": 145701.10268726715
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100001010272",
+     "CompanyName": "Çebitaş Demir Çelik Endüstrisi AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 601,
+    "2022": 617,
+    "2023": 639,
+    "2024": 622,
+    "2025": 605,
+    "2026": 605
+   },
+   "Centroid": {
+    "Geometry": [
+     26.9519643148224,
+     38.7396881067893
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567080,
+   "Name": "Toscelik Toprakkale steel plant",
+   "NativeId": "TZSTL2403000000735",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 1209924.6779007646,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 2000000,
+     "CapacityFactor": 0.6049623389503823,
+     "EmissionsFactor": 0.08920000000000003,
+     "EmissionsQuantity": 107925.28126874824
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000130880",
+     "CompanyName": "Toscelik Profil ve Sac Endustrisi AS"
+    },
+    {
+     "CompanyId": "E100000130880",
+     "CompanyName": "Toscelik Profil ve Sac Endustrisi AS"
+    }
+   ],
+   "Confidence": [
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 661,
+    "2022": 681,
+    "2023": 706,
+    "2024": 684,
+    "2025": 665,
+    "2026": 665
+   },
+   "Centroid": {
+    "Geometry": [
+     36.1101864309013,
+     37.0197246117158
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567075,
+   "Name": "Kroman Steel Darica plant",
+   "NativeId": "TZSTL2403000000730",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 907443.5084255736,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 1500000,
+     "CapacityFactor": 0.6049623389503824,
+     "EmissionsFactor": 0.10760000000000004,
+     "EmissionsQuantity": 97640.92150659175
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000130801",
+     "CompanyName": "Kroman Celik Sanayii AS"
+    }
+   ],
+   "Confidence": [
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 680,
+    "2022": 694,
+    "2023": 729,
+    "2024": 703,
+    "2025": 677,
+    "2026": 677
+   },
+   "Centroid": {
+    "Geometry": [
+     29.3743248450085,
+     40.8010537127119
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567064,
+   "Name": "Diler Iron and Steel Dilovasi plant",
+   "NativeId": "TZSTL2403000000719",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 786451.0406354971,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 1299999.9999999998,
+     "CapacityFactor": 0.6049623389503824,
+     "EmissionsFactor": 0.10760000000000002,
+     "EmissionsQuantity": 84622.1319723795
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000130789",
+     "CompanyName": "Diler Demir Celik Endustri ve Ticaret AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 702,
+    "2022": 740,
+    "2023": 756,
+    "2024": 734,
+    "2025": 716,
+    "2026": 716
+   },
+   "Centroid": {
+    "Geometry": [
+     29.5330798467728,
+     40.7839434675694
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567072,
+   "Name": "Kaptan Ereglisi steel plant",
+   "NativeId": "TZSTL2403000000727",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 846947.2745305353,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 1400000,
+     "CapacityFactor": 0.6049623389503824,
+     "EmissionsFactor": 0.09840000000000003,
+     "EmissionsQuantity": 83339.6118138047
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000001058",
+     "CompanyName": "Kaptan Demir Celik Endustrisi Ve Ticaret AŞ"
+    },
+    {
+     "CompanyId": "E100000001058",
+     "CompanyName": "Kaptan Demir Celik Endustrisi Ve Ticaret AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 707,
+    "2022": 743,
+    "2023": 757,
+    "2024": 737,
+    "2025": 722,
+    "2026": 722
+   },
+   "Centroid": {
+    "Geometry": [
+     27.9598477255557,
+     41.0152185914845
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567082,
+   "Name": "Yesilyurt Iron and Steel Tekkekoy plant",
+   "NativeId": "TZSTL2403000000737",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 786451.0406354971,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 1299999.9999999998,
+     "CapacityFactor": 0.6049623389503824,
+     "EmissionsFactor": 0.09840000000000003,
+     "EmissionsQuantity": 77386.78239853293
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000130882",
+     "CompanyName": "Yesilyurt Demir Celik Endustri Ve Liman Isletmeleri AŞ"
+    },
+    {
+     "CompanyId": "E100000130882",
+     "CompanyName": "Yesilyurt Demir Celik Endustri Ve Liman Isletmeleri AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 728,
+    "2022": 751,
+    "2023": 771,
+    "2024": 746,
+    "2025": 736,
+    "2026": 736
+   },
+   "Centroid": {
+    "Geometry": [
+     36.4404842723864,
+     41.2403516954097
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567066,
+   "Name": "Ekinciler Iron and Steel Iskenderun plant",
+   "NativeId": "TZSTL2403000000721",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 756202.923687978,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 1249999.9999999998,
+     "CapacityFactor": 0.6049623389503824,
+     "EmissionsFactor": 0.09840000000000002,
+     "EmissionsQuantity": 74410.36769089704
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000130793",
+     "CompanyName": "Ekinciler Demir ve Celik Sanayi AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 737,
+    "2022": 759,
+    "2023": 781,
+    "2024": 758,
+    "2025": 747,
+    "2026": 747
+   },
+   "Centroid": {
+    "Geometry": [
+     36.2048446538149,
+     36.6908852919788
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567083,
+   "Name": "Tosyali Toprakkale steel plant",
+   "NativeId": "TZSTL2403000000738",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 629418.0187706952,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 994535.519125683,
+     "CapacityFactor": 0.6328763595331716,
+     "EmissionsFactor": 0.09840000000000002,
+     "EmissionsQuantity": 61934.73304703642
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100001000709",
+     "CompanyName": "Tosyalı Holding AŞ"
+    },
+    {
+     "CompanyId": "E100001000709",
+     "CompanyName": "Tosyalı Holding AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "very low",
+       "asset_type": "very low",
+       "capacity": "very low",
+       "capacity_factor": "very low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "very low",
+       "co2_emissions_factor": "very low",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "very low",
+       "total_co2e_20yrgwp": "very low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "very low",
+       "asset_type": "very low",
+       "capacity": "very low",
+       "capacity_factor": "very low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "very low",
+       "co2_emissions_factor": "very low",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "very low",
+       "total_co2e_20yrgwp": "very low"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 644,
+    "2022": 660,
+    "2023": 677,
+    "2024": 792,
+    "2025": 949,
+    "2026": 949
+   },
+   "Centroid": {
+    "Geometry": [
+     36.0940099999736,
+     37.0188279969216
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567081,
+   "Name": "Yazici Iron and Steel Iskenderun plant",
+   "NativeId": "TZSTL2403000000736",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 635210.4558979014,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 1049999.9999999998,
+     "CapacityFactor": 0.6049623389503824,
+     "EmissionsFactor": 0.08920000000000003,
+     "EmissionsQuantity": 56660.77266609283
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000130881",
+     "CompanyName": "Yazici Demir Celik Sanayi ve Turizm Ticaret AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 798,
+    "2022": 814,
+    "2023": 820,
+    "2024": 810,
+    "2025": 800,
+    "2026": 800
+   },
+   "Centroid": {
+    "Geometry": [
+     36.2071282983028,
+     36.6856423936233
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567084,
+   "Name": "Asil Celik Orhangazi steel plant",
+   "NativeId": "TZSTL2403000000739",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 441622.50743377913,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 730000,
+     "CapacityFactor": 0.6049623389503823,
+     "EmissionsFactor": 0.08000000000000003,
+     "EmissionsQuantity": 35329.80059470234
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000130849",
+     "CompanyName": "Asil Celik Sanayi ve Ticaret AŞ"
+    },
+    {
+     "CompanyId": "E100000130849",
+     "CompanyName": "Asil Celik Sanayi ve Ticaret AŞ"
+    },
+    {
+     "CompanyId": "E100000130849",
+     "CompanyName": "Asil Celik Sanayi ve Ticaret AŞ"
+    },
+    {
+     "CompanyId": "E100000130849",
+     "CompanyName": "Asil Celik Sanayi ve Ticaret AŞ"
+    },
+    {
+     "CompanyId": "E100000130849",
+     "CompanyName": "Asil Celik Sanayi ve Ticaret AŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 870,
+    "2022": 894,
+    "2023": 907,
+    "2024": 889,
+    "2025": 870,
+    "2026": 870
+   },
+   "Centroid": {
+    "Geometry": [
+     29.270123608243,
+     40.4272815024238
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 1567079,
+   "Name": "Siddik Kardesler Dilovasi steel plant",
+   "NativeId": "TZSTL2403000000734",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 417424.01387576386,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 690000,
+     "CapacityFactor": 0.6049623389503824,
+     "EmissionsFactor": 0.07999999999999996,
+     "EmissionsQuantity": 33393.92111006109
+    }
+   ],
+   "Owners": [
+    {
+     "CompanyId": "E100000131138",
+     "CompanyName": "Sıddık Kardeşler Haddecilik Sanayi Ticaret LŞ"
+    }
+   ],
+   "Confidence": [
+    {
+     "2024": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2021": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 884,
+    "2022": 909,
+    "2023": 919,
+    "2024": 898,
+    "2025": 880,
+    "2026": 880
+   },
+   "Centroid": {
+    "Geometry": [
+     29.5091394841404,
+     40.8015545433451
+    ],
+    "SRID": 4326
+   }
+  },
+  {
+   "Id": 55793501,
+   "Name": "Vertra Celik Sarımazı steel plant",
+   "NativeId": "TZSTL2606000000009",
+   "Country": "TUR",
+   "Sector": "iron-and-steel",
+   "AssetType": "EAF",
+   "ReportingEntity": "climate-trace",
+   "EmissionsSummary": [
+    {
+     "Gas": "co2e_100yr",
+     "ActivityUnits": "t of steel",
+     "Activity": 0,
+     "EmissionsFactorUnits": "t of CO2e_100yr per t of steel",
+     "CapacityUnits": "t of steel",
+     "Capacity": 0,
+     "CapacityFactor": null,
+     "EmissionsFactor": null,
+     "EmissionsQuantity": 0
+    }
+   ],
+   "Owners": null,
+   "Confidence": [
+    {
+     "2021": [
+      {
+       "activity": "very low",
+       "asset_type": "very low",
+       "capacity": "very low",
+       "capacity_factor": "very low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "very low",
+       "co2_emissions_factor": "very low",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "very low",
+       "total_co2e_20yrgwp": "very low"
+      }
+     ]
+    },
+    {
+     "2022": [
+      {
+       "activity": "very low",
+       "asset_type": "very low",
+       "capacity": "very low",
+       "capacity_factor": "very low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "very low",
+       "co2_emissions_factor": "very low",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "very low",
+       "total_co2e_20yrgwp": "very low"
+      }
+     ]
+    },
+    {
+     "2023": [
+      {
+       "activity": "very low",
+       "asset_type": "very low",
+       "capacity": "very low",
+       "capacity_factor": "very low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "very low",
+       "co2_emissions_factor": "very low",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "very low",
+       "total_co2e_20yrgwp": "very low"
+      }
+     ]
+    },
+    {
+     "2025": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    },
+    {
+     "2024": [
+      {
+       "activity": "very low",
+       "asset_type": "very low",
+       "capacity": "very low",
+       "capacity_factor": "very low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "very low",
+       "co2_emissions_factor": "very low",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "very low",
+       "total_co2e_20yrgwp": "very low"
+      }
+     ]
+    },
+    {
+     "2026": [
+      {
+       "activity": "low",
+       "asset_type": "high",
+       "capacity": "high",
+       "capacity_factor": "low",
+       "ch4_emissions": "very low",
+       "ch4_emissions_factor": "very low",
+       "co2_emissions": "low",
+       "co2_emissions_factor": "medium",
+       "n2o_emissions": "very low",
+       "n2o_emissions_factor": "very low",
+       "other_gas_emissions": "very low",
+       "other_gas_emissions_factor": "very low",
+       "total_co2e_100yrgwp": "low",
+       "total_co2e_20yrgwp": "low"
+      }
+     ]
+    }
+   ],
+   "SectorRanks": {
+    "2021": 966,
+    "2022": 968,
+    "2023": 959,
+    "2024": 951,
+    "2025": 614,
+    "2026": 614
+   },
+   "Centroid": {
+    "Geometry": [
+     36.0015083001521,
+     36.9463425815609
+    ],
+    "SRID": 4326
+   }
+  }
+ ]
+}

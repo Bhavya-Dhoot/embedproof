@@ -1,0 +1,30 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+test = "test"
+script = "script"
+solc = "0.8.28"
+evm_version = "cancun"
+optimizer = true
+optimizer_runs = 200
+# Deterministic bytecode (no metadata hash) so repeated builds are byte-identical.
+bytecode_hash = "none"
+remappings = [
+    "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+    "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
+    "forge-std/=lib/forge-std/src/",
+]
+# The deploy script writes ../deployments/<chainId>.json (repo root), nothing else.
+fs_permissions = [{ access = "read-write", path = "../deployments" }]
+
+# Each top-level call from a test is run as its own transaction (intrinsic gas, cold/warm access),
+# which is what test/Gas.t.sol relies on. (Default in Foundry 1.8; pinned so it cannot silently change.)
+isolate = true
+
+[fuzz]
+runs = 512
+
+[invariant]
+runs = 64
+depth = 64

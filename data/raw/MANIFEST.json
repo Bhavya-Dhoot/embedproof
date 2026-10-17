@@ -1,0 +1,58 @@
+{
+ "retrievedAtUtc": "2026-10-17T22:54:12Z",
+ "files": [
+  {
+   "upstream": "https://downloads.climatetrace.org/latest/sector_packages/co2e_100yr/manufacturing.zip",
+   "kept": false,
+   "sha256": "51dd3003112986d7167689147794871425798ed3ae8926297c964f72234e3186",
+   "bytes": 45852775,
+   "note": "full upstream zip, not stored"
+  },
+  {
+   "upstream": "https://downloads.climatetrace.org/latest/sector_packages/co2e_100yr/manufacturing.zip#DATA/iron-and-steel_emissions_sources_v5_10_0.csv",
+   "kept": "raw/climate_trace/iron-and-steel_emissions_sources_v5_10_0.csv.gz",
+   "sha256_uncompressed": "fab11228f2a34475a553b5f3824771c694bf7370f0157a27b10225be69ce0436",
+   "sha256_stored": "9979c89e2596de2c2ff2d9baf91ab7bca0f24b4c5bdd6e2716c7fb1fa6b3efd5",
+   "bytes_stored": 4572282
+  },
+  {
+   "upstream": "https://downloads.climatetrace.org/latest/sector_packages/co2e_100yr/manufacturing.zip#DATA/iron-and-steel_emissions_sources_confidence_v5_10_0.csv",
+   "kept": "raw/climate_trace/iron-and-steel_emissions_sources_confidence_v5_10_0.csv.gz",
+   "sha256_uncompressed": "00a7abb94670a10909d3852b3ec87c36b3f9446f2bb16e768063a34c2baad5c6",
+   "sha256_stored": "1edd77e6c6625c6dc4392c6be6713217302fbf5437a88d82334184b15385538b",
+   "bytes_stored": 330006
+  },
+  {
+   "upstream": "https://downloads.climatetrace.org/latest/sector_packages/co2e_100yr/manufacturing.zip#ABOUT_THE_DATA/detailed_data_schema_v5_10_0.csv",
+   "kept": "raw/climate_trace/detailed_data_schema_v5_10_0.csv",
+   "sha256_uncompressed": "eaee3411c2b06866afc3b2a9eead3c957967dbb91efb7f86f97f9bdc2b809e96",
+   "sha256_stored": "eaee3411c2b06866afc3b2a9eead3c957967dbb91efb7f86f97f9bdc2b809e96",
+   "bytes_stored": 193961
+  },
+  {
+   "upstream": "https://api.climatetrace.org/v6/definitions/countries",
+   "kept": "raw/climate_trace/api_v6_definitions_countries.json",
+   "sha256_stored": "8d7d6877f96fe5e34cc9c98702bca7b3ad032a1babdd7a1a9e7e5506d5ae78e8"
+  },
+  {
+   "upstream": "https://api.climatetrace.org/v6/assets?subsectors=iron-and-steel&countries=TUR&limit=100&year=2024",
+   "kept": "raw/climate_trace/api_v6_assets_TUR_iron-and-steel_year2024.json",
+   "sha256_stored": "a1712129f23df59b62f8397f61be72e8d8f841b18e255bfbda98ad2e5421d589",
+   "note": "Thumbnail field removed (contains a map-tile token)"
+  },
+  {
+   "upstream": "https://storage.googleapis.com/emb-prod-bkt-publicdata/public-downloads/yearly_full_release_long_format.csv",
+   "kept": "raw/ember/ember_yearly_co2_intensity_gco2_per_kwh.csv",
+   "rows": 5726,
+   "sha256_uncompressed_full_upstream": "259e1095ee8ffeaf0aff37ad557916ae1823a2da13312da50ba4cec6b4574c3b",
+   "sha256_stored": "d5c174e4ade87fc22f25c535eb8f6005467350b42cdfe09e1668f38de6c15502",
+   "note": "filtered to Variable == 'CO2 intensity' (Power sector emissions)"
+  },
+  {
+   "upstream": "https://taxation-customs.ec.europa.eu/document/download/1c05d211-80cb-4aaa-8ef0-e08005a95d7e_en?filename=DVs%20as%20adopted_v20260204%20.xlsx",
+   "kept": "raw/cbam/cbam_default_values_definitive_period_v2_2026-08-06.xlsx",
+   "sha256_stored": "900583811c7e1194799eb9bdbad2d6d7e1100f5a7d80a664c1584a8fce6f9f35",
+   "bytes_stored": 642541
+  }
+ ]
+}

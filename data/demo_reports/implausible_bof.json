@@ -1,0 +1,13 @@
+{
+  "schema": "embedproof.report.v1",
+  "installationId": "TR-BOF-0002",
+  "period": "2026-09",
+  "route": "BF-BOF",
+  "cnCode": "72083900",
+  "productionTonnes": 250000,
+  "directEmissionsTco2": 90000.0,
+  "electricityMwh": 105000.0,
+  "gridFactorTco2PerMwh": 0.476,
+  "indirectEmissionsTco2": 49980.0,
+  "seeTco2PerT": 0.56
+}

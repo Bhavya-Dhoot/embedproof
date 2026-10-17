@@ -1,0 +1,602 @@
+{
+ "modelVersionHash": "0x20b809be2fbaaa91ca00a36a48825647b0259ef6dfd049d04817d1b023f89b3d",
+ "evaluated_artefact": "trained on the train-split plants only; the test plants were never used for any decision",
+ "target_note": "Truth = Climate TRACE v5.10.0 modelled direct+indirect emissions factor. Metrics measure agreement with that model, not with metered plant emissions.",
+ "data": {
+  "fixture_sha256": {
+   "steel_facility_months.csv": "744172e7f9ab88b1deb2d59c1ad6a58816c7024dedf9db92d2defa117a3634f7",
+   "grid_intensity_ember_annual.csv": "9286f7ccc749a5a8f97ff6134855401ae361df7b7a92d1bcbc9cfe99d40f62ba",
+   "cbam_defaults_steel.csv": "2bc6b8534aad38ba6de9d671ba81d93f3d751f806876b589234bcb544ce84a92",
+   "countries.csv": "89cb0482c23b8794f55c61c329f1ee0c9cdb6e977f32a4ba1765f60bbc84f215"
+  },
+  "rows_by_split": {
+   "calib": 8392,
+   "test": 10699,
+   "train": 33778
+  },
+  "plants_by_split": {
+   "calib": 139,
+   "test": 173,
+   "train": 554
+  }
+ },
+ "dataset": {
+  "rows": 52869,
+  "plants": 866,
+  "countries": 77,
+  "months": [
+   2021,
+   2026
+  ],
+  "plants_by_route_and_split": {
+   "BF-BOF/calib": 51,
+   "BF-BOF/test": 63,
+   "BF-BOF/train": 202,
+   "DRI-EAF/calib": 9,
+   "DRI-EAF/test": 12,
+   "DRI-EAF/train": 37,
+   "EAF/calib": 79,
+   "EAF/test": 98,
+   "EAF/train": 315
+  },
+  "rows_with_ember_grid_missing": 44
+ },
+ "training_ranges_train_plants": {
+  "BF-BOF": {
+   "capacity_tpy": [
+    380000.0,
+    22950000.0
+   ],
+   "plants": 202,
+   "grid_gco2_kwh": [
+    34.91,
+    756.36
+   ]
+  },
+  "DRI-EAF": {
+   "capacity_tpy": [
+    200000.0,
+    7400000.0
+   ],
+   "plants": 37,
+   "grid_gco2_kwh": [
+    57.39,
+    903.57
+   ]
+  },
+  "EAF": {
+   "capacity_tpy": [
+    200000.0,
+    6022000.0
+   ],
+   "plants": 315,
+   "grid_gco2_kwh": [
+    26.92,
+    1150.48
+   ]
+  }
+ },
+ "hyperparameters": {
+  "objective": "quantile",
+  "learning_rate": 0.05,
+  "bagging_fraction": 0.8,
+  "bagging_freq": 1,
+  "max_bin": 32,
+  "verbose": -1,
+  "num_threads": 1,
+  "deterministic": true,
+  "force_row_wise": true,
+  "num_leaves": 4,
+  "min_data_in_leaf": 400,
+  "rounds": 500,
+  "seed": 7
+ },
+ "calibration_offsets": {
+  "ALL": {
+   "lower": 0.006101301619578003,
+   "upper": 0.039510711004178134,
+   "n_rows": 8392,
+   "n_calibration_plants": 139
+  },
+  "BF-BOF": {
+   "lower": 6.390797602673359e-06,
+   "upper": 0.009661405374371768,
+   "n_rows": 2883,
+   "n_calibration_plants": 51
+  },
+  "EAF": {
+   "lower": 0.007461228008101228,
+   "upper": 0.08573465698857752,
+   "n_rows": 4940,
+   "n_calibration_plants": 79
+  }
+ },
+ "cv_selection_train_plants_only": [
+  {
+   "hp": {
+    "num_leaves": 4,
+    "min_data_in_leaf": 200
+   },
+   "rounds": 200,
+   "pinball": 0.02604,
+   "mae_q50": 0.09141,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.8912
+  },
+  {
+   "hp": {
+    "num_leaves": 4,
+    "min_data_in_leaf": 200
+   },
+   "rounds": 500,
+   "pinball": 0.02627,
+   "mae_q50": 0.09425,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.86083
+  },
+  {
+   "hp": {
+    "num_leaves": 4,
+    "min_data_in_leaf": 400
+   },
+   "rounds": 200,
+   "pinball": 0.02621,
+   "mae_q50": 0.09122,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.88753
+  },
+  {
+   "hp": {
+    "num_leaves": 4,
+    "min_data_in_leaf": 400
+   },
+   "rounds": 500,
+   "pinball": 0.02595,
+   "mae_q50": 0.09085,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.86965
+  },
+  {
+   "hp": {
+    "num_leaves": 4,
+    "min_data_in_leaf": 1000
+   },
+   "rounds": 200,
+   "pinball": 0.02709,
+   "mae_q50": 0.09513,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.88898
+  },
+  {
+   "hp": {
+    "num_leaves": 4,
+    "min_data_in_leaf": 1000
+   },
+   "rounds": 500,
+   "pinball": 0.02633,
+   "mae_q50": 0.0944,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.87744
+  },
+  {
+   "hp": {
+    "num_leaves": 7,
+    "min_data_in_leaf": 200
+   },
+   "rounds": 200,
+   "pinball": 0.02752,
+   "mae_q50": 0.09538,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.86962
+  },
+  {
+   "hp": {
+    "num_leaves": 7,
+    "min_data_in_leaf": 200
+   },
+   "rounds": 500,
+   "pinball": 0.02842,
+   "mae_q50": 0.09828,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.83329
+  },
+  {
+   "hp": {
+    "num_leaves": 7,
+    "min_data_in_leaf": 400
+   },
+   "rounds": 200,
+   "pinball": 0.02714,
+   "mae_q50": 0.09271,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.87329
+  },
+  {
+   "hp": {
+    "num_leaves": 7,
+    "min_data_in_leaf": 400
+   },
+   "rounds": 500,
+   "pinball": 0.02767,
+   "mae_q50": 0.09481,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.83557
+  },
+  {
+   "hp": {
+    "num_leaves": 7,
+    "min_data_in_leaf": 1000
+   },
+   "rounds": 200,
+   "pinball": 0.02707,
+   "mae_q50": 0.09536,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.88081
+  },
+  {
+   "hp": {
+    "num_leaves": 7,
+    "min_data_in_leaf": 1000
+   },
+   "rounds": 500,
+   "pinball": 0.0268,
+   "mae_q50": 0.09488,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.85582
+  }
+ ],
+ "point_accuracy_and_coverage": {
+  "n_test_plants": 173,
+  "n_test_rows": 10699,
+  "mae_q50": 0.07896665398635387,
+  "mae_q50_ci95_plant_bootstrap": [
+   0.05998718853260978,
+   0.10344121760048912
+  ],
+  "mae_route_median_baseline": 0.17047134517244603,
+  "improvement_vs_baseline": 0.5367746180070763,
+  "improvement_ci95_plant_bootstrap": [
+   0.45227664043439997,
+   0.6156727796054523
+  ],
+  "improvement_vs_baseline_equal_weight_per_plant": 0.5288300283761698,
+  "route_median_baseline_values": {
+   "BF-BOF": 2.401121,
+   "DRI-EAF": 1.486147,
+   "EAF": 0.633813
+  },
+  "coverage_90_calibrated_rows": 0.9304607907281054,
+  "coverage_ci95_plant_bootstrap": [
+   0.9045827255719869,
+   0.9522701303006177
+  ],
+  "coverage_90_calibrated_equal_weight_per_plant": 0.931501009245917,
+  "coverage_90_before_conformal": 0.8883073184409758,
+  "mean_interval_width": 0.4341031311337508,
+  "target_check": {
+   "mae_improvement_ge_20pct": true,
+   "coverage_in_85_95": true
+  }
+ },
+ "by_route": {
+  "BF-BOF": {
+   "plants": 63,
+   "rows": 3757,
+   "mae_q50": 0.02810657732233165,
+   "mae_baseline": 0.06191826084642002,
+   "improvement": 0.5460696579956232,
+   "coverage_90": 0.9079052435453819,
+   "mean_width": 0.11268248602608469
+  },
+  "DRI-EAF": {
+   "plants": 12,
+   "rows": 738,
+   "mae_q50": 0.2442627737127371,
+   "mae_baseline": 0.3718316436314363,
+   "improvement": 0.3430823387509937,
+   "coverage_90": 0.948509485094851,
+   "mean_width": 1.2057018970189701
+  },
+  "EAF": {
+   "plants": 98,
+   "rows": 6204,
+   "mae_q50": 0.09010346437782076,
+   "mae_baseline": 0.21225568391360417,
+   "improvement": 0.5754956347152702,
+   "coverage_90": 0.941972920696325,
+   "mean_width": 0.5369621695680207
+  }
+ },
+ "by_climate_trace_method": {
+  "extrapolation (global)": {
+   "rows": 1195,
+   "mae_q50": 0.16310401673640165,
+   "mae_baseline": 0.26701559581589956,
+   "coverage_90": 0.8502092050209205
+  },
+  "extrapolation (national)": {
+   "rows": 6084,
+   "mae_q50": 0.08113923750821828,
+   "mae_baseline": 0.20062285815253122,
+   "coverage_90": 0.9584155161078238
+  },
+  "extrapolation (plant)": {
+   "rows": 472,
+   "mae_q50": 0.043744603813559275,
+   "mae_baseline": 0.09195693855932204,
+   "coverage_90": 0.9322033898305084
+  },
+  "satellite": {
+   "rows": 2948,
+   "mae_q50": 0.04601640332428767,
+   "mae_baseline": 0.08168118758480326,
+   "coverage_90": 0.9050203527815468
+  }
+ },
+ "detection_synthetic": {
+  "0.5x": {
+   "synthetic": true,
+   "red_rate_full_rule": 0.8622301149640154,
+   "red_rate_interval_only": 0.8051219740162632,
+   "red_rate_full_rule_ci95_plant_bootstrap": [
+    0.8107017960123426,
+    0.906584884050689
+   ],
+   "red_rate_interval_only_ci95_plant_bootstrap": [
+    0.7489804209584549,
+    0.856418515817496
+   ],
+   "amber_or_red_rate_full_rule": 0.9152257220300962,
+   "mean_risk_full_rule": 88.14393868585849,
+   "below_half_cbam_default_rate": 0.9741097298812973,
+   "by_route_red_rate_full_rule": {
+    "BF-BOF": 0.9888208677136012,
+    "DRI-EAF": 0.3157181571815718,
+    "EAF": 0.8505802707930368
+   },
+   "by_route_red_rate_interval_only": {
+    "BF-BOF": 0.9888208677136012,
+    "DRI-EAF": 0.2046070460704607,
+    "EAF": 0.7653127014829143
+   }
+  },
+  "0.7x": {
+   "synthetic": true,
+   "red_rate_full_rule": 0.5944480792597439,
+   "red_rate_interval_only": 0.5221048696139826,
+   "red_rate_full_rule_ci95_plant_bootstrap": [
+    0.5312216575226432,
+    0.6600296847483845
+   ],
+   "red_rate_interval_only_ci95_plant_bootstrap": [
+    0.45420040838868136,
+    0.5933405687103257
+   ],
+   "amber_or_red_rate_full_rule": 0.7123095616412749,
+   "mean_risk_full_rule": 67.15291148705487,
+   "below_half_cbam_default_rate": 0.6621179549490607,
+   "by_route_red_rate_full_rule": {
+    "BF-BOF": 0.9888208677136012,
+    "DRI-EAF": 0.03387533875338753,
+    "EAF": 0.4223081882656351
+   },
+   "by_route_red_rate_interval_only": {
+    "BF-BOF": 0.9888208677136012,
+    "DRI-EAF": 0.0,
+    "EAF": 0.30157962604771116
+   }
+  },
+  "0.85x": {
+   "synthetic": true,
+   "red_rate_full_rule": 0.38003551733806895,
+   "red_rate_interval_only": 0.36134218151229086,
+   "red_rate_full_rule_ci95_plant_bootstrap": [
+    0.31027897869629445,
+    0.4517123588080844
+   ],
+   "red_rate_interval_only_ci95_plant_bootstrap": [
+    0.29033200907664225,
+    0.4357496928556939
+   ],
+   "amber_or_red_rate_full_rule": 0.4706047294139639,
+   "mean_risk_full_rule": 51.35358444714459,
+   "below_half_cbam_default_rate": 0.6357603514347135,
+   "by_route_red_rate_full_rule": {
+    "BF-BOF": 0.9888208677136012,
+    "DRI-EAF": 0.0,
+    "EAF": 0.05657640232108317
+   },
+   "by_route_red_rate_interval_only": {
+    "BF-BOF": 0.9888208677136012,
+    "DRI-EAF": 0.0,
+    "EAF": 0.0243391360412637
+   }
+  },
+  "1x": {
+   "synthetic": false,
+   "red_rate_full_rule": 0.004766800635573418,
+   "red_rate_interval_only": 0.004299467239928965,
+   "red_rate_full_rule_ci95_plant_bootstrap": [
+    0.0013135241935234296,
+    0.009708772868053083
+   ],
+   "red_rate_interval_only_ci95_plant_bootstrap": [
+    0.0009374601235609622,
+    0.009313449790445422
+   ],
+   "amber_or_red_rate_full_rule": 0.015889335451911395,
+   "mean_risk_full_rule": 12.886157584821012,
+   "below_half_cbam_default_rate": 0.6061314141508553,
+   "by_route_red_rate_full_rule": {
+    "BF-BOF": 0.009582113388341761,
+    "DRI-EAF": 0.0,
+    "EAF": 0.0024177949709864605
+   },
+   "by_route_red_rate_interval_only": {
+    "BF-BOF": 0.009582113388341761,
+    "DRI-EAF": 0.0,
+    "EAF": 0.0016118633139909735
+   }
+  },
+  "note": "Rows with factor < 1 are SYNTHETIC underreports built from Climate TRACE's own estimate; '1x' is the false-alert rate on unmodified held-out values. recall == red_rate for factor < 1. 'full_rule' is the shipped risk score (incl. +20 under 0.5x CBAM default); 'interval_only' drops the +20 rule.",
+  "targets": {
+   "recall_0.5x_ge_0.9": false,
+   "recall_0.7x_ge_0.6": false
+  }
+ },
+ "feature_ablation_grouped_cv_train_plants": {
+  "route only": {
+   "pinball": 0.04587,
+   "mae_q50": 0.1722,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.89369
+  },
+  "route + grid": {
+   "pinball": 0.02533,
+   "mae_q50": 0.08953,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.89111
+  },
+  "route + capacity": {
+   "pinball": 0.04877,
+   "mae_q50": 0.17701,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.84866
+  },
+  "route + capacity + grid  (SHIPPED)": {
+   "pinball": 0.02595,
+   "mae_q50": 0.09085,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.86965
+  },
+  "route + capacity + grid + country (categorical)": {
+   "pinball": 0.02751,
+   "mae_q50": 0.08803,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.83019
+  },
+  "route + capacity + grid + Climate TRACE capacity factor  (EXCLUDED a priori: leakage proxy)": {
+   "pinball": 0.02592,
+   "mae_q50": 0.09092,
+   "mae_route_median_baseline": 0.17216,
+   "coverage_raw": 0.86065
+  }
+ },
+ "feature_ablation_larger_trees_grouped_cv_train_plants": {
+  "hyperparameters": {
+   "num_leaves": 15,
+   "min_data_in_leaf": 200,
+   "rounds": 200
+  },
+  "results": {
+   "route + capacity + grid  (SHIPPED)": {
+    "pinball": 0.02847,
+    "mae_q50": 0.09787,
+    "mae_route_median_baseline": 0.17216,
+    "coverage_raw": 0.84371
+   },
+   "route + capacity + grid + Climate TRACE capacity factor  (EXCLUDED a priori: leakage proxy)": {
+    "pinball": 0.02788,
+    "mae_q50": 0.09641,
+    "mae_route_median_baseline": 0.17216,
+    "coverage_raw": 0.84552
+   }
+  }
+ },
+ "leave_country_out_cv_train_plants": {
+  "pinball": 0.03757,
+  "mae_q50": 0.1303,
+  "mae_route_median_baseline": 0.23457,
+  "coverage_raw": 0.78445,
+  "improvement_vs_baseline": 0.4445,
+  "note": "5 folds grouped by country; coverage_raw is BEFORE conformal calibration"
+ },
+ "shap_stability": {
+  "note": "The model has only 3 features, so the top-3 SET is trivially identical; stability of the RANK ORDER is the informative check.",
+  "reference_seed": 7,
+  "reference_rank": [
+   "route_code",
+   "grid_gco2_kwh",
+   "capacity_tpy"
+  ],
+  "reference_mean_abs_shap": {
+   "route_code": 0.7343942813481784,
+   "capacity_tpy": 0.007174280747876515,
+   "grid_gco2_kwh": 0.16597670412693244
+  },
+  "seeds": {
+   "101": {
+    "rank": [
+     "route_code",
+     "grid_gco2_kwh",
+     "capacity_tpy"
+    ],
+    "mean_abs_shap": {
+     "route_code": 0.7338816956175818,
+     "capacity_tpy": 0.006740090463502089,
+     "grid_gco2_kwh": 0.16733561769765207
+    }
+   },
+   "102": {
+    "rank": [
+     "route_code",
+     "grid_gco2_kwh",
+     "capacity_tpy"
+    ],
+    "mean_abs_shap": {
+     "route_code": 0.7348432981275206,
+     "capacity_tpy": 0.00695964302730644,
+     "grid_gco2_kwh": 0.16669182859191312
+    }
+   },
+   "103": {
+    "rank": [
+     "route_code",
+     "grid_gco2_kwh",
+     "capacity_tpy"
+    ],
+    "mean_abs_shap": {
+     "route_code": 0.7339873017554462,
+     "capacity_tpy": 0.007468162681051296,
+     "grid_gco2_kwh": 0.16605033001725827
+    }
+   },
+   "104": {
+    "rank": [
+     "route_code",
+     "grid_gco2_kwh",
+     "capacity_tpy"
+    ],
+    "mean_abs_shap": {
+     "route_code": 0.7351165629457606,
+     "capacity_tpy": 0.006585957439772503,
+     "grid_gco2_kwh": 0.16647116921789543
+    }
+   },
+   "105": {
+    "rank": [
+     "route_code",
+     "grid_gco2_kwh",
+     "capacity_tpy"
+    ],
+    "mean_abs_shap": {
+     "route_code": 0.7351208091124009,
+     "capacity_tpy": 0.006687973457005656,
+     "grid_gco2_kwh": 0.1665495162982871
+    }
+   }
+  },
+  "top3_set_identical_in_all_seeds": true,
+  "rank_order_identical_in_all_seeds": true,
+  "rank_order_matches_reference_in": 5,
+  "n_seeds": 5
+ },
+ "latency": {
+  "n_calls": 300,
+  "mean_ms": 8.184436334801527,
+  "p50_ms": 7.452249992638826,
+  "p95_ms": 12.523755014990456,
+  "max_ms": 29.26310000475496,
+  "includes": "feature build + 3 boosters + SHAP TreeExplainer(q50) + explanation, warm process"
+ }
+}

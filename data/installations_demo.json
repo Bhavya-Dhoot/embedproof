@@ -1,0 +1,49 @@
+{
+  "_comment": "Feature priors for the two FICTIONAL demo installations (INTERFACES section 2). Keyed by installation id. Read by model.scorer.Scorer. The climateTraceReference blocks only record which real Climate TRACE asset supplied the route / capacity-class context; they are provenance, not a model input, and nothing is stated or implied about any real company.",
+  "TR-EAF-0001": {
+    "displayName": "Marmara Demir Mini-Mill (fictional)",
+    "fictional": true,
+    "country": "TR",
+    "sector": "STEEL",
+    "route": "EAF",
+    "capacityTpy": 300000,
+    "priors": {
+      "capacityTpy": 300000,
+      "gridGco2PerKwh": 475.73,
+      "gridSource": "Ember yearly electricity data, power-sector CO2 intensity, TUR 2025 (CC BY 4.0); data/fixtures/grid_intensity_ember_annual.csv"
+    },
+    "climateTraceReference": {
+      "role": "provenance of the route / capacity-class context only; NOT a model input",
+      "climateTraceSourceId": 1567079,
+      "country": "TUR",
+      "route": "EAF",
+      "capacityTpy": 690000,
+      "ctMeanSee2025TCO2PerT": 0.4891,
+      "notAModelInput": true,
+      "capacityClassNote": "Closest-capacity Turkish EAF in Climate TRACE v5.10.0. The demo mill's 300,000 t/yr is inside the training range (smallest EAF in the training set is 200,000 t/yr)."
+    }
+  },
+  "TR-BOF-0002": {
+    "displayName": "Anadolu Entegre Çelik (fictional)",
+    "fictional": true,
+    "country": "TR",
+    "sector": "STEEL",
+    "route": "BF_BOF",
+    "capacityTpy": 3500000,
+    "priors": {
+      "capacityTpy": 3500000,
+      "gridGco2PerKwh": 475.73,
+      "gridSource": "Ember yearly electricity data, power-sector CO2 intensity, TUR 2025 (CC BY 4.0); data/fixtures/grid_intensity_ember_annual.csv"
+    },
+    "climateTraceReference": {
+      "role": "provenance of the route / capacity-class context only; NOT a model input",
+      "climateTraceSourceId": 1567073,
+      "country": "TUR",
+      "route": "BF-BOF",
+      "capacityTpy": 3501000,
+      "ctMeanSee2025TCO2PerT": 2.2903,
+      "notAModelInput": true,
+      "capacityClassNote": "Turkish BF-BOF plant in Climate TRACE v5.10.0 with essentially the same nameplate capacity (3.501 Mt/yr). The fictional installation is not this company and no inference about it is made."
+    }
+  }
+}

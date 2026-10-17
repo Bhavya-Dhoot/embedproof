@@ -1,0 +1,16 @@
+.git
+.venv
+**/__pycache__
+**/.pytest_cache
+node_modules
+web
+contracts/lib
+contracts/out
+contracts/cache
+contracts/broadcast
+attestor/var
+attestor/.env
+.env
+*.log
+EmbedProof_PRD.md
+plans

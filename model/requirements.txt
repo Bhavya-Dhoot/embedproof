@@ -1,0 +1,12 @@
+# EmbedProof model + data build (Python 3.11). Versions are those the frozen artefact was trained and tested with.
+lightgbm==4.7.0
+shap==0.51.0
+numpy==2.4.6
+pandas==3.0.6
+pyarrow==26.0.0        # pandas 3 uses it for string columns when present
+scikit-learn==1.9.1    # GroupKFold only
+scipy==1.17.1
+numba==0.68.0          # shap dependency
+openpyxl==3.1.5        # data/build_fixtures.py reads the EC CBAM workbook
+httpx==0.28.1          # data/fetch_raw.py
+pytest==9.1.1

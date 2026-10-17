@@ -1,0 +1,16 @@
+# Runtime dependencies of the attestor (pinned to the versions it was built and tested with).
+# The scoring model's own dependencies (lightgbm, shap, numpy, pandas, ...) are pinned in model/requirements.txt.
+fastapi==0.143.3
+uvicorn==0.54.0
+pydantic==2.14.1
+httpx==0.28.1
+python-dotenv==1.2.4
+web3==8.0.0
+eth-account==0.14.0
+eth-abi==6.0.0
+eth-utils==6.0.0
+rfc8785==0.1.4
+cryptography==50.0.2
+# ML-DSA-44 backends, in selection order: oqs (liboqs-python, optional, needs a C toolchain) -> pqcrypto -> dilithium-py
+pqcrypto==1.0.0
+dilithium-py==1.5.1

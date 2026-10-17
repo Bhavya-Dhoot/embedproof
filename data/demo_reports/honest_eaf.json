@@ -1,0 +1,13 @@
+{
+  "schema": "embedproof.report.v1",
+  "installationId": "TR-EAF-0001",
+  "period": "2026-09",
+  "route": "EAF",
+  "cnCode": "72142000",
+  "productionTonnes": 5000,
+  "directEmissionsTco2": 1200.0,
+  "electricityMwh": 3100.0,
+  "gridFactorTco2PerMwh": 0.476,
+  "indirectEmissionsTco2": 1475.6,
+  "seeTco2PerT": 0.535
+}
