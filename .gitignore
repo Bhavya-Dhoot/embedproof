@@ -16,3 +16,4 @@ brag-output/work/
 .claude/
 contracts/broadcast/
 brag-output/demo-4min.mp4
+.env.testnet

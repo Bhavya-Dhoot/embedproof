@@ -24,7 +24,7 @@ contract DeployScriptTest is Test {
 
     function _skipIfEnvPreset() internal {
         // vm.setEnv is process-wide; these tests only make sense on a clean environment.
-        if (vm.envExists("ATTESTOR") || vm.envExists("VERIFIER") || vm.envExists("REGULATOR")) vm.skip(true);
+        if (vm.envExists("ATTESTOR") || vm.envExists("VERIFIER") || vm.envExists("REGULATOR") || vm.envExists("EXPORTER_A")) vm.skip(true);
     }
 
     /// @dev ONE sequential test: forge runs the test functions of a contract in parallel and the
@@ -54,7 +54,17 @@ contract DeployScriptTest is Test {
         address v = makeAddr("prod verifier");
         address r = makeAddr("prod regulator");
         vm.setEnv("REGULATOR", vm.toString(r));
+        // DEMO=1 is still set from the Anvil scenario: the demo operators must be explicit too.
+        vm.expectRevert(abi.encodeWithSelector(Deploy.MissingEnv.selector, "EXPORTER_A"));
+        script.run();
+        address ex = makeAddr("prod exporter");
+        vm.setEnv("EXPORTER_A", vm.toString(ex));
+        vm.expectRevert(abi.encodeWithSelector(Deploy.MissingEnv.selector, "EXPORTER_B"));
+        script.run();
+        vm.setEnv("EXPORTER_B", vm.toString(ex));
         Deploy.Deployed memory d = script.run();
+        assertEq(d.registry.getInstallation(bytes32("TR-EAF-0001")).operator, ex, "demo operator is the explicit exporter");
+        assertEq(d.registry.getInstallation(bytes32("TR-BOF-0002")).operator, ex);
         assertTrue(d.registry.hasRole(ATTESTOR_ROLE, a));
         assertTrue(d.registry.hasRole(VERIFIER_ROLE, v));
         assertTrue(d.registry.hasRole(REGULATOR_ROLE, r));

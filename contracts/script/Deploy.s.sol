@@ -18,7 +18,8 @@ import {Sector, Route} from "../src/interfaces/IEmbedProof.sol";
 /// proxy (UUPS), wired registry -> attestation -> allocator.
 ///
 /// Environment. On chain 31337 everything is optional and defaults to the Anvil accounts of INTERFACES.md
-/// section 1. On ANY OTHER chain ATTESTOR, VERIFIER and REGULATOR are mandatory (`MissingEnv`): the public
+/// section 1. On ANY OTHER chain ATTESTOR, VERIFIER and REGULATOR (and, with DEMO=1, EXPORTER_A and EXPORTER_B)
+/// are mandatory (`MissingEnv`): the public
 /// Anvil keys must never receive roles on a real network (INTERFACES.md section 9.F).
 ///   ADMIN, ATTESTOR, VERIFIER, REGULATOR           role holders (ADMIN defaults to the broadcaster)
 ///   EXPORTER_A, EXPORTER_B, IMPORTER_A, IMPORTER_B demo personas (recorded in the JSON; exporters
@@ -178,6 +179,13 @@ contract Deploy is Script {
         string[3] memory names = ["ATTESTOR", "VERIFIER", "REGULATOR"];
         for (uint256 i; i < names.length; i++) {
             if (!vm.envExists(names[i])) revert MissingEnv(names[i]);
+        }
+        // DEMO installations get operators: never the public Anvil exporters on a real chain.
+        if (_isDemo()) {
+            string[2] memory ops = ["EXPORTER_A", "EXPORTER_B"];
+            for (uint256 i; i < ops.length; i++) {
+                if (!vm.envExists(ops[i])) revert MissingEnv(ops[i]);
+            }
         }
     }
 
