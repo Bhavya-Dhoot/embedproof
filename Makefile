@@ -11,7 +11,7 @@ SHELL := bash
 setup:
 	source scripts/env.sh
 	command -v forge >/dev/null || { echo "Install Foundry first: https://book.getfoundry.sh/getting-started/installation"; exit 1; }
-	git submodule update --init --recursive
+	git submodule update --init
 	[ -d .venv ] || uv venv --python 3.11 .venv || python3.11 -m venv .venv
 	uv pip install --python $$PY -r requirements.txt || $$PY -m pip install -r requirements.txt
 	cd contracts && forge build && cd ..

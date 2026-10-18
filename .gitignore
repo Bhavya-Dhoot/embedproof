@@ -13,3 +13,5 @@ attestor/var/
 *.log
 .DS_Store
 var/
+brag-output/work/
+.claude/
