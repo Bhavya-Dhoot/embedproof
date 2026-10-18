@@ -1,0 +1,2 @@
+Nobody can see the CO₂ in a steel coil, so EmbedProof makes the claim checkable: an AI plausibility check (honest EAF mill risk 20, a BF-BOF mill claiming 0.56 tCO₂/t risk 100), ECDSA and ML-DSA-44 (FIPS 204) signatures that both fail when one digit changes, and a contract that reverts the second sale of the same 5,000 tonnes with DoubleClaimBlocked.
+Built for the IEEE ClimateChain Global Hackathon 2026, Track 1. A prototype on a local chain with fictional companies, not accredited CBAM verification.

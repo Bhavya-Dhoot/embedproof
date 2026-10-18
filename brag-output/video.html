@@ -1,0 +1,484 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>EmbedProof launch</title>
+<link rel="stylesheet" href="work/fonts/fonts.css">
+<style>
+:root { --ink:#0B1020; --indigo:#3B2BFF; --teal:#00C2A8; --rose:#FF5C8A; --amber:#FFB547; --teal-t:#35E8CC; --rose-t:#FF8FAE; --amber-t:#FFC66D; }
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1920px; height:1080px; overflow:hidden; background:#0B1020; }
+body { font-family:'Inter',sans-serif; color:#fff; -webkit-font-smoothing:antialiased; }
+#stage { position:absolute; inset:0; overflow:hidden; background:#0B1020; }
+.field, .orb { position:absolute; left:0; top:0; border-radius:50%; z-index:0; }
+#leftscrim { position:absolute; left:0; top:0; width:1000px; height:1080px; z-index:1; pointer-events:none;
+  background:linear-gradient(90deg, rgba(11,16,32,.86) 0, rgba(11,16,32,.74) 560px, rgba(11,16,32,0) 1000px); }
+
+/* frosted glass: white 12%, 1px edge, dark scrim under the content, brighter top edge */
+.glass { position:absolute; left:0; top:0; overflow:hidden; z-index:5; border-radius:28px;
+  background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.30); }
+.scrim { position:absolute; inset:0; background:#0B1020; opacity:.46; }
+.edge { position:absolute; left:0; right:0; top:0; height:3px;
+  background:linear-gradient(90deg, rgba(255,255,255,.1), rgba(255,255,255,.8), rgba(255,255,255,.1)); }
+.sheen { position:absolute; top:-30%; left:0; width:240px; height:160%;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent); }
+.body { position:absolute; inset:0; }
+.a { position:absolute; }
+.sub2 { font-size:.6em; position:relative; top:.22em; margin-left:.02em; letter-spacing:0; }
+.num { font-family:'Space Grotesk',sans-serif; font-weight:700; font-variant-numeric:tabular-nums; }
+.mute { color:rgba(255,255,255,.78); }
+
+/* captions: left column */
+.cap { position:absolute; left:120px; width:560px; z-index:30; opacity:0; visibility:hidden; }
+.kick { font-weight:700; font-size:28px; letter-spacing:.16em; text-transform:uppercase; color:var(--teal-t); }
+.head { font-weight:700; font-size:76px; line-height:1.05; letter-spacing:-.035em; }
+.subl { font-weight:400; font-size:36px; line-height:1.2; letter-spacing:-.01em; }
+.subl b { font-weight:700; }
+
+/* app chips (same recipe as the web app) */
+.chip { display:inline-flex; align-items:center; gap:10px; border-radius:999px; padding:4px 18px; font-weight:700; letter-spacing:.07em;
+  text-transform:uppercase; border:2px solid currentColor; white-space:nowrap; font-size:24px; }
+.chip.g { color:var(--teal-t); background:rgba(0,194,168,.16); }
+.chip.r { color:var(--rose-t); background:rgba(255,92,138,.17); }
+.chip.n { color:rgba(255,255,255,.9); background:rgba(255,255,255,.1); }
+
+#hook { width:1640px; height:470px; }
+.hk { position:absolute; left:0; right:0; top:0; bottom:0; padding:0 100px; display:flex; flex-direction:column; justify-content:center; }
+.hk div { white-space:nowrap; line-height:1.06; letter-spacing:-.035em; font-weight:700; }
+#l1 { font-weight:400; color:rgba(255,255,255,.76); }
+#chip1 { position:absolute; z-index:40; left:0; top:0; padding:16px 34px; border-radius:60px; background:rgba(11,16,32,.84);
+  border:3px solid var(--rose); display:flex; align-items:baseline; gap:16px; white-space:nowrap; opacity:0; }
+#chip1 .lab { font-size:30px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--rose-t); }
+#chip1 .v { font-size:60px; color:#fff; }
+#chip1 .u { font-size:34px; color:rgba(255,255,255,.84); }
+
+#end { width:1500px; height:620px; }
+.ec { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+#t1 { font-size:190px; line-height:1; letter-spacing:-.045em; font-weight:700; white-space:nowrap; }
+#t2 { margin-top:34px; font-size:58px; line-height:1.14; letter-spacing:-.02em; font-weight:400; color:rgba(255,255,255,.94); }
+#t2 b { font-weight:700; color:#fff; }
+#t3 { margin-top:40px; display:flex; gap:22px; align-items:center; justify-content:center; }
+#t4 { margin-top:26px; font-size:28px; color:rgba(255,255,255,.76); letter-spacing:.01em; }
+
+#wipe { width:1920px; height:1080px; border-radius:0; border:0; z-index:35; }
+#ring { position:absolute; left:0; top:0; border-radius:50%; border:4px solid #fff; z-index:49; opacity:0; }
+#cur { position:absolute; left:0; top:0; width:56px; height:56px; z-index:50; transform-origin:0 0; opacity:0; filter:drop-shadow(0 4px 8px rgba(0,0,0,.45)); }
+#halo { position:absolute; left:0; top:0; width:1054px; height:548px; border-radius:28px; z-index:11; opacity:0;
+  box-shadow:0 0 0 5px rgba(255,92,138,.9), 0 0 150px 34px rgba(255,92,138,.62); }
+.tile { border-radius:18px; background:rgba(11,16,32,.42); border:1px solid rgba(255,255,255,.16); }
+img { display:block; }
+</style></head><body>
+<div id="stage"><div id="leftscrim"></div>
+  <div id="ring"></div>
+  <svg id="cur" viewBox="0 0 46 46"><path d="M4 3 L4 33 L12 25.5 L17.5 38 L23 35.5 L17.5 23.5 L28 23.5 Z" fill="#fff" stroke="#0B1020" stroke-width="2.5" stroke-linejoin="round"/></svg>
+</div>
+<script>
+// ------------------------------------------------------------------ helpers (pure functions of t)
+const $ = s => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const eo = x => 1 - Math.pow(1 - x, 3);
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;
+const spring = x => x <= 0 ? 0 : 1 - Math.exp(-x * 8) * Math.cos(x * 20);
+const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);
+const lerp = (a, b, p) => a + (b - a) * p;
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const CO2 = 'CO<span class="sub2">2</span>';
+window.DURATION = 20.5;
+window.MARKS = [0, 3, 8, 12, 17];
+
+// code-made sound cues (motion-kit soundkit): a sound on what matters, not on every slide
+window.SFX = [
+  {t:1.50, type:'pop', x:.3},
+  {t:2.05, type:'whoosh', x:-.2},
+  {t:2.9, type:'whoosh', x:.3},
+  {t:4.40, type:'click', x:.2},
+  {t:4.50, type:'count', x:0},
+  {t:5.30, type:'chime', x:.2},
+  {t:5.85, type:'switch'},
+  {t:6.55, type:'click', x:.4},
+  {t:6.65, type:'count', x:.3},
+  {t:7.45, type:'alert'},
+  {t:7.75, type:'whoosh', x:.1},
+  {t:8.90, type:'tick', x:.1},
+  {t:9.22, type:'tick', x:.5},
+  {t:10.05, type:'click', x:.3},
+  {t:10.12, type:'glitch'},
+  {t:10.16, type:'thud'},
+  {t:10.36, type:'thud'},
+  {t:10.58, type:'thud'},
+  {t:11.4, type:'whoosh', x:-.3},
+  {t:12.75, type:'tick', x:.4},
+  {t:13.25, type:'switch'},
+  {t:14.40, type:'click', x:.5},
+  {t:14.50, type:'stamp'},
+  {t:14.54, type:'thud'},
+  {t:14.62, type:'alert'},
+  {t:16.25, type:'whoosh', x:.2},
+  {t:17.2, type:'chime', x:.6},
+  {t:17.55, type:'final'}
+];
+
+// ------------------------------------------------------------------ real data (attestor /score output for the two demo reports)
+const SC = {
+  g: {risk:20,  band:'green', q05:.4323, q50:.5754, q95:.9633, cbam:2.31,  decl:.535, dtxt:'0.535', range:'0.432 to 0.963', med:'0.575', big:'0.535', label:'Honest EAF mill', inst:'TR-EAF-0001 · 2026-09'},
+  r: {risk:100, band:'red',   q05:2.1709, q50:2.2753, q95:2.3453, cbam:2.428, decl:.56, dtxt:'0.560', range:'2.171 to 2.345', med:'2.275', big:'0.56',  label:'BF-BOF mill',     inst:'TR-BOF-0002 · 2026-09'}
+};
+const BC = {green:'#00C2A8', amber:'#FFB547', red:'#FF5C8A'};
+const BT = {green:'#35E8CC', amber:'#FFC66D', red:'#FF8FAE'};
+const bandOf = n => n <= 30 ? 'green' : n <= 60 ? 'amber' : 'red';
+
+// ------------------------------------------------------------------ assets (real captures of the running web app, 2x)
+const AS = 'work/assets/';
+const FILES = ['btn_check','plaus_green_tile1','plaus_green_tile2','plaus_red_tile1','plaus_red_tile2','badge_ecdsa_ok','badge_mldsa_ok',
+  'tbadge_ecdsa_ok','tbadge_mldsa_ok','tbadge_fp_ok','tbadge_ecdsa_fail','tbadge_mldsa_fail','tbadge_fp_fail','btn_change_digit',
+  'verify_headline_ok','verify_headline_failed','verify_alloc','alloc_form','blocked'];
+const IM = {};   // name -> {w,h} in CSS px (capture is 2x)
+const imgTag = (n, k = 1, st = '') => `<img src="${AS}${n}.png" style="width:${IM[n].w * k}px;height:${IM[n].h * k}px;${st}">`;
+
+// ------------------------------------------------------------------ the drifting colour
+const stage = $('#stage');
+const COL = ['#3B2BFF', '#00C2A8', '#FF5C8A'];
+const FIELDS = COL.map(c => { const d = document.createElement('div'); d.className = 'field';
+  d.style.cssText = `width:1300px;height:1300px;background:radial-gradient(circle,${c} 0%,${c}bb 32%,transparent 68%)`;
+  stage.prepend(d); return d; });
+const ORBS = Array.from({ length: 7 }, (_, i) => { const d = document.createElement('div'); d.className = 'orb';
+  const s = 70 + rnd(i) * 110, c = COL[i % 3];
+  d.style.cssText = `width:${s}px;height:${s}px;background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.95),${c} 55%,${c}00 100%)`;
+  stage.prepend(d); return d; });
+
+// ------------------------------------------------------------------ glass panels
+const frost = (el, op, blur) => { el.style.opacity = op; el.style.visibility = op < .01 ? 'hidden' : 'visible';
+  el.style.backdropFilter = op < .01 ? 'none' : `blur(${blur}px) saturate(1.3)`; };
+const blurIn = (el, p, dy = 30, bl = 16) => { el.style.opacity = p; el.style.transform = `translateY(${(1 - p) * dy}px)`; el.style.filter = p < 1 ? `blur(${(1 - p) * bl}px)` : 'none'; };
+function mk(id, w, h, inner, extra = '') {
+  const d = document.createElement('div'); d.className = 'glass'; d.id = id; d.style.width = w + 'px'; d.style.height = h + 'px';
+  d.innerHTML = `<div class="scrim"></div><div class="sheen"></div><div class="body">${inner}</div><div class="edge"></div>`;
+  if (extra) d.style.cssText += extra; stage.appendChild(d); d._w = w; d._h = h; return d;
+}
+// place a panel from a state {x,y,s,r,op,dim,blur,z}
+function place(el, st) {
+  el.style.transform = `translate(${st.x - el._w / 2}px,${st.y - el._h / 2}px) rotate(${st.r}deg) scale(${st.s})`;
+  frost(el, st.op, 24);
+  el.style.zIndex = st.z;
+  el._scrim = el._scrim || el.querySelector('.scrim'); el._body = el._body || el.querySelector('.body'); el._sheen = el._sheen || el.querySelector('.sheen');
+  el._scrim.style.opacity = st.dim;
+  el._body.style.filter = st.blur > .2 ? `blur(${st.blur}px)` : 'none';
+  el._sheen.style.transform = `translateX(${lerp(-400, el._w + 200, ((st.t || 0) * .3 + (st.ph || 0)) % 1)}px) rotate(16deg)`;
+}
+// local panel point -> screen point under a state
+function toScreen(st, w, h, lx, ly) {
+  const c = Math.cos(st.r * Math.PI / 180), s = Math.sin(st.r * Math.PI / 180), dx = (lx - w / 2) * st.s, dy = (ly - h / 2) * st.s;
+  return [st.x + dx * c - dy * s, st.y + dx * s + dy * c];
+}
+
+// ------------------------------------------------------------------ captions (left column, blur in / fade out)
+const CAPS = [];
+function addCap(id, top, html, t0, t1, cls) {
+  const d = document.createElement('div'); d.className = 'cap'; d.style.top = top + 'px'; d.innerHTML = `<div class="${cls}">${html}</div>`;
+  stage.appendChild(d); CAPS.push({ el: d, t0, t1 }); }
+
+// ------------------------------------------------------------------ gauge (the app's own SVG geometry; needle driven by the clock)
+function gaugeSVG(w, band) {
+  const op = b => b === band ? 1 : .55;
+  return `<svg viewBox="0 0 240 150" width="${w}" height="${w * .625}" style="display:block">
+   <path d="M 30.00 120.00 A 90 90 0 0 1 210.00 120.00" fill="none" stroke="rgb(255 255 255 / .14)" stroke-width="20"/>
+   <path d="M 30.00 120.00 A 90 90 0 0 1 67.10 47.19" fill="none" stroke="#00C2A8" stroke-width="16" opacity="${op('green')}"/>
+   <path d="M 68.48 46.20 A 90 90 0 0 1 147.81 34.40" fill="none" stroke="#FFB547" stroke-width="16" opacity="${op('amber')}"/>
+   <path d="M 149.42 34.94 A 90 90 0 0 1 210.00 120.00" fill="none" stroke="#FF5C8A" stroke-width="16" opacity="${op('red')}"/>
+   <g class="needle" style="transform-origin:120px 120px"><line x1="120" y1="120" x2="40" y2="120" stroke="#fff" stroke-width="4" stroke-linecap="round"/></g>
+   <circle cx="120" cy="120" r="9" fill="#fff"/><circle cx="120" cy="120" r="4" fill="#0B1020"/>
+   <text x="26" y="142" font-size="11" fill="rgb(255 255 255 / .85)" text-anchor="middle" font-family="Inter">0</text>
+   <text x="214" y="142" font-size="11" fill="rgb(255 255 255 / .85)" text-anchor="middle" font-family="Inter">100</text></svg>`;
+}
+// declared vs expected, rebuilt large for legibility (same geometry and numbers as the app's IntervalBar)
+function intervalHTML(d, w) {
+  const mx = Math.max(d.cbam * 1.08, d.q95 * 1.25, d.decl * 1.15), P = v => v / mx * w, col = BC[d.band];
+  const cx = Math.min(P(d.cbam), w - 6);
+  return `<div class="a" style="left:0;top:0;font-size:22px;font-weight:700;letter-spacing:.14em;color:rgba(255,255,255,.78)">DECLARED VS EXPECTED</div>
+   <div class="a trk" style="left:0;top:122px;width:${w}px;height:30px;border-radius:15px;background:rgba(255,255,255,.16)"></div>
+   <div class="a rng" style="left:${P(d.q05)}px;top:122px;width:${Math.max(8, P(d.q95) - P(d.q05))}px;height:30px;border-radius:15px;background:linear-gradient(90deg,rgba(0,194,168,.65),rgba(59,43,255,.7));border:2px solid rgba(255,255,255,.65);transform-origin:50% 50%"></div>
+   <div class="a med" style="left:${P(d.q50) - 2}px;top:114px;width:4px;height:46px;border-radius:2px;background:#fff"></div>
+   <div class="a cbl" style="left:${cx - 1.5}px;top:92px;height:96px;border-left:3px dashed var(--amber)"></div>
+   <div class="a cbf" style="left:${cx}px;top:36px;transform:translateX(-100%);font-size:22px;font-weight:700;color:var(--amber-t);border:2px dashed var(--amber);background:rgba(11,16,32,.85);border-radius:8px;padding:2px 10px;white-space:nowrap">CBAM default ${d.cbam.toFixed(2)}</div>
+   <div class="a dcl" style="left:${P(d.decl) - 2.5}px;top:100px;width:5px;height:74px;border-radius:3px;background:${col}"></div>
+   <div class="a dcf" style="left:${P(d.decl)}px;top:36px;transform:translateX(-50%);text-align:center">
+     <span style="display:block;white-space:nowrap;border-radius:8px;padding:2px 12px;font-size:24px;font-weight:700;color:#0B1020;background:${col}">Declared ${d.dtxt}</span>
+     <span style="display:block;width:0;height:0;margin:0 auto;border-left:9px solid transparent;border-right:9px solid transparent;border-top:12px solid ${col}"></span></div>
+   <div class="a" style="left:0;top:206px;font-size:24px;line-height:1.35;color:rgba(255,255,255,.88);white-space:nowrap">model 5 to 95% range <b style="color:#fff">${d.range}</b> · median <b style="color:#fff">${d.med}</b></div>
+   <div class="a" style="left:0;top:262px;font-size:22px;color:rgba(255,255,255,.72);white-space:nowrap">${'tCO<span class="sub2">2</span> per tonne of product'}</div>`;
+}
+
+// ------------------------------------------------------------------ build everything once the images and fonts are in
+let P = {};
+function build() {
+  // ---- S1 hook
+  P.hook = mk('hook', 1640, 470, `<div class="hk"><div id="l1">Nobody can see</div><div id="l2">the ${CO2} in a steel coil.</div></div>`);
+  const chip = document.createElement('div'); chip.id = 'chip1';
+  chip.innerHTML = `<span class="lab">Declared</span><span class="num v">0.56</span><span class="u">t${CO2} / t</span>`; stage.appendChild(chip); P.chip1 = chip;
+
+  // ---- S2 two result panels (A honest EAF, B implausible BF-BOF)
+  for (const k of ['g', 'r']) {
+    const d = SC[k], col = BC[d.band], tx = BT[d.band];
+    const inner = `
+      <div class="a" style="left:24px;top:22px;font-size:36px;font-weight:700;letter-spacing:-.02em;line-height:48px">${d.label}</div>
+      <div class="a pill" style="left:24px;top:76px;font-size:24px;letter-spacing:.06em;border:2px solid rgba(255,255,255,.5);border-radius:20px;padding:0 14px;color:rgba(255,255,255,.9);line-height:34px">${d.inst}</div>
+      <div class="a btn" style="left:${1102 - 24 - 244}px;top:30px;transform-origin:50% 50%">${imgTag('btn_check', 1.3)}</div>
+      <div class="a claim" style="left:24px;top:132px;width:1054px;height:560px;text-align:center">
+        <div style="margin-top:34px;font-size:32px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.78)">Declared by the mill</div>
+        <div class="num" style="font-size:250px;line-height:1.05;letter-spacing:-.03em">${d.big}</div>
+        <div style="font-size:44px;color:rgba(255,255,255,.9)">t${CO2} per tonne of product</div></div>
+      <div class="a gwrap" style="left:34px;top:116px;width:355px">${gaugeSVG(355, d.band)}
+        <div class="a gnum" style="left:0;top:206px;width:355px;text-align:center;line-height:1"><span class="num gn" style="font-size:74px"></span><span class="num" style="font-size:30px;color:rgba(255,255,255,.78);margin-left:4px">/100</span></div>
+        <div class="a gchip" style="left:0;top:290px;width:355px;text-align:center"><span class="chip ${d.band === 'green' ? 'g' : 'r'}">● ${d.band === 'green' ? 'Green · plausible' : 'Red · implausible'}</span></div></div>
+      <div class="a ivl" style="left:${24 + 375 + 40}px;top:128px;width:615px;height:340px">${intervalHTML(d, 615)}</div>
+      <div class="a shap" style="left:24px;top:488px">${imgTag(k === 'g' ? 'plaus_green_tile1' : 'plaus_red_tile1')}</div>
+      <div class="a plain" style="left:${24 + 517 + 20}px;top:488px">${imgTag(k === 'g' ? 'plaus_green_tile2' : 'plaus_red_tile2')}</div>`;
+    P['p' + k] = mk('p' + k, 1102, 764, inner);
+  }
+
+  // ---- S3 certificate headline (back) and tamper panel (front)
+  P.hd = mk('hd', 1144, 289, `<div class="a" style="left:20px;top:20px">${imgTag('verify_headline_ok')}</div>
+     <div class="a hdf" style="left:20px;top:20px">${imgTag('verify_headline_failed')}</div>`);
+  const mono = "font-family:'JetBrains Mono',monospace;font-size:31px;line-height:46px;white-space:pre";
+  const tr = `
+    <div class="a" style="left:28px;top:20px;font-size:36px;font-weight:700;letter-spacing:-.02em;line-height:48px">Both signatures, checked here and now</div>
+    <div class="a okb" style="left:24px;top:86px">${imgTag('badge_ecdsa_ok', 1, 'position:absolute;left:0;top:0')}${imgTag('badge_mldsa_ok', 1, 'position:absolute;left:537px;top:0')}</div>
+    <div class="a fb" style="left:24px;top:86px;opacity:0">${imgTag('tbadge_ecdsa_fail', 1, 'position:absolute;left:0;top:0')}${imgTag('tbadge_mldsa_fail', 1, 'position:absolute;left:356px;top:0')}${imgTag('tbadge_fp_fail', 1, 'position:absolute;left:712px;top:0')}</div>
+    <div class="a cbtn" style="left:28px;top:196px;transform-origin:50% 50%">${imgTag('btn_change_digit', 1.3)}</div>
+    <div class="a" style="left:268px;top:203px"><span class="chip g cok">Original document</span><span class="chip r cbad" style="position:absolute;left:0;top:0;opacity:0">Edited copy · on-chain record untouched</span></div>
+    <div class="a tile" style="left:28px;top:274px;width:1046px;height:176px;overflow:hidden">
+      <div class="a docA" style="left:24px;top:16px"><div style="font-size:22px;font-weight:700;letter-spacing:.14em;color:rgba(255,255,255,.78)">THE SIGNED DOCUMENT</div>
+        <div style="${mono};margin-top:8px">  "productionTonnes": 5000,
+  "seeTco2PerT": 0.535</div></div>
+      <div class="a docB" style="left:24px;top:16px;opacity:0"><div style="font-size:22px;font-weight:700;letter-spacing:.14em;color:rgba(255,255,255,.78)">WHAT CHANGED</div>
+        <div style="${mono};margin-top:8px"><span style="color:var(--rose-t)">- </span><span style="color:rgba(255,255,255,.8)">"seeTco2PerT": 0.53</span><span style="background:rgba(255,92,138,.55);border-radius:5px;padding:0 4px">5</span>
+<span style="color:var(--teal-t)">+ </span>"seeTco2PerT": 0.53<span style="background:rgba(255,92,138,.55);border-radius:5px;padding:0 4px">4</span></div></div></div>`;
+  P.pc = mk('pc', 1102, 478, tr);
+
+  // ---- S4 ledger (back) and allocate form (front), the blocked panel on top
+  P.pl = mk('pl', 1144, 319, `<div class="a" style="left:20px;top:20px">${imgTag('verify_alloc')}</div>
+      <div class="a hlA" style="left:24px;top:204px;width:1096px;height:64px;border:3px solid var(--teal-t);border-radius:16px;opacity:0"></div>`);
+  P.pf = mk('pf', 1144, 560, `<div class="a" style="left:20px;top:20px">${imgTag('alloc_form')}</div>`);
+  const bl = document.createElement('div'); bl.id = 'blk'; bl.style.cssText = 'position:absolute;left:0;top:0;z-index:12;opacity:0';
+  bl.innerHTML = imgTag('blocked'); stage.appendChild(bl); P.blk = bl; bl._w = 1054; bl._h = 548;
+  const bb = document.createElement('div'); bb.id = 'blkb'; bb.style.cssText = 'position:absolute;left:0;top:0;width:1054px;height:548px;border-radius:28px;z-index:11;opacity:0;background:rgb(38,8,26)'; stage.appendChild(bb); P.blkb = bb;
+  const halo = document.createElement('div'); halo.id = 'halo'; stage.appendChild(halo); P.halo = halo;
+
+  // ---- wipe + end card
+  P.wipe = mk('wipe', 1920, 1080, ''); P.wipe.style.left = '0'; P.wipe.style.top = '0'; P.wipe.querySelector('.sheen').remove(); P.wipe.querySelector('.edge').remove();
+  P.end = mk('end', 1500, 620, `<div class="ec" id="ec"><div id="t1">EmbedProof</div>
+      <div id="t2">A ${CO2} claim you can <b>check</b>.<br>A tonne it can’t sell <b>twice</b>.</div>
+      <div id="t3"><span class="chip g">178 contract tests · 100% coverage</span></div>
+      <div id="t4">Hackathon prototype · fictional companies, demo data</div></div>`);
+
+  // ---- captions
+  addCap('c2k', 300, 'AI plausibility check', 3.1, 7.9, 'kick');
+  addCap('c2h', 350, 'An AI<br>checks the<br>claim.', 3.2, 7.9, 'head');
+  addCap('c2a', 700, 'Honest EAF mill:<br><b style="color:var(--teal-t)">risk 20</b>', 4.6, 6.2, 'subl');
+  addCap('c2b', 700, 'BF-BOF at 0.56:<br><b style="color:var(--rose-t)">risk 100</b>', 6.4, 8.0, 'subl');
+  addCap('c3k', 330, 'Quantum-safe', 8.35, 11.7, 'kick');
+  addCap('c3a', 380, 'Signed<br>twice.', 8.45, 10.15, 'head');
+  addCap('c3as', 620, 'ECDSA + ML-DSA-44<br>(FIPS 204)', 8.8, 10.15, 'subl');
+  addCap('c3b', 380, 'One digit.<br><span style="color:var(--rose-t)">Both fail.</span>', 10.25, 11.7, 'head');
+  addCap('c4k', 260, 'Anti-double-claim ledger', 12.0, 16.5, 'kick');
+  addCap('c4a', 310, 'Importer A<br>holds 5,000 t.', 12.05, 13.75, 'head');
+  addCap('c4b', 310, 'Importer B<br>asks again.', 13.8, 15.0, 'head');
+  addCap('c4c', 310, 'The same<br>tonne cannot<br>be sold <span style="color:var(--rose-t)">twice.</span>', 15.1, 16.55, 'head');
+}
+
+// ------------------------------------------------------------------ panel states, all pure functions of t
+const FX = 1250, FY = 540;
+// S2: A front first, rack focus to B at 5.8 to 6.5
+function stA(t) {
+  const sl = eo(seg(t, 2.8, 3.55)), k = eio(seg(t, 5.8, 6.5)), out = seg(t, 7.45, 7.85);
+  const f = {x:FX, y:FY, s:1 + .03 * seg(t, 3.7, 5.8), r:0, dim:.46, blur:0}, b = {x:1130, y:395, s:.8, r:-2.2, dim:.76, blur:6};
+  const o = {};
+  for (const q in f) o[q] = lerp(f[q], b[q], k);
+  o.x += (1 - sl) * 700; o.y += Math.sin(t * 1.2) * 6 * (1 - k);
+  o.op = seg(t, 2.8, 3.2) * (1 - out) ; o.z = k > .5 ? 6 : 10; o.t = t; o.ph = 0;
+  return o;
+}
+function stB(t) {
+  const sl = eo(seg(t, 2.95, 3.7)), k = eio(seg(t, 5.8, 6.5)), g = eio(seg(t, 7.6, 8.3)), cl = eo(seg(t, 8.3, 8.85));
+  const b = {x:1385, y:410, s:.82, r:2.4, dim:.74, blur:6}, f = {x:FX, y:FY, s:1 + .03 * seg(t, 6.5, 7.7), r:0, dim:.46, blur:0};
+  const o = {};
+  for (const q in b) o[q] = lerp(b[q], f[q], k);
+  o.x += (1 - sl) * 760; o.y += Math.sin(t * 1.2 + 1.9) * 6 * k;
+  o.s *= 1 + 1.7 * g; o.y = lerp(o.y, 540, g); o.x = lerp(o.x, 960, g); o.r *= 1 - g;
+  o.op = seg(t, 2.95, 3.3) * (1 - cl); o.z = k > .5 ? 10 : 6; o.t = t; o.ph = .37; o.g = g;
+  return o;
+}
+// S3: headline panel (back, above) and tamper panel (front)
+function stC(t) {
+  const sl = eo(seg(t, 8.25, 8.95)), out = eio(seg(t, 11.3, 11.85)), sh = (t > 10.12 && t < 10.75) ? Math.sin((t - 10.12) * 70) * 11 * (1 - (t - 10.12) / .63) : 0;
+  return {x:FX + (1 - sl) * 700 + sh - out * 120, y:FY + 130 + Math.sin(t * 1.2) * 5 + out * 60, s:(1 - .22 * out) * (1 + .02 * seg(t, 9, 11)), r:0, dim:.46, blur:out * 8, op:seg(t, 8.25, 8.65) * (1 - eo(seg(t, 11.35, 11.85))), z:10, t, ph:.2};
+}
+function stH(t) {
+  const sl = eo(seg(t, 8.35, 9.05)), out = eio(seg(t, 11.3, 11.85)), sh = (t > 10.14 && t < 10.75) ? Math.sin((t - 10.14) * 62) * 8 * (1 - (t - 10.14) / .6) : 0;
+  return {x:FX + (1 - sl) * 700 + sh - out * 100, y:FY - 250 + out * 40, s:.88 * (1 - .12 * out), r:0, dim:.56, blur:2 + out * 8, op:seg(t, 8.35, 8.75) * (1 - eo(seg(t, 11.35, 11.85))), z:7, t, ph:.6};
+}
+// S4: ledger first in front, form takes the front at 13.2; blocked panel slams in at 14.5
+function stL(t) {
+  const sl = eo(seg(t, 11.75, 12.45)), k = eio(seg(t, 13.2, 13.85)), bk = eo(seg(t, 14.5, 15.0)), out = eo(seg(t, 16.45, 16.9));
+  const f = {x:FX, y:FY, s:1, r:0, dim:.46, blur:0}, b = {x:1230, y:300, s:.8, r:-1.8, dim:.8, blur:6};
+  const o = {};
+  for (const q in f) o[q] = lerp(f[q], b[q], k);
+  o.x += (1 - sl) * 700; o.dim = lerp(o.dim, .86, bk); o.blur += 4 * bk; o.s *= 1 - .08 * bk;
+  o.op = seg(t, 11.75, 12.15) * (1 - out); o.z = k > .5 ? 6 : 10; o.t = t; o.ph = .1;
+  return o;
+}
+function stF(t) {
+  const sl = eo(seg(t, 11.9, 12.6)), k = eio(seg(t, 13.2, 13.85)), bk = eo(seg(t, 14.5, 15.0)), out = eo(seg(t, 16.45, 16.9));
+  const b = {x:1290, y:790, s:.8, r:1.6, dim:.74, blur:5}, f = {x:FX, y:FY + 20, s:1, r:0, dim:.46, blur:0};
+  const o = {};
+  for (const q in b) o[q] = lerp(b[q], f[q], k);
+  o.x += (1 - sl) * 760; o.y += Math.sin(t * 1.2 + 1) * 5 * k; o.dim = lerp(o.dim, .86, bk); o.blur += 5 * bk; o.s *= 1 - .1 * bk;
+  o.op = seg(t, 11.9, 12.3) * (1 - out); o.z = k > .5 ? 10 : 6; o.t = t; o.ph = .5;
+  return o;
+}
+
+// ------------------------------------------------------------------ cursor: targets live on the panels, so it always lands on the real button
+const btnA = t => toScreen(stA(t), 1102, 764, 1102 - 24 - 122, 30 + 28);
+const btnB = t => toScreen(stB(t), 1102, 764, 1102 - 24 - 122, 30 + 28);
+const btnC = t => toScreen(stC(t), 1102, 478, 28 + 107, 196 + 28);
+const btnF = t => toScreen(stF(t), 1144, 560, 20 + 25 + 58, 20 + 450 + 22);
+const lerp2 = (p, q, k) => [lerp(p[0], q[0], k), lerp(p[1], q[1], k)];
+const ENTER = [1880, 1010];
+function cursorAt(t) {
+  const R = [];
+  // S2: A
+  if (t < 3.5) return null;
+  if (t < 5.7) { const k = eio(seg(t, 3.5, 4.3)); return { p:lerp2(ENTER, btnA(t), k), a:eo(seg(t, 3.5, 3.8)) }; }
+  if (t < 7.2) { const k = eio(seg(t, 5.7, 6.45)); return { p:lerp2(btnA(5.7), btnB(t), k), a:1 }; }
+  if (t < 7.9) { const k = eio(seg(t, 7.2, 7.8)); return { p:lerp2(btnB(7.2), [1860, 1020], k), a:1 - seg(t, 7.4, 7.85) }; }
+  // S3
+  if (t < 9.0) return null;
+  if (t < 10.45) { const k = eio(seg(t, 9.05, 9.95)); return { p:lerp2(ENTER, btnC(t), k), a:eo(seg(t, 9.05, 9.3)) }; }
+  if (t < 11.0) { const k = eio(seg(t, 10.45, 10.95)); return { p:lerp2(btnC(10.45), [1500, 1010], k), a:1 - seg(t, 10.55, 10.95) }; }
+  // S4
+  if (t < 13.3) return null;
+  if (t < 14.95) { const k = eio(seg(t, 13.35, 14.3)); return { p:lerp2(ENTER, btnF(t), k), a:eo(seg(t, 13.35, 13.6)) }; }
+  if (t < 15.5) { const k = eio(seg(t, 14.95, 15.4)); return { p:lerp2(btnF(14.95), [1500, 1010], k), a:1 - seg(t, 15.0, 15.4) }; }
+  return null;
+}
+const CLICKS = [4.40, 6.55, 10.05, 14.40];
+
+// ------------------------------------------------------------------ render
+function render(t) {
+  if (!P.hook) return;
+  // colour drifting
+  FIELDS.forEach((d, i) => { d.style.transform = `translate(${960 + 480 * Math.sin(t * .55 + i * 2.1) - 650}px,${540 + 320 * Math.cos(t * .45 + i * 1.3) - 650}px)`; });
+  ORBS.forEach((d, i) => { d.style.transform = `translate(${160 + rnd(i + 10) * 1600 + Math.sin(t * (.4 + rnd(i + 30) * .5) + i * 2) * 170}px,${120 + rnd(i + 20) * 800 + Math.cos(t * (.35 + rnd(i + 40) * .4) + i) * 130}px)`; });
+
+  // left scrim only while the captions run on the left
+  $('#leftscrim').style.opacity = eo(seg(t, 2.9, 3.5)) * (1 - eo(seg(t, 16.3, 16.8)));
+
+  // ---------------- S1 hook: two lines sharpen in over frosted glass, a claim chip lands, the panel dives
+  { const hp = eo(seg(t, 0, .6)), hx = eio(seg(t, 2.0, 2.85)), hc = eo(seg(t, 2.85, 3.5)), el = P.hook;
+    const st = { x:960, y:500 - 10 * hx, s:(1 + .035 * seg(t, 0, 2.4)) * (1 + 1.55 * hx), r:0, dim:.46, blur:0, op:hp * (1 - hc), z:12, t, ph:.3 };
+    st.y += (1 - hp) * 40; place(el, st);
+    blurIn($('#l1'), eo(seg(t, .15, .75))); blurIn($('#l2'), eo(seg(t, .65, 1.25)));
+    el._body.style.opacity = 1 - seg(t, 2.0, 2.45);
+    const c = P.chip1, cp = spring((t - 1.5) / 1.15), cf = 1 - seg(t, 2.1, 2.5), cw = c.offsetWidth || 560, ch = c.offsetHeight || 96;
+    c.style.opacity = clamp(cp * 3) * cf;
+    c.style.transform = `translate(${1370 - cw / 2}px,${722 - ch / 2 + Math.sin(t * 2) * 4}px) scale(${Math.max(.01, cp)}) rotate(-2deg)`;
+  }
+
+  // ---------------- S2 AI check
+  const A = stA(t), B = stB(t);
+  place(P.pg, A); place(P.pr, B);
+  [['g', P.pg, A, 4.4, 4.45, 5.3], ['r', P.pr, B, 6.55, 6.6, 7.45]].forEach(([k, el, st, tc, t0, t1]) => {
+    const d = SC[k], q = el.querySelector.bind(el), pr = eio(seg(t, t0 + .05, t1 - .05)), n = Math.round(d.risk * pr), band = bandOf(n);
+    // toolbar button press then gone, claim number lifts away, results pop in
+    const bt = q('.btn'); bt.style.transform = `scale(${1 - .07 * bump((t - tc) / .22)})`; bt.style.opacity = 1 - seg(t, tc + .18, tc + .5);
+    const cl = q('.claim'), cs = seg(t, tc + .02, tc + .55); cl.style.opacity = 1 - cs; cl.style.transform = `scale(${1 + .12 * cs})`; cl.style.filter = cs > 0 ? `blur(${cs * 14}px)` : 'none';
+    q('.gwrap').style.opacity = eo(seg(t, tc + .1, tc + .5));
+    const ang = d.risk * 1.8 * pr; q('.needle').style.transform = `rotate(${ang}deg)`;
+    const gn = q('.gn'); gn.textContent = n; gn.style.color = BT[band];
+    q('.gchip').style.opacity = eo(seg(t, t1 - .05, t1 + .25)); q('.gchip').style.transform = `scale(${.8 + .2 * spring((t - (t1 - .05)) / .5)})`;
+    const iv = q('.ivl'); const ip = eo(seg(t, tc + .35, tc + .95)); iv.style.opacity = ip;
+    const rng = q('.rng'); rng.style.transform = `scaleX(${eo(seg(t, tc + .4, tc + .95))})`;
+    const dcf = q('.dcf'); const dp = spring((t - (tc + .75)) / .6); dcf.style.opacity = clamp(dp * 2); dcf.style.transform = `translateX(-50%) translateY(${(1 - Math.min(1, dp)) * -26}px)`;
+    q('.dcl').style.opacity = clamp(dp * 2);
+    q('.cbf').style.opacity = eo(seg(t, tc + .9, tc + 1.3)); q('.cbl').style.opacity = eo(seg(t, tc + .9, tc + 1.3));
+    blurIn(q('.shap'), eo(seg(t, tc + .6, tc + 1.1)), 24, 10); blurIn(q('.plain'), eo(seg(t, tc + .8, tc + 1.3)), 24, 10);
+    // verdict ring flash when the count completes
+    const fl = bump((t - t1) / .5); el.style.boxShadow = fl > 0 ? `0 0 0 ${2 + fl * 7}px ${band === 'green' ? 'rgba(0,194,168,' : 'rgba(255,92,138,'}${fl * .9})` : 'none';
+    el._body.style.opacity = k === 'r' ? 1 - seg(t, 7.7, 8.05) : 1;
+  });
+
+  // ---------------- S3
+  const C = stC(t), H = stH(t);
+  place(P.pc, C); place(P.hd, H);
+  { const el = P.pc, q = el.querySelector.bind(el);
+    // two valid badges tick in, then flip to three FAILED badges on the click
+    const b1 = spring((t - 8.85) / .6), b2 = spring((t - 9.17) / .6), fl = seg(t, 10.1, 10.2);
+    const [b1el, b2el] = q('.okb').querySelectorAll('img');
+    b1el.style.opacity = clamp(b1 * 2); b1el.style.transform = `scale(${.8 + .2 * Math.min(1.08, b1)})`;
+    b2el.style.opacity = clamp(b2 * 2); b2el.style.transform = `scale(${.8 + .2 * Math.min(1.08, b2)})`;
+    q('.okb').style.opacity = 1 - fl; q('.fb').style.opacity = fl;
+    const fb = q('.fb').querySelectorAll('img'); fb.forEach((im, i) => { const u = t - (10.12 + i * .22), p = spring(u / .5); im.style.opacity = clamp(u / .05); im.style.transform = `scale(${1 + 1.1 * (1 - eo(clamp(u / .14))) * (u > 0 ? 1 : 0)}) translateY(${(u > 0 && u < .5) ? Math.sin(u * 60) * 4 * (1 - u / .5) : 0}px)`; });
+    const cb = q('.cbtn'); cb.style.transform = `scale(${1 - .07 * bump((t - 10.05) / .22)})`; cb.style.opacity = eo(seg(t, 8.9, 9.3));
+    q('.cok').style.opacity = 1 - fl; q('.cbad').style.opacity = fl;
+    const dp = spring((t - 10.2) / .5); q('.docA').style.opacity = 1 - fl; const dB = q('.docB'); dB.style.opacity = fl; dB.style.transform = `translateY(${(1 - Math.min(1, dp)) * 14}px)`;
+    const rf = bump((t - 10.12) / .6); el.style.boxShadow = rf > 0 ? `0 0 0 ${2 + rf * 7}px rgba(255,92,138,${rf * .9})` : 'none';
+    const vf = bump((t - 9.1) / .55), vf2 = bump((t - 8.85) / .5); if (rf <= 0 && vf > 0) el.style.boxShadow = `0 0 0 ${3 + vf * 7}px rgba(0,194,168,${vf * .7})`;
+  }
+  { const el = P.hd, sw = eo(seg(t, 10.14, 10.34)); el.querySelector('.hdf').style.opacity = sw;
+    const rf = bump((t - 10.15) / .6); el.style.boxShadow = rf > 0 ? `0 0 0 ${2 + rf * 6}px rgba(255,92,138,${rf * .8})` : 'none'; }
+
+  // ---------------- S4
+  const L = stL(t), F = stF(t);
+  place(P.pl, L); place(P.pf, F);
+  { const hl = P.pl.querySelector('.hlA'); const hv = bump((t - 12.6) / .9); hl.style.opacity = hv; hl.style.transform = `scale(${1 + .03 * (1 - hv)})`; }
+  { const fb = P.pf.querySelector('.body'); /* allocate button press */ const u = (t - 14.4) / .2; }
+  // blocked panel slam
+  { const u = t - 14.5, b = P.blk, h = P.halo, out = eo(seg(t, 16.45, 16.9));
+    const sc = u < 0 ? 2.5 : 2.4 - 1.4 * eo(clamp(u / .16)) + .02 * seg(t, 15.2, 16.3) - 0 ;
+    const sk = (u > 0 && u < .6) ? Math.sin(u * 80) * 14 * (1 - u / .6) : 0, sy = (u > 0 && u < .6) ? Math.cos(u * 70) * 7 * (1 - u / .6) : 0;
+    const bx = FX + 8 + sk, by = FY + 10 + sy - 20 * (u > .16 ? eo(seg(t, 14.7, 15.3)) : 0);
+    const bs = (u < 0 ? 1 : sc) * (1 + .5 * out) + (u >= .16 ? .0 : 0);
+    b.style.opacity = clamp(u / .05) * (1 - out);
+    b.style.transform = `translate(${bx - 527}px,${by - 274}px) scale(${bs})`;
+    P.blkb.style.opacity = clamp(u / .05) * (1 - out) * .97; P.blkb.style.transform = b.style.transform;
+    h.style.opacity = clamp((u - .1) / .2) * (.55 + .45 * Math.sin((t - 14.6) * 4.5) ** 2) * (1 - out);
+    h.style.transform = `translate(${bx - 527}px,${by - 274}px) scale(${bs})`;
+    // everything else shakes with the revert
+    if (u > 0 && u < .6) { P.pf.style.transform += ` translateX(${sk * .6}px)`; P.pl.style.transform += ` translateX(${sk * .4}px)`; }
+  }
+
+  // ---------------- transition + end card
+  { const w = P.wipe, up = eo(seg(t, 16.2, 16.75)), cl = eo(seg(t, 16.8, 17.4));
+    frost(w, up * (1 - cl), 24); w.style.zIndex = 35; w._scrim = w._scrim || w.querySelector('.scrim'); w._scrim.style.opacity = .5; w.style.transform = 'none'; }
+  { const e = P.end, ep = eo(seg(t, 16.85, 17.45)), eb = 1 - eo(seg(t, 16.9, 17.7));
+    place(e, { x:960, y:540 + Math.sin(t * 1.1) * 5, s:1 + .04 * (1 - eo(seg(t, 16.85, 17.7))) + .006 * seg(t, 17.7, 20.5), r:0, dim:.46, blur:0, op:ep, z:36, t, ph:.45 });
+    $('#ec').style.filter = eb > .001 ? `blur(${eb * 18}px)` : 'none';
+    const tp = spring((t - 17.25) / .7); $('#t3').style.transform = `scale(${.9 + .1 * Math.min(1.05, tp)})`; $('#t3').style.opacity = clamp(tp * 2);
+    $('#t4').style.opacity = eo(seg(t, 17.6, 18.1)); }
+
+  // ---------------- captions
+  CAPS.forEach(c => { const p = eo(seg(t, c.t0, c.t0 + .45)), o = 1 - seg(t, c.t1 - .3, c.t1);
+    const v = t >= c.t0 && t <= c.t1; c.el.style.visibility = v ? 'visible' : 'hidden'; if (!v) return;
+    c.el.style.opacity = p * o; c.el.style.transform = `translateY(${(1 - p) * 26}px)`; c.el.style.filter = p < 1 ? `blur(${(1 - p) * 14}px)` : 'none'; });
+
+  // ---------------- cursor + click rings
+  { const cu = $('#cur'), ring = $('#ring'), cur = cursorAt(t);
+    let press = 0; CLICKS.forEach(tc => { press = Math.max(press, bump((t - tc) / .2)); });
+    if (cur) { cu.style.opacity = cur.a; cu.style.transform = `translate(${cur.p[0] - 5}px,${cur.p[1] - 4}px) scale(${1 - .14 * press})`; } else cu.style.opacity = 0;
+    let rv = 0, rx = 0, ry = 0, rs = 0;
+    CLICKS.forEach(tc => { const rp = seg(t, tc, tc + .55); if (rp > 0 && rp < 1) { rv = (1 - rp) * .9; rs = 24 + 190 * eo(rp);
+      const pp = cursorAt(tc + .01); if (pp) { rx = pp.p[0]; ry = pp.p[1]; } } });
+    ring.style.opacity = rv; ring.style.width = ring.style.height = rs + 'px'; ring.style.transform = `translate(${rx - rs / 2}px,${ry - rs / 2}px)`; }
+}
+window.render = render;
+
+// ------------------------------------------------------------------ load: fonts, then every capture, then build and fit the hook type
+window.ready = (async () => {
+  await Promise.all([document.fonts.load('700 40px "Inter"'), document.fonts.load('400 40px "Inter"'), document.fonts.load('700 40px "Space Grotesk"'), document.fonts.ready]);
+  await Promise.all(FILES.map(n => new Promise((res, rej) => { const i = new Image(); i.onload = () => { IM[n] = { w:i.naturalWidth / 2, h:i.naturalHeight / 2 }; i.decode().then(res, res); }; i.onerror = () => rej(new Error('missing asset ' + n)); i.src = AS + n + '.png'; })));
+  build();
+  // fit the hook so the long line sits inside the panel with 100px each side
+  const l2 = $('#l2'), l1 = $('#l1'); let fs = 120; l1.style.fontSize = l2.style.fontSize = fs + 'px';
+  const wmax = 1640 - 200, w2 = l2.scrollWidth; if (w2 > wmax) fs = Math.floor(fs * wmax / w2); l1.style.fontSize = l2.style.fontSize = fs + 'px';
+  // decode every <img> that was added, so the first frame is never blank
+  await Promise.all([...document.images].map(i => i.decode().catch(() => 0)));
+  render(0);
+})();
+</script></body></html>
