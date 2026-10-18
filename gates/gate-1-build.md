@@ -23,7 +23,7 @@
 | `pnpm test` / lint / typecheck / `next build` (web) | 70 passed (4 opt-in live skipped) / clean / clean / 9 pages built |
 | `make demo` | 5/5 scenarios + 13 hardening/replay probes + rescore PASS, 32.9 s wall |
 | Browser click-through | (a) green attest, (b) red → verifier reject with reason, (c) DoubleClaimBlocked panel + importer claim, (d) tamper flips ECDSA + ML-DSA; amber attest; mobile 375 px and tablet nav |
-| Fresh clone keeps model hash | `40d9ee13…` byte-identical (`.gitattributes`); re-run on the round-3 commit |
+| Fresh clone of round-3 commit b5e2deb | `make setup` exit 0; `make demo` 5/5 + rescore PASS, 90 s cold; model hash `40d9ee13…` byte-identical |
 
 ## Round 3 (judge panel 73/100 + PRD audit 95 met / 36 partial / 5 missing)
 - Allocation cap keyed by (installation, period): closes revoke-and-resubmit double counting.

@@ -83,8 +83,9 @@ make web       # http://localhost:3000 — demo personas switch between exporter
 make down
 ```
 
-`make demo` takes about 33 s on the development laptop after `make setup`. That is 11.6 s of
-scenarios plus chain start, deploy and the ~10 s rescore check. The committed model artefact and
+`make demo` takes about 33 s on the development laptop once caches are warm: 11.6 s of scenarios
+plus chain start, deploy and the ~10 s rescore check. The first run on a fresh clone took 90 s,
+because it compiles the contracts and loads the Python libraries for the first time. The committed model artefact and
 fixtures mean nothing is downloaded or trained. `make test` runs the contract, model and attestor
 test suites. `make train` regenerates the model and prints its `modelVersionHash`.
 
