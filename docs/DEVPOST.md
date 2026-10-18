@@ -44,7 +44,16 @@ once the default-value cost for Turkish steel is confirmed against iklim.gov.tr.
 
 ## Technical Execution
 
-⟨tbd: numbers from the final verification run — contract tests/coverage/gas, model metrics, demo timing⟩
+Measured on the final build:
+
+| What | Result |
+| --- | --- |
+| Contract tests | 178 passing (unit, fuzz, stateful invariants, timelocked upgrade), 100% line and branch coverage |
+| Gas (receipt) | `attest()` 228,019 (budget 250k) · first `allocate()` 115,243 (budget 120k) |
+| Model, 173 held-out plants | q50 MAE 0.079 tCO₂/t vs 0.171 route-median baseline (54% better); 90% interval coverage 93.0% |
+| Detection at red | synthetic under-reports at 0.5× / 0.7×: recall 0.86 / 0.59 (targets 0.9 / 0.6 — missed; strong for BF-BOF, weak for EAF) |
+| Attestor | report submit → attestation tx hash in ~0.3 s locally; 293 unit tests |
+| `make demo` | all four scenarios plus 13 hardening and replay probes, 23 s from a cold start |
 
 - Contracts: Solidity 0.8 + Foundry + OpenZeppelin 5; three UUPS proxies behind a 24-hour
   `TimelockController`; role registry (ADMIN, OPERATOR, VERIFIER, ATTESTOR, REGULATOR); global pause.

@@ -153,7 +153,7 @@ contract ConsignmentAllocatorTest is Base {
                 )
             )
         );
-        mock.set(Status.Attested, 1000, EAF_ID);
+        mock.set(Status.Attested, 1000, EAF_ID, attestor);
 
         uint256 big = uint256(type(uint32).max) + 1;
         vm.expectRevert(abi.encodeWithSelector(ConsignmentAllocator.BatchIdTooLarge.selector, big));
@@ -164,12 +164,12 @@ contract ConsignmentAllocatorTest is Base {
         alloc2.allocate(type(uint256).max, C1, importerA, CN, 1);
 
         // Unknown (None) batches still report BatchNotAttested first, whatever their id.
-        mock.set(Status.None, 0, bytes32(0));
+        mock.set(Status.None, 0, bytes32(0), address(0));
         vm.expectRevert(abi.encodeWithSelector(IConsignmentAllocator.BatchNotAttested.selector, big));
         vm.prank(exporterA);
         alloc2.allocate(big, C1, importerA, CN, 1);
 
-        mock.set(Status.Attested, 1000, EAF_ID);
+        mock.set(Status.Attested, 1000, EAF_ID, attestor);
         vm.prank(exporterA);
         alloc2.allocate(type(uint32).max, C1, importerA, CN, 7);
         assertEq(alloc2.getAllocation(C1).batchId, type(uint32).max);
@@ -387,6 +387,106 @@ contract ConsignmentAllocatorTest is Base {
         uint256 id = _redBatch(250_000);
         assertEq(allocator.allocatedTonnes(id), 0);
         assertEq(allocator.remainingTonnes(id), 250_000);
+    }
+
+    // ------------------------------------- operator / attestor liveness (9.B, 9.C)
+
+    function test_Allocate_OperatorRoleRevoked_StopsAllocation() public {
+        uint256 id = _greenBatch(5000);
+        _allocate(id, C1, importerA, 100);
+        vm.prank(admin);
+        registry.revokeRole(OPERATOR_ROLE, exporterA); // still operatorOf(EAF) in the registry data
+        assertEq(registry.operatorOf(EAF_ID), exporterA);
+
+        vm.expectRevert(abi.encodeWithSelector(IConsignmentAllocator.NotBatchOperator.selector, id, exporterA));
+        vm.prank(exporterA);
+        allocator.allocate(id, C2, importerA, CN, 1);
+        assertEq(allocator.allocatedTonnes(id), 100);
+
+        // Restoring the role restores the ability (the role is live, not cached).
+        vm.prank(admin);
+        registry.grantRole(OPERATOR_ROLE, exporterA);
+        _allocate(id, C2, importerA, 1);
+    }
+
+    function test_Allocate_AttestorRevoked_StopsAllocation() public {
+        uint256 id = _greenBatch(5000);
+        _allocate(id, C1, importerA, 100);
+        vm.prank(admin);
+        registry.revokeRole(ATTESTOR_ROLE, attestor); // key compromise / offboarding
+
+        vm.expectRevert(abi.encodeWithSelector(ConsignmentAllocator.AttestorRevoked.selector, id, attestor));
+        vm.prank(exporterA);
+        allocator.allocate(id, C2, importerA, CN, 1);
+        assertEq(allocator.allocatedTonnes(id), 100);
+
+        // Earlier allocations are untouched and can still be claimed.
+        vm.prank(importerA);
+        allocator.claim(C1);
+
+        vm.prank(admin);
+        registry.grantRole(ATTESTOR_ROLE, attestor);
+        _allocate(id, C2, importerA, 1);
+    }
+
+    function test_Allocate_AttestorRevoked_AlsoBlocksVerifierApprovedBatches() public {
+        uint256 id = _redBatch(250_000);
+        _verify(id, true);
+        vm.prank(admin);
+        registry.revokeRole(ATTESTOR_ROLE, attestor);
+        vm.expectRevert(abi.encodeWithSelector(ConsignmentAllocator.AttestorRevoked.selector, id, attestor));
+        vm.prank(exporterB);
+        allocator.allocate(id, C1, importerA, CN, 1);
+    }
+
+    function test_Allocate_NonOperatorSeesNotBatchOperatorBeforeAttestorRevoked() public {
+        uint256 id = _greenBatch(5000);
+        vm.prank(admin);
+        registry.revokeRole(ATTESTOR_ROLE, attestor);
+        vm.expectRevert(abi.encodeWithSelector(IConsignmentAllocator.NotBatchOperator.selector, id, stranger));
+        vm.prank(stranger);
+        allocator.allocate(id, C1, importerA, CN, 1);
+    }
+
+    function test_Allocate_RevokedBatchCannotBeAllocated() public {
+        uint256 id = _greenBatch(5000);
+        _allocate(id, C1, importerA, 100);
+        vm.prank(admin);
+        attestation.revokeBatch(id, REASON);
+        vm.expectRevert(abi.encodeWithSelector(IConsignmentAllocator.BatchNotAttested.selector, id));
+        vm.prank(exporterA);
+        allocator.allocate(id, C2, importerA, CN, 1);
+        assertEq(allocator.allocatedTonnes(id), 100, "earlier allocation is not unwound");
+    }
+
+    function test_Allocate_AfterSetOperator_NewOperatorAllocatesOldOneCannot() public {
+        uint256 id = _greenBatch(5000);
+        address newOp = makeAddr("newOperator");
+        vm.prank(admin);
+        registry.setOperator(EAF_ID, newOp);
+
+        // exporterA still holds OPERATOR_ROLE but is no longer operatorOf(EAF).
+        assertTrue(registry.hasRole(OPERATOR_ROLE, exporterA));
+        vm.expectRevert(abi.encodeWithSelector(IConsignmentAllocator.NotBatchOperator.selector, id, exporterA));
+        vm.prank(exporterA);
+        allocator.allocate(id, C1, importerA, CN, 1);
+
+        vm.prank(newOp);
+        allocator.allocate(id, C1, importerA, CN, 1);
+        assertEq(allocator.allocatedTonnes(id), 1);
+    }
+
+    function test_Allocate_OperatorOfRecordButNoRoleIsRefused() public {
+        // The operator address is registered, then its role is revoked: both conditions are required.
+        uint256 id = _greenBatch(5000);
+        vm.startPrank(admin);
+        registry.revokeRole(OPERATOR_ROLE, exporterA);
+        vm.stopPrank();
+        assertEq(registry.operatorOf(EAF_ID), exporterA);
+        assertFalse(registry.hasRole(OPERATOR_ROLE, exporterA));
+        vm.expectRevert(abi.encodeWithSelector(IConsignmentAllocator.NotBatchOperator.selector, id, exporterA));
+        vm.prank(exporterA);
+        allocator.allocate(id, C1, importerA, CN, 1);
     }
 
     // -------------------------------------------------------------- fuzzing

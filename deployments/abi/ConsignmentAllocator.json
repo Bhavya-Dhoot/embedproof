@@ -340,6 +340,22 @@
   },
   {
     "type": "error",
+    "name": "AttestorRevoked",
+    "inputs": [
+      {
+        "name": "batchId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "attestor",
+        "type": "address",
+        "internalType": "address"
+      }
+    ]
+  },
+  {
+    "type": "error",
     "name": "BatchIdTooLarge",
     "inputs": [
       {

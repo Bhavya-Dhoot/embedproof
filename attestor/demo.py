@@ -31,7 +31,7 @@ from .canonical import jcs, keccak256
 from .chain import Chain, ChainError, ChainRevert
 from .config import REPO_ROOT, Config
 from .report import period_to_int
-from .signing import recover_commitment_signer, select_backend, sign_commitment
+from .signing import attestation_digest, recover_attestation_signer, select_backend, sign_commitment
 
 # Public Anvil test keys #2..#6 (docs/INTERFACES.md section 1). Never use them on a real network.
 KEYS = {
@@ -72,6 +72,7 @@ class Demo:
         self.reports_dir = reports_dir
         self.run_id = os.urandom(3).hex()
         self.batch_a: dict | None = None  # AttestResult of scenario (a)
+        self.batch_b: dict | None = None  # AttestResult of scenario (b), rejected by the verifier
         self.report_a: dict | None = None
 
     # ------------------------------------------------------------------ helpers
@@ -79,16 +80,17 @@ class Demo:
         return json.loads((self.reports_dir / name).read_text(encoding="utf-8"))
 
     def free_period(self, report: dict, sc: Scenario) -> dict:
-        """First period >= the report's whose slot is empty or Rejected (the only re-attestable state)."""
+        """The report period, or the nearest EARLIER month whose slot is empty or Rejected (the only re-attestable
+        state). Never later: the attestor refuses periods after the current UTC month."""
         report = copy.deepcopy(report)
         year, month = int(report["period"][:4]), int(report["period"][5:7])
         original = report["period"]
-        for _ in range(60):
+        for _ in range(120):
             report["period"] = f"{year:04d}-{month:02d}"
             existing = self.chain.batch_of(report["installationId"], period_to_int(report["period"]))
             if existing == 0 or self.chain.batch(existing)["status"] == "Rejected":
                 break
-            year, month = (year + 1, 1) if month == 12 else (year, month + 1)
+            year, month = (year - 1, 12) if month == 1 else (year, month - 1)
         if report["period"] != original:
             sc.notes.append(f"period {original} already attested on this chain; using fresh period {report['period']}")
             print(f"    note: {sc.notes[-1]}")
@@ -112,6 +114,22 @@ class Demo:
         This is the quantity the contract tests hold to the 250k / 120k budgets (INTERFACES section 3)."""
         data = bytes(self.chain.w3.eth.get_transaction(tx_hash)["input"])
         return gas_used - 21_000 - sum(4 if b == 0 else 16 for b in data)
+
+    @staticmethod
+    def attestation_fields(b: dict, commitment: bytes) -> dict:
+        """EIP-712 Attestation struct as the contract sees it: on-chain batch fields plus the given commitment."""
+        return {"installationId": bytes(b["installationId"]), "period": int(b["period"]), "commitment": commitment,
+                "seeDeclared": int(b["seeDeclared"]), "verifiedTonnes": int(b["verifiedTonnes"]),
+                "riskScore": int(b["riskScore"]), "modelVersionHash": bytes(b["modelVersionHash"]),
+                "algId": int(b["algId"]), "pqSigHash": bytes(b["pqSigHash"])}
+
+    def attest_input(self, b: dict, ecdsa_sig, **override) -> tuple:
+        """AttestInput tuple (ABI component order) rebuilt from an on-chain batch, optionally with edited fields."""
+        sig = bytes.fromhex(ecdsa_sig[2:]) if isinstance(ecdsa_sig, str) else ecdsa_sig
+        values = {**self.attestation_fields(b, bytes(b["commitment"])), "cidDigest": bytes(b["cidDigest"]),
+                  "ecdsaSig": sig, **override}
+        comps = self.chain.attestation.get_function_by_name("attest").abi["inputs"][0]["components"]
+        return tuple(values[c["name"]] for c in comps)
 
     def consignment_id(self, batch_id: int, tag: str) -> bytes:
         return f"EP-{batch_id}-{tag}-{self.run_id}".encode().ljust(32, b"\x00")
@@ -173,17 +191,27 @@ class Demo:
         canonical = bundle.open_bundle(parsed, bundle.b64url_decode(res["keyB64url"]))
         commitment = keccak256(canonical)
         sc.check("keccak256(JCS(document)) == on-chain commitment", commitment == bytes(b["commitment"]))
-        signer = recover_commitment_signer(commitment, parsed["ecdsaSignature"])
-        sc.check("ECDSA signature recovers to the on-chain attestor", signer == b["attestor"], signer)
+        fields = self.attestation_fields(b, commitment)
+        signer = recover_attestation_signer(fields, self.chain.chain_id, self.chain.attestation_address,
+                                            parsed["ecdsaSignature"])
+        sc.check("EIP-712 Attestation signature (typed data from on-chain fields + recomputed commitment) recovers "
+                 "to the on-chain attestor", signer == b["attestor"], signer)
+        local_digest = attestation_digest(fields, self.chain.chain_id, self.chain.attestation_address)
+        try:
+            onchain_digest = bytes(self.chain.attestation.functions.hashAttestation(
+                self.attest_input(b, parsed["ecdsaSignature"])).call())
+            sc.check("contract hashAttestation() == locally computed EIP-712 digest", onchain_digest == local_digest,
+                     "0x" + local_digest.hex()[:18] + "...")
+        except Exception as exc:  # ABI without hashAttestation, or a revert
+            sc.check("contract hashAttestation() == locally computed EIP-712 digest", False, type(exc).__name__)
         backend = select_backend()
         sc.check(f"ML-DSA-44 signature verifies over the canonical bytes ({parsed['raw']['mldsa']['backend']} bundle, "
                  f"{backend.label} verifier)", backend.verify(parsed["mldsaPublicKey"], canonical, parsed["mldsaSignature"]))
         sc.check("keccak256(ML-DSA signature) == on-chain pqSigHash",
                  keccak256(parsed["mldsaSignature"]) == bytes(b["pqSigHash"]))
-        anchored = self.chain.attestor_pq_key(b["attestor"])
-        sc.check("keccak256(bundle ML-DSA public key) == registry.attestorPqKey(attestor), non-zero",
-                 bool(anchored) and anchored != bytes(32) and keccak256(parsed["mldsaPublicKey"]) == anchored,
-                 "0x" + (anchored or b"").hex()[:16] + "...")
+        pq_hash = keccak256(parsed["mldsaPublicKey"])
+        sc.check("registry.isAttestorPqKey(attestor, keccak256(bundle ML-DSA public key))",
+                 self.chain.is_attestor_pq_key(b["attestor"], pq_hash) is True, "0x" + pq_hash.hex()[:16] + "...")
 
         v = self.http.get(f"/verify/{res['cid']}").json()
         sc.check("GET /verify/{cid} allValid", v["allValid"], json.dumps({k: v[k] for k in (
@@ -200,6 +228,7 @@ class Demo:
         if not sc.check("POST /attest accepted", r.status_code == 200, f"HTTP {r.status_code} {r.text[:200] if r.status_code != 200 else ''}"):
             return sc
         res = r.json()
+        self.batch_b = res
         sc.check("band red, riskScore > 60, status PendingVerifier",
                  res["band"] == "red" and res["riskScore"] > 60 and res["status"] == "PendingVerifier",
                  f"band={res['band']} riskScore={res['riskScore']} status={res['status']}")
@@ -309,9 +338,34 @@ class Demo:
         sc.check("disclosure to importer B (no allocation) -> 403", self.disclosure(res["batchId"], "importerB").status_code == 403)
         sc.check("disclosure with a 10-minute-old timestamp -> 403",
                  self.disclosure(res["batchId"], "exporterA", ts=int(time.time()) - 600).status_code == 403)
+        self.replay_probes(sc)
         v = self.http.get(f"/verify/{res['cid']}").json()
         sc.check("GET /verify still allValid after all of the above", v["allValid"])
         return sc
+
+    def replay_probes(self, sc: Scenario) -> None:
+        """A valid attestor signature must not be reusable for other numbers (INTERFACES 9.A).
+
+        Batch (b) is Rejected, so its (installation, period) slot is open again: the attacker calls attest()
+        directly with the signed record signature but a lowered riskScore, another period or other tonnes. The
+        signature covers all of them, so the contract recovers a different signer: BadAttestorSignature."""
+        if not self.batch_b:
+            sc.check("replay probes need scenario (b)", False, "no batch (b)")
+            return
+        b = self.chain.batch(self.batch_b["batchId"])
+        sig = bytes.fromhex(self.batch_b["ecdsaSignature"][2:])
+        for label, change in ((f"riskScore {b['riskScore']} -> 5", {"riskScore": 5}),
+                              ("period moved to 2000-01", {"period": 200001}),
+                              ("verifiedTonnes x2", {"verifiedTonnes": int(b["verifiedTonnes"]) * 2})):
+            before = self.chain.attestation.functions.batchCount().call()
+            try:
+                self.chain.send(self.chain.attestation.functions.attest(
+                    self.attest_input(b, sig, **change), self.batch_b["cid"]), self.cfg.attestor_private_key)
+                sc.check(f"replayed signature with {label} reverts", False, "transaction unexpectedly succeeded")
+            except ChainRevert as exc:
+                sc.check(f"replayed signature with {label} -> BadAttestorSignature",
+                         exc.name == "BadAttestorSignature", str(exc)[:90])
+            sc.check("no batch was created by the replay", self.chain.attestation.functions.batchCount().call() == before)
 
 
 def run(argv: list[str] | None = None) -> int:

@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// EmbedProof shared interface contract (v1) - verbatim from docs/INTERFACES.md section 3.
+// EmbedProof shared interface contract (v1.1) - docs/INTERFACES.md section 3 as amended by section 9
+// (the only signature change is allocInfo, which gains the `attestor` return value; the section 9
+// additions - EIP-712 hashAttestation, setOperator, revokeBatch, PQ key history - live in the contracts).
 // Do not edit independently of that document: web, attestor and deploy tooling bind to these ABIs.
 
 enum Sector { STEEL, CEMENT }                                   // 0,1
@@ -86,7 +88,7 @@ interface IEmissionsAttestation {
     function getBatch(uint256 batchId) external view returns (Batch memory);           // reverts UnknownBatch
     function batchOf(bytes32 installationId, uint32 period) external view returns (uint256); // 0 if none
     function batchCount() external view returns (uint256);
-    function allocInfo(uint256 batchId) external view returns (Status status, uint64 verifiedTonnes, bytes32 installationId); // slim view for the allocator
+    function allocInfo(uint256 batchId) external view returns (Status status, uint64 verifiedTonnes, bytes32 installationId, address attestor); // slim view for the allocator (INTERFACES section 9.C adds `attestor`)
     function riskThreshold() external view returns (uint8);       // default 60
     function setRiskThreshold(uint8 t) external;                  // ADMIN
     function approveModel(bytes32 modelVersionHash) external;     // ADMIN

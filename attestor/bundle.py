@@ -10,8 +10,11 @@ from typing import Any
 from cryptography.exceptions import InvalidTag
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
+from .canonical import from_hex
+
 BUNDLE_SCHEMA = "embedproof.bundle.v1"
 ALG_ID = 1
+ECDSA_SCHEME = "eip712-embedproof-attestation-v1"  # INTERFACES section 9.A
 KEY_LEN, IV_LEN, TAG_LEN = 32, 12, 16
 
 _CID_PREFIX = bytes([0x01, 0x55, 0x12, 0x20])  # CIDv1, raw codec, sha2-256, 32-byte digest
@@ -128,7 +131,7 @@ def build_bundle(
         "algId": ALG_ID,
         "batchHint": {"chainId": chain_id, "installationId": installation_id, "period": period},
         "commitment": "0x" + commitment.hex(),
-        "ecdsa": {"scheme": "secp256k1-eip191-keccak256", "signer": ecdsa_signer, "signature": ecdsa_signature},
+        "ecdsa": {"scheme": ECDSA_SCHEME, "signer": ecdsa_signer, "signature": ecdsa_signature},
         "mldsa": {
             "scheme": "ML-DSA-44",
             "backend": mldsa_backend,
@@ -150,9 +153,9 @@ def parse_bundle(raw: bytes) -> dict[str, Any]:
             raise BundleError("unsupported encryption parameters")
         if b["mldsa"]["scheme"] != "ML-DSA-44":
             raise BundleError("unsupported PQ scheme")
-        commitment = bytes.fromhex(b["commitment"][2:]) if b["commitment"].startswith("0x") else b""
-        if len(commitment) != 32:
-            raise BundleError("bad commitment")
+        if b["ecdsa"]["scheme"] != ECDSA_SCHEME:
+            raise BundleError("unsupported ECDSA scheme")
+        commitment = from_hex(b["commitment"], 32)
         return {
             "raw": b,
             "commitment": commitment,

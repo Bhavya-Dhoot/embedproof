@@ -36,6 +36,11 @@ contract ConsignmentAllocator is Initializable, UUPSUpgradeable, IConsignmentAll
     error TonnesTooLarge(uint64 tonnes);
     /// @dev Batch id does not fit the packed record (> type(uint32).max).
     error BatchIdTooLarge(uint256 batchId);
+    /// @dev The batch's attestor no longer holds ATTESTOR_ROLE (key compromise / offboarding).
+    error AttestorRevoked(uint256 batchId, address attestor);
+
+    bytes32 private constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
+    bytes32 private constant ATTESTOR_ROLE = keccak256("ATTESTOR_ROLE");
 
     address private _registry;
     address private _attestation;
@@ -62,9 +67,11 @@ contract ConsignmentAllocator is Initializable, UUPSUpgradeable, IConsignmentAll
     // -------------------------------------------------------------- allocate
 
     /// @notice Allocate `tonnes` of an Attested batch to one consignment of one importer.
-    /// @dev Caller must be `registry.operatorOf(batch.installationId)` (an importer cannot self-allocate,
-    ///      which closes the front-running vector). Reverts: `ZeroTonnes`, `ZeroImporter`,
-    ///      `BatchNotAttested` (unknown, pending or rejected batch), `NotBatchOperator`,
+    /// @dev Caller must hold OPERATOR_ROLE and be `registry.operatorOf(batch.installationId)` (an importer
+    ///      cannot self-allocate, which closes the front-running vector, and a role revocation stops an
+    ///      operator immediately). The batch's attestor must still hold ATTESTOR_ROLE (`AttestorRevoked`).
+    ///      Reverts: `ZeroTonnes`, `ZeroImporter`,
+    ///      `BatchNotAttested` (unknown, pending or rejected/revoked batch), `NotBatchOperator`,
     ///      `ConsignmentReused`, `DoubleClaimBlocked(batchId, requested, remaining)`, and the packing
     ///      guards `BatchIdTooLarge` / `TonnesTooLarge` (the cap check runs first, so an over-cap request
     ///      always reports `DoubleClaimBlocked`).
@@ -80,10 +87,7 @@ contract ConsignmentAllocator is Initializable, UUPSUpgradeable, IConsignmentAll
         if (tonnes == 0) revert ZeroTonnes();
         if (importer == address(0)) revert ZeroImporter();
 
-        (Status status, uint64 verified, bytes32 installationId) = IAttestationView(_attestation).allocInfo(batchId);
-        if (status != Status.Attested) revert BatchNotAttested(batchId);
-        if (batchId > type(uint32).max) revert BatchIdTooLarge(batchId);
-        if (reg.operatorOf(installationId) != msg.sender) revert NotBatchOperator(batchId, msg.sender);
+        uint64 verified = _authoriseBatch(reg, batchId);
 
         AllocationStore storage rec = _allocations[consignmentId];
         if (rec.importer != address(0)) revert ConsignmentReused(consignmentId);
@@ -149,7 +153,7 @@ contract ConsignmentAllocator is Initializable, UUPSUpgradeable, IConsignmentAll
     function remainingTonnes(uint256 batchId) external view returns (uint64) {
         // status and installationId are intentionally ignored: remaining is pure arithmetic.
         // forge-lint: disable-next-line(unused-return)
-        (, uint64 verified,) = IAttestationView(_attestation).allocInfo(batchId);
+        (, uint64 verified,,) = IAttestationView(_attestation).allocInfo(batchId);
         return verified - _allocated[batchId];
     }
 
@@ -173,6 +177,20 @@ contract ConsignmentAllocator is Initializable, UUPSUpgradeable, IConsignmentAll
     }
 
     // ------------------------------------------------------------- internals
+
+    /// @dev Batch-level gates of `allocate`; returns the batch's verified tonnes.
+    function _authoriseBatch(IRegistryView reg, uint256 batchId) private view returns (uint64 verified) {
+        Status status;
+        bytes32 installationId;
+        address attestor;
+        (status, verified, installationId, attestor) = IAttestationView(_attestation).allocInfo(batchId);
+        if (status != Status.Attested) revert BatchNotAttested(batchId);
+        if (batchId > type(uint32).max) revert BatchIdTooLarge(batchId);
+        if (!reg.hasRole(OPERATOR_ROLE, msg.sender) || reg.operatorOf(installationId) != msg.sender) {
+            revert NotBatchOperator(batchId, msg.sender);
+        }
+        if (!reg.hasRole(ATTESTOR_ROLE, attestor)) revert AttestorRevoked(batchId, attestor);
+    }
 
     function _enforceNotPaused() private view returns (IRegistryView reg) {
         reg = IRegistryView(_registry);

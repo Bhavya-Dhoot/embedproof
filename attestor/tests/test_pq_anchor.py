@@ -63,6 +63,7 @@ def test_unanchored_attest_is_refused_with_a_clear_503(client, attestor, chain, 
 def test_other_endpoints_stay_available_when_unanchored(client, attestor, chain):
     first = attest(client).json()  # anchored at this point
     chain.pq_keys[ADDR["attestor"]] = bytes(32)
+    chain.pq_history[ADDR["attestor"]].clear()  # key revoked
     attestor._anchored_until = 0.0
     h = client.get("/health")
     assert h.status_code == 200 and h.json()["pqKeyAnchored"] is False

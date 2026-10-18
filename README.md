@@ -39,7 +39,7 @@ make web       # http://localhost:3000 — demo personas switch between exporter
 make down
 ```
 
-`make demo` runs in ⟨tbd⟩ s on this machine after `make setup` (the committed model artefact and
+`make demo` runs in 23 s on the development laptop after `make setup` (the committed model artefact and
 fixtures mean nothing is downloaded or trained). `make test` runs the contract, model and attestor
 test suites. `make train` regenerates the model and prints its `modelVersionHash`.
 
@@ -105,7 +105,25 @@ flowchart LR
 
 ## AI plausibility model
 
-⟨tbd: headline metrics from model/artefacts/eval.json⟩
+Trained on Climate TRACE v5.10.0 iron-and-steel plant-months (CC BY 4.0): 52,869 rows, 866 plants,
+77 countries, routes BF-BOF / EAF / DRI-EAF. Features: production route, nameplate capacity and the
+country grid carbon intensity (Ember). Evaluation holds out whole plants (173 test plants):
+
+| Check | Result | Target |
+| --- | --- | --- |
+| MAE of q50 vs Climate TRACE SEE | 0.079 tCO₂/t vs 0.171 for the route-median baseline (54% better) | ≥ 20% better |
+| 90% interval coverage | 93.0% (CI 90.5–95.2%) | 85–95% |
+| Recall at red, synthetic under-report at 0.5× | 0.86 | ≥ 0.9 — **missed** |
+| Recall at red, synthetic under-report at 0.7× | 0.59 | ≥ 0.6 — **missed** |
+| Recall at red, synthetic under-report at 0.85× | 0.38 | – |
+| False red on unmodified held-out values | 0.5% | – |
+| Inference incl. SHAP | ~8 ms warm | < 500 ms |
+
+Detection is strong for BF-BOF (0.99 at every level) and weak for EAF and DRI-EAF, whose intervals
+are wide relative to a 30% under-report. The ground truth is Climate TRACE's own modelled estimate, so
+these numbers measure agreement with Climate TRACE, not with measured plant emissions. The artefact
+is frozen in `model/artefacts/embedproof_model_v1.json`; its SHA-256 is the on-chain
+`modelVersionHash` (`0x20b809be…9b3d`) and `make train` reproduces it byte for byte.
 
 Full model card: [`model/MODEL_CARD.md`](model/MODEL_CARD.md). Data sources and licences:
 [`data/SOURCES.md`](data/SOURCES.md).
@@ -117,14 +135,21 @@ measure CO₂.
 
 ## Contracts
 
-⟨tbd: tests, coverage, gas⟩
+- 178 Foundry tests (unit, fuzz, stateful invariants, EIP-712 replay matrix, upgrade-through-timelock), 100% line, branch
+  and function coverage on all three contracts (`make coverage`).
+- Gas on the transaction receipt: `attest()` 228,019 (budget 250k); first `allocate()` on a batch
+  115,243 (budget 120k).
+- Every privileged call is role-gated in the registry; one global pause stops `attest`,
+  `verifierSign`, `allocate` and `claim`; upgrades only through the 24 h `TimelockController`; only
+  admin-approved model hashes can attest, and a model can be revoked; the attestor's ML-DSA-44 public
+  key hash is anchored in the registry and the attestor refuses to sign if it is not.
 
 | Contract | Local Anvil (deterministic) | Base Sepolia |
 | --- | --- | --- |
-| InstallationRegistry | ⟨tbd⟩ | not yet deployed — needs a funded key (`make deploy-testnet`) |
-| EmissionsAttestation | ⟨tbd⟩ | not yet deployed |
-| ConsignmentAllocator | ⟨tbd⟩ | not yet deployed |
-| TimelockController (24 h) | ⟨tbd⟩ | not yet deployed |
+| InstallationRegistry | `0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0` | not yet deployed — needs a funded key (`make deploy-testnet`) |
+| EmissionsAttestation | `0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9` | not yet deployed |
+| ConsignmentAllocator | `0x0165878A594ca255338adfa4d48449f69242Eb8F` | not yet deployed |
+| TimelockController (24 h) | `0x5FbDB2315678afecb367f032d93F642f64180aa3` | not yet deployed |
 
 Hyperledger Besu (permissioned, same Solidity) is the production path for a consortium of
 exporters, verifiers and the regulator.
@@ -162,6 +187,24 @@ The chain guarantees integrity after data entry, not the truth of the data; the 
 - Off-chain (IPFS, AES-256-GCM encrypted): full report, electricity data, SHAP output, raw signatures. Key shared with verifier and regulator only.
 - Salted commitment allows selective disclosure of single fields to the verifier.
 - Roadmap: lattice-based ZK range proof that SEE ≤ benchmark without revealing SEE; permissioned Besu deployment for production.
+
+### Privacy and security as built
+
+The threat model above is the design brief from the PRD. Where the prototype differs, it says so here:
+
+- The attestor's ECDSA signature is EIP-712 typed data over every on-chain field (installation,
+  period, commitment, SEE, tonnes, risk score, model hash, `algId`, ML-DSA signature hash) with the
+  chain id and contract address in the domain, so a signature cannot be replayed to another period,
+  another number set, another chain or another contract. `attest()` re-verifies it with `ecrecover`.
+- Verified tonnes per batch and per consignment are public on-chain: the double-claim cap needs them.
+- The report decryption key goes to the exporter (in the `/attest` response), and through signed
+  `/disclosure` requests to the verifier, the regulator, the installation operator and importers who
+  hold an allocation on that batch; the certificate QR carries it in the URL fragment.
+- There is one salt per document, so disclosure is all-or-nothing; per-field selective disclosure
+  is roadmap, alongside ZK range proofs.
+- Accepted residual risks: consignment ids are global (FR-C6), so a second registered operator can
+  grief an id; the CN code is not bound to the batch; the admin can grant roles instantly (upgrades
+  and the risk threshold go through the 24 h timelock).
 
 ## Standards alignment
 

@@ -128,3 +128,83 @@ def test_backends_interoperate():
     msg = b"interop"
     assert dilithium.verify(pk, msg, pqcrypto.sign(sk, msg))  # PQClean signature, reference verifier
     assert pqcrypto.verify(pk, msg, dilithium.sign(sk, msg))  # reference signature, PQClean verifier (same sk)
+
+
+# ------------------------------------------------------------------ EIP-712 Attestation (INTERFACES 9.A)
+
+from eth_abi import encode as abi_encode  # noqa: E402
+from eth_utils import keccak  # noqa: E402
+
+from attestor.signing import (ATTESTATION_FIELDS, ECDSA_SCHEME, attestation_digest, recover_attestation_signer,  # noqa: E402
+                              sign_attestation)
+
+VC = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+FIELDS = {"installationId": b"TR-EAF-0001".ljust(32, b"\x00"), "period": 202609, "commitment": bytes(range(32)),
+          "seeDeclared": 4190, "verifiedTonnes": 5000, "riskScore": 20, "modelVersionHash": b"\xab" * 32, "algId": 1,
+          "pqSigHash": b"\xcd" * 32}
+
+
+def manual_digest(f, chain_id, vc):
+    """EIP-712 by hand (eth_abi + keccak), independent of eth_account's typed-data encoder."""
+    domain_t = keccak(text="EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)")
+    ds = keccak(abi_encode(["bytes32", "bytes32", "bytes32", "uint256", "address"],
+                           [domain_t, keccak(text="EmbedProof"), keccak(text="1"), chain_id, vc]))
+    struct_t = keccak(text="Attestation(bytes32 installationId,uint32 period,bytes32 commitment,uint32 seeDeclared,"
+                           "uint64 verifiedTonnes,uint8 riskScore,bytes32 modelVersionHash,uint8 algId,bytes32 pqSigHash)")
+    sh = keccak(abi_encode(["bytes32"] + [t for _, t in ATTESTATION_FIELDS], [struct_t] + [f[n] for n, _ in ATTESTATION_FIELDS]))
+    return keccak(b"\x19\x01" + ds + sh)
+
+
+def test_eip712_digest_matches_a_hand_rolled_encoding():
+    assert attestation_digest(FIELDS, 31337, VC) == manual_digest(FIELDS, 31337, VC)
+    assert attestation_digest(FIELDS, 84532, VC) == manual_digest(FIELDS, 84532, VC)
+    assert "cidDigest" not in dict(ATTESTATION_FIELDS)  # deliberately not signed: the bundle carries the signature
+
+
+def test_eip712_sign_recover_and_scheme_label():
+    sig, signer = sign_attestation(FIELDS, 31337, VC, KEYS["attestor"])
+    assert signer == ADDR["attestor"] and len(bytes.fromhex(sig[2:])) == 65
+    assert recover_attestation_signer(FIELDS, 31337, VC, sig) == signer
+    assert ECDSA_SCHEME == "eip712-embedproof-attestation-v1"
+    # the signature is over the digest itself (no EIP-191 prefix on top)
+    assert Account._recover_hash(attestation_digest(FIELDS, 31337, VC), signature=sig) == signer
+
+
+@pytest.mark.parametrize("field", [n for n, _ in ATTESTATION_FIELDS])
+def test_changing_any_signed_field_changes_the_recovered_signer(field):
+    sig, signer = sign_attestation(FIELDS, 31337, VC, KEYS["attestor"])
+    bumped = dict(FIELDS)
+    bumped[field] = FIELDS[field] ^ 1 if isinstance(FIELDS[field], int) else bytes([FIELDS[field][0] ^ 1]) + FIELDS[field][1:]
+    assert recover_attestation_signer(bumped, 31337, VC, sig) != signer
+
+
+def test_signature_is_bound_to_chain_and_contract():
+    sig, signer = sign_attestation(FIELDS, 31337, VC, KEYS["attestor"])
+    assert recover_attestation_signer(FIELDS, 84532, VC, sig) != signer  # other chain
+    assert recover_attestation_signer(FIELDS, 31337, ADDR["attestor"], sig) != signer  # other verifyingContract
+
+
+def test_eip712_rejects_malformed_fields():
+    for bad in ({"period": True}, {"period": 1.5}, {"commitment": b"short"}, {"pqSigHash": "0x" + "00" * 32}):
+        with pytest.raises(SignatureError):
+            sign_attestation({**FIELDS, **bad}, 31337, VC, KEYS["attestor"])
+
+
+def test_matches_the_contracts_build_golden_eip712_vector():
+    """contracts/test/vectors/eip712_vector.json (Foundry hashAttestation() cross-checked): same digest and signer."""
+    import json
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parents[2] / "contracts" / "test" / "vectors" / "eip712_vector.json"
+    if not path.exists():
+        pytest.skip("contracts golden vector not present")
+    v = json.loads(path.read_text(encoding="utf-8"))
+    m = v["message"]
+    fields = {k: (bytes.fromhex(x[2:]) if isinstance(x, str) else x) for k, x in m.items()}
+    d = v["domain"]
+    assert d["name"] == "EmbedProof" and d["version"] == "1"
+    digest = attestation_digest(fields, d["chainId"], d["verifyingContract"])
+    assert "0x" + digest.hex() == v["digest"]
+    assert recover_attestation_signer(fields, d["chainId"], d["verifyingContract"], v["signature"]) == v["signer"]
+    # and signing the same message with Anvil #1 reproduces the contract-side signature (RFC 6979, deterministic)
+    assert sign_attestation(fields, d["chainId"], d["verifyingContract"], KEYS["attestor"])[0] == v["signature"]

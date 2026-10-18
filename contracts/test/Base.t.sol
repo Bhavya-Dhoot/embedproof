@@ -4,7 +4,6 @@ pragma solidity ^0.8.24;
 import {Test} from "forge-std/Test.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
-import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 
 import {InstallationRegistry} from "../src/InstallationRegistry.sol";
 import {EmissionsAttestation} from "../src/EmissionsAttestation.sol";
@@ -20,6 +19,14 @@ abstract contract Base is Test {
     // which would silently consume a pending vm.prank / vm.expectRevert.
     bytes32 internal constant CID_DIGEST = 0xeb333942340dfa7da54597d78b894f35310289e75ec3a84137a197a37ab1d164; // sha256("bundle-bytes")
     bytes32 internal constant PQ_SIG_HASH = keccak256("ml-dsa-44-signature");
+    bytes32 internal constant REASON = keccak256("reason");
+
+    // EIP-712, re-implemented here independently of the contract (INTERFACES section 9.A).
+    bytes32 internal constant DOMAIN_TYPEHASH =
+        keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
+    bytes32 internal constant ATTESTATION_TYPEHASH = keccak256(
+        "Attestation(bytes32 installationId,uint32 period,bytes32 commitment,uint32 seeDeclared,uint64 verifiedTonnes,uint8 riskScore,bytes32 modelVersionHash,uint8 algId,bytes32 pqSigHash)"
+    );
     bytes32 internal constant MODEL = 0x83d653bca132c08183f985fb30e35a317074429d5cb89d1747bab4f81c380a82; // sha256("embedproof_model_v1.json")
 
     bytes32 internal constant EAF_ID = bytes32("TR-EAF-0001");
@@ -96,10 +103,52 @@ abstract contract Base is Test {
 
     // ------------------------------------------------------------ helpers
 
-    /// @dev EIP-191 personal_sign over the raw 32 commitment bytes with a real secp256k1 key.
-    function _sign(uint256 pk, bytes32 commitment) internal pure returns (bytes memory) {
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(pk, MessageHashUtils.toEthSignedMessageHash(commitment));
+    function _domainSeparator(uint256 chainId_, address verifyingContract) internal pure returns (bytes32) {
+        return keccak256(
+            abi.encode(DOMAIN_TYPEHASH, keccak256("EmbedProof"), keccak256("1"), chainId_, verifyingContract)
+        );
+    }
+
+    function _structHash(AttestInput memory a) internal pure returns (bytes32) {
+        return keccak256(
+            abi.encode(
+                ATTESTATION_TYPEHASH,
+                a.installationId,
+                a.period,
+                a.commitment,
+                a.seeDeclared,
+                a.verifiedTonnes,
+                a.riskScore,
+                a.modelVersionHash,
+                a.algId,
+                a.pqSigHash
+            )
+        );
+    }
+
+    /// @dev EIP-712 digest for an explicit (chain id, verifying contract) pair.
+    function _digestFor(AttestInput memory a, uint256 chainId_, address verifyingContract)
+        internal
+        pure
+        returns (bytes32)
+    {
+        return keccak256(abi.encodePacked("\x19\x01", _domainSeparator(chainId_, verifyingContract), _structHash(a)));
+    }
+
+    /// @dev EIP-712 digest for the attestation proxy of this fixture on the current chain.
+    function _digest(AttestInput memory a) internal view returns (bytes32) {
+        return _digestFor(a, block.chainid, address(attestation));
+    }
+
+    /// @dev Real secp256k1 EIP-712 signature over `digest`.
+    function _signDigest(uint256 pk, bytes32 digest) internal pure returns (bytes memory) {
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(pk, digest);
         return abi.encodePacked(r, s, v);
+    }
+
+    /// @dev Sign the Attestation struct of `a` for this fixture's attestation proxy.
+    function _signAttestation(uint256 pk, AttestInput memory a) internal view returns (bytes memory) {
+        return _signDigest(pk, _digest(a));
     }
 
     function _commitmentFor(bytes32 id, uint32 period, uint8 risk) internal pure returns (bytes32) {
@@ -119,8 +168,9 @@ abstract contract Base is Test {
             algId: 1,
             pqSigHash: PQ_SIG_HASH,
             cidDigest: CID_DIGEST,
-            ecdsaSig: _sign(attestorPk, commitment)
+            ecdsaSig: ""
         });
+        a.ecdsaSig = _signAttestation(attestorPk, a);
     }
 
     /// @dev Attest as the attestor service and return the new batch id.
@@ -142,7 +192,7 @@ abstract contract Base is Test {
 
     function _verify(uint256 batchId, bool approve) internal {
         vm.prank(verifier);
-        attestation.verifierSign(batchId, approve, keccak256("reason"));
+        attestation.verifierSign(batchId, approve, REASON);
     }
 
     function _allocate(uint256 batchId, bytes32 consignmentId, address importer, uint64 tonnes) internal {

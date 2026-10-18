@@ -99,7 +99,7 @@ def test_bundle_structure_matches_interfaces():
     assert b["schema"] == "embedproof.bundle.v1" and b["algId"] == 1
     assert b["batchHint"] == {"chainId": 31337, "installationId": "TR-EAF-0001", "period": 202609}
     assert b["commitment"] == "0x" + "07" * 32
-    assert b["ecdsa"]["scheme"] == "secp256k1-eip191-keccak256"
+    assert b["ecdsa"]["scheme"] == "eip712-embedproof-attestation-v1"
     assert b["mldsa"]["scheme"] == "ML-DSA-44" and b["mldsa"]["backend"] == "pqclean"
     assert len(base64.b64decode(b["mldsa"]["publicKey"])) == 1312
     assert len(base64.b64decode(b["mldsa"]["signature"])) == 2420
@@ -122,7 +122,8 @@ def test_bundle_open_binds_commitment_as_aad():
 
 @pytest.mark.parametrize("mutate", [
     lambda b: b.update(schema="other"), lambda b: b.update(algId=2), lambda b: b["encryption"].update(alg="AES-128-CBC"),
-    lambda b: b["mldsa"].update(scheme="Dilithium2"), lambda b: b.update(commitment="0x1234"),
+    lambda b: b["mldsa"].update(scheme="Dilithium2"), lambda b: b["ecdsa"].update(scheme="secp256k1-eip191-keccak256"),
+    lambda b: b.update(commitment="0x" + "07" * 31 + " 07"), lambda b: b.update(commitment="0x1234"),
     lambda b: b["mldsa"].update(signature="***"), lambda b: b.pop("ecdsa"),
 ])
 def test_parse_bundle_rejects_malformed(mutate):

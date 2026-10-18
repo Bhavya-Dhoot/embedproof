@@ -9,14 +9,16 @@ contract MockAttestation {
     Status internal _status;
     uint64 internal _verified;
     bytes32 internal _installation;
+    address internal _attestor;
 
-    function set(Status status_, uint64 verified_, bytes32 installation_) external {
+    function set(Status status_, uint64 verified_, bytes32 installation_, address attestor_) external {
         _status = status_;
         _verified = verified_;
         _installation = installation_;
+        _attestor = attestor_;
     }
 
-    function allocInfo(uint256) external view returns (Status, uint64, bytes32) {
-        return (_status, _verified, _installation);
+    function allocInfo(uint256) external view returns (Status, uint64, bytes32, address) {
+        return (_status, _verified, _installation, _attestor);
     }
 }

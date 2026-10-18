@@ -17,11 +17,19 @@ import {IRegistryView, ZeroAddress} from "./interfaces/IRegistryView.sol";
 ///         Scores above the risk threshold must be co-signed by an accredited verifier.
 /// @dev UUPS upgradeable; roles, pause flag and the upgrade timelock live in `InstallationRegistry`.
 ///
-///      Gas layout (attest <= 250,000, see test/Gas.t.sol). The public `Batch` struct is rebuilt on
-///      read from a 7-word packed `BatchStore`:
+///      Attestor signature (INTERFACES section 9.A): an EIP-712 signature over the nine-field
+///      `Attestation` struct (everything in `AttestInput` except `cidDigest` and the signature itself)
+///      under the domain {EmbedProof, 1, block.chainid, address(this)}. The domain separator is rebuilt
+///      from constant name/version hashes, `block.chainid` and `address(this)`: no storage reads, and
+///      it is correct behind the proxy and across chain forks. Because installation, period, tonnes,
+///      score, model and PQ-signature hash are signed, a valid signature cannot be replayed with
+///      altered numbers, for another period, on another chain or against another contract.
+///
+///      Gas layout (attest <= 250,000, allocate <= 120,000, see test/Gas.t.sol). The public `Batch`
+///      struct is rebuilt on read from a 7-word packed `BatchStore`; `allocInfo` needs only words 0-1:
 ///        word 0  installationId
-///        word 1  attestor(20) period(4) seeDeclared(4) attestedAt(4)
-///        word 2  verifier(20) verifiedTonnes(8) riskScore(1) algId(1) status(1) modelIdx(1)
+///        word 1  attestor(20) verifiedTonnes(8) riskScore(1) algId(1) status(1) modelIdx(1)
+///        word 2  verifier(20) period(4) seeDeclared(4) attestedAt(4)
 ///        word 3  commitment | word 4 pqSigHash | word 5 cidDigest | word 6 reasonHash
 ///      `modelIdx` indexes the registered-model list (hence `ModelApproved(hash, index)`), so the
 ///      32-byte model hash is stored once at first approval rather than once per batch. Revoking a model
@@ -36,29 +44,48 @@ contract EmissionsAttestation is Initializable, UUPSUpgradeable, IEmissionsAttes
     /// @dev OZ DEFAULT_ADMIN_ROLE as held in the registry.
     bytes32 private constant ADMIN_ROLE = 0x00;
 
-    /// @dev The only algorithm id defined in v1: ECDSA-secp256k1 (EIP-191) + ML-DSA-44.
+    /// @dev The only algorithm id defined in v1: ECDSA-secp256k1 (EIP-712) + ML-DSA-44.
     uint8 public constant ALG_ID_ECDSA_MLDSA44 = 1;
     uint8 public constant MAX_RISK_SCORE = 100;
     uint8 private constant DEFAULT_RISK_THRESHOLD = 60;
     /// @dev `modelIdx` is a uint8.
     uint256 private constant MAX_MODELS = 256;
 
+    // EIP-712 (INTERFACES section 9.A). All hashes are compile-time constants.
+    bytes32 private constant DOMAIN_TYPEHASH =
+        keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
+    bytes32 private constant NAME_HASH = keccak256("EmbedProof");
+    bytes32 private constant VERSION_HASH = keccak256("1");
+    bytes32 private constant ATTESTATION_TYPEHASH = keccak256(
+        "Attestation(bytes32 installationId,uint32 period,bytes32 commitment,uint32 seeDeclared,uint64 verifiedTonnes,uint8 riskScore,bytes32 modelVersionHash,uint8 algId,bytes32 pqSigHash)"
+    );
+
     /// @dev More than 256 model hashes cannot be indexed by `ModelApproved(hash, uint8 index)`.
     error TooManyModels();
+    /// @dev The verifier is the batch's attestor or the operator of its installation (separation of duties).
+    error VerifierConflict(uint256 batchId, address verifier);
+    /// @dev `verifierSign` / `revokeBatch` need a non-zero reason hash.
+    error ZeroReasonHash();
+    /// @dev `revokeBatch` on a batch that is already Rejected.
+    error AlreadyRejected(uint256 batchId);
+
+    /// @notice An admin withdrew a batch (PendingVerifier or Attested -> Rejected).
+    /// @dev Allocations already made against the batch are not unwound; the allocator refuses new ones.
+    event BatchRevoked(uint256 indexed batchId, address indexed by, bytes32 reasonHash);
 
     // -------------------------------------------------------------- storage
     struct BatchStore {
         bytes32 installationId; // word 0
-        address attestor; // word 1 (32 bytes with the three uint32)
-        uint32 period;
-        uint32 seeDeclared;
-        uint32 attestedAt;
-        address verifier; // word 2 (32 bytes with the four small fields)
+        address attestor; // word 1: 20 + 8 + 4 = 32 bytes (everything the allocator reads)
         uint64 verifiedTonnes;
         uint8 riskScore;
         uint8 algId;
         Status status;
         uint8 modelIdx;
+        address verifier; // word 2: 20 + 3 * 4 = 32 bytes
+        uint32 period;
+        uint32 seeDeclared;
+        uint32 attestedAt;
         bytes32 commitment; // word 3
         bytes32 pqSigHash; // word 4
         bytes32 cidDigest; // word 5
@@ -103,8 +130,9 @@ contract EmissionsAttestation is Initializable, UUPSUpgradeable, IEmissionsAttes
     /// @notice Record an attestation for (installationId, period).
     /// @dev Checks, in order: system not paused; msg.sender holds ATTESTOR_ROLE; algId == 1;
     ///      riskScore <= 100; installation registered; model hash approved; period unused (or its
-    ///      previous batch Rejected); `ecdsaSig` is a canonical (low-s) 65-byte EIP-191 signature over
-    ///      `commitment` whose signer also holds ATTESTOR_ROLE. Then writes state and emits.
+    ///      previous batch Rejected); `ecdsaSig` is a canonical (low-s) 65-byte EIP-712 signature over the
+    ///      `Attestation` struct (see `hashAttestation`) whose signer also holds ATTESTOR_ROLE. Then writes
+    ///      state and emits.
     ///      status = riskScore > riskThreshold ? PendingVerifier : Attested.
     /// @param a The attestation fields (see `AttestInput`).
     /// @param cid IPFS CIDv1 of the bundle; emitted only, never stored.
@@ -125,7 +153,7 @@ contract EmissionsAttestation is Initializable, UUPSUpgradeable, IEmissionsAttes
             revert DuplicatePeriod(a.installationId, a.period, existing);
         }
 
-        address signer = _recoverAttestor(reg, a.commitment, a.ecdsaSig);
+        address signer = _recoverAttestor(reg, _digest(a), a.ecdsaSig);
 
         Status status = a.riskScore > _riskThreshold ? Status.PendingVerifier : Status.Attested;
         batchId = ++_batchCount;
@@ -154,25 +182,50 @@ contract EmissionsAttestation is Initializable, UUPSUpgradeable, IEmissionsAttes
     }
 
     /// @notice An accredited verifier resolves a batch that scored above the risk threshold.
-    /// @dev VERIFIER_ROLE only; the batch must be PendingVerifier. Approve -> Attested, reject -> Rejected
-    ///      (which frees the (installation, period) slot for a corrected resubmission).
+    /// @dev VERIFIER_ROLE only; `reasonHash` must be non-zero; the batch must be PendingVerifier; the
+    ///      verifier must be neither the batch's attestor nor the current operator of its installation
+    ///      (`VerifierConflict`). Approve -> Attested, reject -> Rejected (which frees the
+    ///      (installation, period) slot for a corrected resubmission).
     /// @param batchId The pending batch.
     /// @param approve True to approve, false to reject.
-    /// @param reasonHash keccak256 of the verifier's written reasoning (text is held off-chain).
+    /// @param reasonHash keccak256 of the verifier's written reasoning (text is held off-chain). Non-zero.
     function verifierSign(uint256 batchId, bool approve, bytes32 reasonHash) external {
         IRegistryView reg = _enforceNotPaused();
         if (!reg.hasRole(VERIFIER_ROLE, msg.sender)) revert MissingRole(VERIFIER_ROLE, msg.sender);
+        if (reasonHash == bytes32(0)) revert ZeroReasonHash();
 
         BatchStore storage b = _batches[batchId];
         Status current = b.status;
         if (current == Status.None) revert UnknownBatch(batchId);
         if (current != Status.PendingVerifier) revert NotPending(batchId);
+        if (msg.sender == b.attestor || msg.sender == reg.operatorOf(b.installationId)) {
+            revert VerifierConflict(batchId, msg.sender);
+        }
 
         b.verifier = msg.sender;
         b.reasonHash = reasonHash;
         b.status = approve ? Status.Attested : Status.Rejected;
 
         emit VerifierDecision(batchId, msg.sender, approve, reasonHash);
+    }
+
+    /// @notice Withdraw a batch that turned out to be wrong. ADMIN only.
+    /// @dev PendingVerifier or Attested -> Rejected, emitting `BatchRevoked`. The reason lives in the event
+    ///      (the stored `reasonHash` / `verifier` fields keep the original verifier decision). The
+    ///      (installation, period) slot is freed for a corrected resubmission, exactly as after a verifier
+    ///      rejection, and the allocator refuses new allocations. Allocations already made are not unwound.
+    ///      Works while paused (incident response).
+    /// @param batchId The batch to withdraw.
+    /// @param reasonHash keccak256 of the written justification (text held off-chain). Non-zero.
+    function revokeBatch(uint256 batchId, bytes32 reasonHash) external {
+        _requireAdmin();
+        if (reasonHash == bytes32(0)) revert ZeroReasonHash();
+        BatchStore storage b = _batches[batchId];
+        Status current = b.status;
+        if (current == Status.None) revert UnknownBatch(batchId);
+        if (current == Status.Rejected) revert AlreadyRejected(batchId);
+        b.status = Status.Rejected;
+        emit BatchRevoked(batchId, msg.sender, reasonHash);
     }
 
     // ---------------------------------------------------------------- views
@@ -219,13 +272,30 @@ contract EmissionsAttestation is Initializable, UUPSUpgradeable, IEmissionsAttes
     /// @return status Batch status (None if the batch does not exist).
     /// @return verifiedTonnes Verified tonnes of product.
     /// @return installationId Installation the batch belongs to.
+    /// @return attestor The recovered ECDSA signer that attested the batch.
     function allocInfo(uint256 batchId)
         external
         view
-        returns (Status status, uint64 verifiedTonnes, bytes32 installationId)
+        returns (Status status, uint64 verifiedTonnes, bytes32 installationId, address attestor)
     {
         BatchStore storage b = _batches[batchId];
-        return (b.status, b.verifiedTonnes, b.installationId);
+        return (b.status, b.verifiedTonnes, b.installationId, b.attestor);
+    }
+
+    /// @notice The EIP-712 digest the attestor signs for these fields (`cidDigest` and `ecdsaSig` are ignored).
+    /// @dev Domain {name "EmbedProof", version "1", chainId block.chainid, verifyingContract address(this)};
+    ///      struct `Attestation(bytes32 installationId,uint32 period,bytes32 commitment,uint32 seeDeclared,
+    ///      uint64 verifiedTonnes,uint8 riskScore,bytes32 modelVersionHash,uint8 algId,bytes32 pqSigHash)`.
+    /// @param a The attestation fields.
+    /// @return The digest `keccak256("\x19\x01" || domainSeparator || structHash)`.
+    function hashAttestation(AttestInput calldata a) external view returns (bytes32) {
+        return _digest(a);
+    }
+
+    /// @notice The EIP-712 domain separator for this deployment.
+    /// @return The separator for the current chain id and this contract's address.
+    function domainSeparator() external view returns (bytes32) {
+        return _domainSeparator();
     }
 
     /// @notice Risk score above which a verifier co-signature is required.
@@ -250,10 +320,11 @@ contract EmissionsAttestation is Initializable, UUPSUpgradeable, IEmissionsAttes
 
     // ---------------------------------------------------------------- admin
 
-    /// @notice Set the risk score above which a batch needs verifier co-signature. ADMIN only.
+    /// @notice Set the risk score above which a batch needs verifier co-signature. TIMELOCK only: the
+    ///         threshold gates the verifier co-sign, so changing it takes the same 24 h delay as an upgrade.
     /// @param t New threshold, 0..100.
     function setRiskThreshold(uint8 t) external {
-        _requireAdmin();
+        if (msg.sender != IRegistryView(_registry).timelock()) revert NotTimelock();
         if (t > MAX_RISK_SCORE) revert InvalidRiskScore(t);
         _riskThreshold = t;
         emit RiskThresholdSet(t);
@@ -315,15 +386,37 @@ contract EmissionsAttestation is Initializable, UUPSUpgradeable, IEmissionsAttes
         if (!IRegistryView(_registry).hasRole(ADMIN_ROLE, msg.sender)) revert MissingRole(ADMIN_ROLE, msg.sender);
     }
 
-    /// @dev EIP-191 recover over the raw 32-byte commitment; signer must hold ATTESTOR_ROLE.
-    ///      A malformed or non-canonical signature reports `address(0)`.
-    function _recoverAttestor(IRegistryView reg, bytes32 commitment, bytes calldata sig)
+    function _domainSeparator() private view returns (bytes32) {
+        return keccak256(abi.encode(DOMAIN_TYPEHASH, NAME_HASH, VERSION_HASH, block.chainid, address(this)));
+    }
+
+    function _digest(AttestInput calldata a) private view returns (bytes32) {
+        bytes32 structHash = keccak256(
+            abi.encode(
+                ATTESTATION_TYPEHASH,
+                a.installationId,
+                a.period,
+                a.commitment,
+                a.seeDeclared,
+                a.verifiedTonnes,
+                a.riskScore,
+                a.modelVersionHash,
+                a.algId,
+                a.pqSigHash
+            )
+        );
+        return MessageHashUtils.toTypedDataHash(_domainSeparator(), structHash);
+    }
+
+    /// @dev Recover the EIP-712 signer; it must hold ATTESTOR_ROLE. A malformed or non-canonical
+    ///      signature reports `address(0)`.
+    function _recoverAttestor(IRegistryView reg, bytes32 digest, bytes calldata sig)
         private
         view
         returns (address signer)
     {
         ECDSA.RecoverError err;
-        (signer, err,) = ECDSA.tryRecoverCalldata(MessageHashUtils.toEthSignedMessageHash(commitment), sig);
+        (signer, err,) = ECDSA.tryRecoverCalldata(digest, sig);
         if (err != ECDSA.RecoverError.NoError) revert BadAttestorSignature(address(0));
         if (!reg.hasRole(ATTESTOR_ROLE, signer)) revert BadAttestorSignature(signer);
     }

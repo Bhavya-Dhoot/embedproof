@@ -24,5 +24,5 @@ interface IAttestationView {
     function allocInfo(uint256 batchId)
         external
         view
-        returns (Status status, uint64 verifiedTonnes, bytes32 installationId);
+        returns (Status status, uint64 verifiedTonnes, bytes32 installationId, address attestor);
 }

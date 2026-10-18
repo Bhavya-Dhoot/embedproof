@@ -14,7 +14,8 @@ from pathlib import Path
 from typing import Callable
 
 from eth_account import Account
-from eth_account.messages import encode_defunct
+from eth_account.messages import encode_defunct, encode_typed_data
+from eth_utils import keccak
 
 log = logging.getLogger("attestor.signing")
 
@@ -41,6 +42,59 @@ def sign_commitment(commitment: bytes, private_key: str) -> tuple[str, str]:
 def recover_commitment_signer(commitment: bytes, signature: str) -> str:
     """Checksummed address that signed `commitment` under EIP-191. Raises SignatureError."""
     return _recover(encode_defunct(primitive=commitment), signature)
+
+
+# ---- EIP-712 attestor signature (INTERFACES section 9.A). cidDigest is deliberately not part of the struct.
+
+ECDSA_SCHEME = "eip712-embedproof-attestation-v1"
+EIP712_NAME, EIP712_VERSION = "EmbedProof", "1"
+ATTESTATION_FIELDS = (
+    ("installationId", "bytes32"), ("period", "uint32"), ("commitment", "bytes32"), ("seeDeclared", "uint32"),
+    ("verifiedTonnes", "uint64"), ("riskScore", "uint8"), ("modelVersionHash", "bytes32"), ("algId", "uint8"),
+    ("pqSigHash", "bytes32"),
+)
+
+
+def attestation_typed_data(fields: dict, chain_id: int, verifying_contract: str) -> dict:
+    """Full EIP-712 message for Attestation(...). bytes32 values are `bytes`, integers are `int`."""
+    message = {}
+    for name, typ in ATTESTATION_FIELDS:
+        value = fields[name]
+        if typ == "bytes32":
+            if not isinstance(value, (bytes, bytearray)) or len(value) != 32:
+                raise SignatureError(f"{name} must be 32 bytes")
+            value = "0x" + bytes(value).hex()
+        elif isinstance(value, bool) or not isinstance(value, int):
+            raise SignatureError(f"{name} must be an integer")
+        message[name] = value
+    return {
+        "types": {
+            "EIP712Domain": [{"name": "name", "type": "string"}, {"name": "version", "type": "string"},
+                             {"name": "chainId", "type": "uint256"}, {"name": "verifyingContract", "type": "address"}],
+            "Attestation": [{"name": n, "type": t} for n, t in ATTESTATION_FIELDS],
+        },
+        "primaryType": "Attestation",
+        "domain": {"name": EIP712_NAME, "version": EIP712_VERSION, "chainId": chain_id,
+                   "verifyingContract": verifying_contract},
+        "message": message,
+    }
+
+
+def attestation_digest(fields: dict, chain_id: int, verifying_contract: str) -> bytes:
+    """keccak256(0x19 0x01 || domainSeparator || hashStruct): what EmissionsAttestation.hashAttestation returns."""
+    msg = encode_typed_data(full_message=attestation_typed_data(fields, chain_id, verifying_contract))
+    return keccak(b"\x19" + msg.version + msg.header + msg.body)
+
+
+def sign_attestation(fields: dict, chain_id: int, verifying_contract: str, private_key: str) -> tuple[str, str]:
+    msg = encode_typed_data(full_message=attestation_typed_data(fields, chain_id, verifying_contract))
+    signed = Account.sign_message(msg, private_key)
+    return "0x" + signed.signature.hex(), Account.from_key(private_key).address
+
+
+def recover_attestation_signer(fields: dict, chain_id: int, verifying_contract: str, signature: str) -> str:
+    msg = encode_typed_data(full_message=attestation_typed_data(fields, chain_id, verifying_contract))
+    return _recover(msg, signature)
 
 
 def recover_text_signer(message: str, signature: str) -> str:

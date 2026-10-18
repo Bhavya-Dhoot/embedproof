@@ -49,7 +49,7 @@ contract AllocationInvariantTest is StdInvariant, Base {
         if (batchIds.length == 0) return;
         uint256 id = batchIds[seed % batchIds.length];
         tonnes = uint64(bound(tonnes, 0, 600_000));
-        (,, bytes32 installation) = attestation.allocInfo(id);
+        (,, bytes32 installation,) = attestation.allocInfo(id);
         address op = installation == EAF_ID ? exporterA : exporterB;
         bytes32 cid = keccak256(abi.encode(consignmentSeed, consignments.length));
         vm.prank(op);
@@ -76,7 +76,7 @@ contract AllocationInvariantTest is StdInvariant, Base {
     function invariant_AllocationsNeverExceedVerifiedTonnes() public view {
         for (uint256 i; i < batchIds.length; i++) {
             uint256 id = batchIds[i];
-            (, uint64 verified,) = attestation.allocInfo(id);
+            (, uint64 verified,,) = attestation.allocInfo(id);
             uint256 allocated = allocator.allocatedTonnes(id);
             assertLe(allocated, verified, "allocated > verified");
             assertEq(allocated, ghostAllocated[id], "allocated != ghost sum");
@@ -87,7 +87,7 @@ contract AllocationInvariantTest is StdInvariant, Base {
     /// @notice Pending and rejected batches never hold allocations.
     function invariant_NonAttestedBatchesHaveNoAllocations() public view {
         for (uint256 i; i < batchIds.length; i++) {
-            (Status s,,) = attestation.allocInfo(batchIds[i]);
+            (Status s,,,) = attestation.allocInfo(batchIds[i]);
             if (s != Status.Attested) {
                 assertEq(allocator.allocatedTonnes(batchIds[i]), 0, "allocation on a non-attested batch");
             }

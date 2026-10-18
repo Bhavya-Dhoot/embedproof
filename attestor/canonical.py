@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import math
+import re
 from typing import Any
 
 import rfc8785
@@ -62,13 +63,14 @@ def hex0x(data: bytes) -> str:
     return "0x" + data.hex()
 
 
+_HEX_RE = re.compile(r"0x(?:[0-9a-fA-F]{2})*")
+
+
 def from_hex(value: str, length: int | None = None) -> bytes:
-    if not isinstance(value, str) or not value.startswith("0x"):
+    """Strict 0x + whole bytes of hex (bytes.fromhex would also swallow whitespace)."""
+    if not isinstance(value, str) or not _HEX_RE.fullmatch(value):
         raise ValueError("expected 0x-prefixed hex string")
-    try:
-        raw = bytes.fromhex(value[2:])
-    except ValueError as exc:
-        raise ValueError("invalid hex string") from exc
+    raw = bytes.fromhex(value[2:])
     if length is not None and len(raw) != length:
         raise ValueError(f"expected {length} bytes, got {len(raw)}")
     return raw

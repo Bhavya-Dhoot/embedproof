@@ -33,10 +33,42 @@ def test_exporter_signature_over_report_digest():
         == VECTOR["exporter"]["address"] == "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"
 
 
-def test_ecdsa_over_commitment():
-    commitment = bytes.fromhex(VECTOR["commitment"][2:])
-    signer = Account.recover_message(encode_defunct(primitive=commitment), signature=VECTOR["ecdsa"]["signature"])
-    assert signer == VECTOR["ecdsa"]["signer"] == "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+def test_eip712_attestation_signature():
+    from eth_account.messages import encode_typed_data
+
+    from .test_signing import manual_digest
+
+    e = VECTOR["eip712"]
+    assert VECTOR["ecdsa"]["scheme"] == "eip712-embedproof-attestation-v1"
+    assert e["domain"] == {"name": "EmbedProof", "version": "1", "chainId": 31337,
+                           "verifyingContract": VECTOR["attestationContract"]}
+    assert [f["name"] for f in e["types"]["Attestation"]] == [
+        "installationId", "period", "commitment", "seeDeclared", "verifiedTonnes", "riskScore", "modelVersionHash",
+        "algId", "pqSigHash"]  # no cidDigest
+    m = e["message"]
+    assert m["commitment"] == VECTOR["commitment"] and m["pqSigHash"] == VECTOR["pqSigHash"]
+    assert m["installationId"] == "0x" + b"TR-EAF-0001".ljust(32, b"\x00").hex() and m["period"] == 202609
+    assert (m["seeDeclared"], m["verifiedTonnes"], m["riskScore"], m["algId"]) == (4190, 5000, 4, 1)
+    assert m["modelVersionHash"] == VECTOR["document"]["assessment"]["modelVersionHash"]
+    # the digest, recomputed by hand (eth_abi + keccak) and via eth_account, and the signature over it
+    by_hand = manual_digest({k: (bytes.fromhex(v[2:]) if isinstance(v, str) else v) for k, v in m.items()},
+                            31337, e["domain"]["verifyingContract"])
+    assert "0x" + by_hand.hex() == e["digest"]
+    full = {"types": {"EIP712Domain": [{"name": "name", "type": "string"}, {"name": "version", "type": "string"},
+                                       {"name": "chainId", "type": "uint256"},
+                                       {"name": "verifyingContract", "type": "address"}], **e["types"]},
+            "primaryType": "Attestation", "domain": e["domain"], "message": m}
+    assert Account.recover_message(encode_typed_data(full_message=full), signature=VECTOR["ecdsa"]["signature"])         == VECTOR["ecdsa"]["signer"] == "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+    assert Account._recover_hash(by_hand, signature=VECTOR["ecdsa"]["signature"]) == VECTOR["ecdsa"]["signer"]
+
+
+def test_see_rounding_cases_follow_the_decimal_string_rule():
+    from decimal import ROUND_HALF_UP, Decimal
+
+    cases = VECTOR["seeRounding"]["cases"]
+    assert len(cases) >= 10
+    for c in cases:
+        assert int((Decimal(c["see"]) * 10000).to_integral_value(rounding=ROUND_HALF_UP)) == c["seeDeclared"], c
 
 
 def test_mldsa_with_independent_reference_implementation():
@@ -76,8 +108,15 @@ def test_tampered_case():
     t = VECTOR["tampered"]
     assert rfc8785.dumps(t["document"]).decode() == t["canonical"] != VECTOR["canonical"]
     assert "0x" + keccak(t["canonical"].encode()).hex() == t["commitment"] != VECTOR["commitment"]
-    signer = Account.recover_message(encode_defunct(primitive=bytes.fromhex(t["commitment"][2:])),
-                                     signature=VECTOR["ecdsa"]["signature"])
-    assert signer != VECTOR["ecdsa"]["signer"]
+    # a verifier re-builds the typed data with the RECOMPUTED commitment; the old signature then recovers elsewhere
+    from eth_account.messages import encode_typed_data
+
+    full = {"types": {"EIP712Domain": [{"name": "name", "type": "string"}, {"name": "version", "type": "string"},
+                                       {"name": "chainId", "type": "uint256"},
+                                       {"name": "verifyingContract", "type": "address"}], **VECTOR["eip712"]["types"]},
+            "primaryType": "Attestation", "domain": VECTOR["eip712"]["domain"],
+            "message": {**VECTOR["eip712"]["message"], "commitment": t["commitment"]}}
+    signer = Account.recover_message(encode_typed_data(full_message=full), signature=VECTOR["ecdsa"]["signature"])
+    assert signer != VECTOR["ecdsa"]["signer"] and signer == t["recoveredSigner"]
     diff = [k for k in VECTOR["document"]["report"] if VECTOR["document"]["report"][k] != t["document"]["report"][k]]
     assert diff == ["productionTonnes"]

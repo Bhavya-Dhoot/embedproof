@@ -15,7 +15,7 @@ from attestor.config import ANVIL_ATTESTOR_KEY, Config
 from attestor.ipfs import IpfsStore
 from attestor.report import installation_id_bytes32
 from attestor.service import Attestor
-from attestor.signing import MLDSASigner, recover_commitment_signer, sign_commitment
+from attestor.signing import MLDSASigner, recover_attestation_signer, sign_commitment
 from attestor.store import Store
 
 # Public Anvil test keys (docs/INTERFACES.md section 1). Never use on a real network.
@@ -31,6 +31,7 @@ KEYS = {
 ADDR = {k: Account.from_key(v).address for k, v in KEYS.items()}
 ATTESTATION_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
 MODEL_HASH = "0x" + "ab" * 32
+NOW = 1_810_000_000  # fixed service clock (2027-05); report periods up to 2027-05 are not "in the future"
 
 HONEST_REPORT = {
     "schema": "embedproof.report.v1", "installationId": "TR-EAF-0001", "period": "2026-09", "route": "EAF",
@@ -86,11 +87,13 @@ class FakeChain:
         }
         self.batches: dict[int, dict] = {}
         self.by_period: dict[tuple[str, int], int] = {}
-        self.roles = {("VERIFIER_ROLE", ADDR["verifier"]), ("REGULATOR_ROLE", ADDR["regulator"])}
+        self.roles = {("VERIFIER_ROLE", ADDR["verifier"]), ("REGULATOR_ROLE", ADDR["regulator"]),
+                      ("OPERATOR_ROLE", ADDR["exporterA"]), ("OPERATOR_ROLE", ADDR["exporterB"])}
         self.allocations: dict[int, set[str]] = {}
         self.approved = {bytes.fromhex(MODEL_HASH[2:])}
-        self.pq_keys: dict[str, bytes] = {}  # registry.attestorPqKey; None return = registry predates the function
-        self.pq_supported = True
+        self.pq_keys: dict[str, bytes] = {}  # registry.attestorPqKey (current key)
+        self.pq_history: dict[str, set[bytes]] = {}  # registry.isAttestorPqKey (every anchored, unrevoked key)
+        self.pq_supported = True  # False = registry predates the PQ-key functions
 
     def connected(self):
         return True
@@ -119,11 +122,23 @@ class FakeChain:
     def attestor_pq_key(self, attestor):
         return self.pq_keys.get(to_checksum_address(attestor), bytes(32)) if self.pq_supported else None
 
+    def is_attestor_pq_key(self, attestor, pq_key_hash):
+        if not self.pq_supported:
+            return None
+        return pq_key_hash != bytes(32) and pq_key_hash in self.pq_history.get(to_checksum_address(attestor), set())
+
+    def anchor_pq_key(self, attestor, pq_key_hash):  # registry.setAttestorPqKey
+        self.pq_keys[attestor] = pq_key_hash
+        self.pq_history.setdefault(attestor, set()).add(pq_key_hash)
+
     def find_batch_by_cid(self, cid):
         return next((b["batchId"] for b in self.batches.values() if b.get("_cid") == cid), None)
 
     def attest(self, a, cid):
-        signer = recover_commitment_signer(a["commitment"], "0x" + a["ecdsaSig"].hex())  # contract: ecrecover
+        # contract: ECDSA.tryRecover over the EIP-712 Attestation digest (cidDigest is not part of it)
+        fields = {k: a[k] for k in ("installationId", "period", "commitment", "seeDeclared", "verifiedTonnes",
+                                    "riskScore", "modelVersionHash", "algId", "pqSigHash")}
+        signer = recover_attestation_signer(fields, self.chain_id, ATTESTATION_ADDRESS, "0x" + a["ecdsaSig"].hex())
         if signer != self.attestor_address:
             raise ChainRevert("BadAttestorSignature", {"recovered": signer})
         iid = a["installationId"].rstrip(b"\x00").decode()
@@ -166,7 +181,7 @@ def chain() -> FakeChain:
 @pytest.fixture
 def attestor(cfg, chain, mldsa_dir) -> Attestor:
     mldsa = MLDSASigner.load_or_create(mldsa_dir)
-    chain.pq_keys[ADDR["attestor"]] = keccak256(mldsa.public_key)  # as deployed with ATTESTOR_PQ_KEY_HASH
+    chain.anchor_pq_key(ADDR["attestor"], keccak256(mldsa.public_key))  # as deployed with ATTESTOR_PQ_KEY_HASH
     return Attestor(chain=chain, scorer=FakeScorer(), store=Store(cfg.db_path),
                     ipfs=IpfsStore(cfg.ipfs_dir), mldsa=mldsa,
-                    attestor_key=cfg.attestor_private_key, clock=lambda: 1_790_000_000.0)
+                    attestor_key=cfg.attestor_private_key, clock=lambda: float(NOW))

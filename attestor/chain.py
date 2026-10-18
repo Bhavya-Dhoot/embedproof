@@ -97,6 +97,8 @@ class Chain:
         self._errors = self._build_error_table(abis.values())
         self._account = Account.from_key(cfg.attestor_private_key)
         self._tx_lock = threading.Lock()  # serialises nonce allocation + broadcast
+        self._importers: dict[int, tuple[int, set[str]]] = {}  # batchId -> (last scanned block, importers)
+        self._importers_lock = threading.Lock()
 
     # ------------------------------------------------------------------ setup helpers
     def _load_abi(self, name: str) -> list:
@@ -143,15 +145,15 @@ class Chain:
     # ------------------------------------------------------------------ revert decoding
     @staticmethod
     def _revert_hex(exc: BaseException) -> str | None:
-        """Pull revert data out of whatever shape web3 / the node put it in."""
+        """Revert data, taken ONLY from `exc.data` (web3's ContractLogicError / ContractCustomError).
+
+        Scraping hex out of str(exc) would let node-controlled error text pose as a contract revert."""
         data = getattr(exc, "data", None)
         if isinstance(data, dict):
-            data = data.get("data") or data.get("originalError", {}).get("data")
+            data = data.get("data")
         if isinstance(data, str) and re.fullmatch(r"0x(?:[0-9a-fA-F]{2}){4,}", data):
             return data
-        blob = " ".join(repr(a) for a in exc.args) + " " + str(getattr(exc, "rpc_response", ""))
-        found = re.findall(r"0x(?:[0-9a-fA-F]{2}){4,}", blob)
-        return max(found, key=len) if found else None
+        return None
 
     def decode_revert(self, data_hex: str) -> ChainRevert | None:
         raw = bytes.fromhex(data_hex[2:])
@@ -173,19 +175,17 @@ class Chain:
         return ChainRevert(name, args, data_hex)
 
     def translate(self, exc: BaseException) -> ChainError:
-        """Map any web3/RPC exception to ChainRevert (decoded) or ChainError."""
+        """Map a web3/RPC exception to a decoded ChainRevert or a generic ChainError.
+
+        ChainError texts are safe to return to clients: RPC error strings can embed provider URLs with API
+        keys, so the original exception is only logged."""
         if isinstance(exc, ChainError):
             return exc
         data = self._revert_hex(exc)
         if data:
-            decoded = self.decode_revert(data)
-            if decoded:
-                return decoded
-            return ChainRevert("UnknownRevert", {"data": data}, data)
-        msg = getattr(exc, "message", None) or str(exc)
-        if "revert" in msg.lower():
-            return ChainRevert("Revert", {"message": msg[:200]})
-        return ChainError(f"{type(exc).__name__}: {msg[:300]}")
+            return self.decode_revert(data) or ChainRevert("UnknownRevert", {"data": data}, data)
+        log.warning("chain call failed: %s: %s", type(exc).__name__, exc)
+        return ChainError("chain RPC call failed")
 
     def _call(self, fn) -> Any:
         try:
@@ -242,24 +242,53 @@ class Chain:
             return None
         return bytes(self._call(self.registry.functions.attestorPqKey(to_checksum_address(attestor))))
 
+    def is_attestor_pq_key(self, attestor: str, pq_key_hash: bytes) -> bool | None:
+        """registry.isAttestorPqKey(attestor, hash): true while that key hash is anchored (history, until revoked).
+
+        None if this registry deployment predates the function."""
+        if not hasattr(self.registry.functions, "isAttestorPqKey"):
+            log.warning("registry ABI has no isAttestorPqKey(address,bytes32)")
+            return None
+        if pq_key_hash == bytes(32):
+            return False
+        return bool(self._call(self.registry.functions.isAttestorPqKey(to_checksum_address(attestor), pq_key_hash)))
+
+    LOG_WINDOW = 5_000  # blocks per eth_getLogs request (public RPCs cap the range)
+
     def importers_of(self, batch_id: int) -> set[str]:
+        """Importers with an Allocated event on `batch_id`. Cached incrementally per batch: only blocks after the
+        last scanned one are queried, so the cache can never hide a new allocation."""
         try:
-            logs = self.allocator.events.Allocated().get_logs(
-                argument_filters={"batchId": batch_id}, from_block=self.deploy_block, to_block="latest"
-            )
+            latest = int(self.w3.eth.block_number)
+            with self._importers_lock:
+                last, found = self._importers.get(batch_id, (self.deploy_block - 1, set()))
+                found = set(found)
+                start = last + 1
+                while start <= latest:
+                    end = min(start + self.LOG_WINDOW - 1, latest)
+                    for entry in self.allocator.events.Allocated().get_logs(
+                            argument_filters={"batchId": batch_id}, from_block=start, to_block=end):
+                        found.add(to_checksum_address(entry["args"]["importer"]))
+                    start = end + 1
+                self._importers[batch_id] = (max(last, latest), found)
+                return set(found)
+        except ChainError:
+            raise
         except Exception as exc:
             raise self.translate(exc) from exc
-        return {to_checksum_address(entry["args"]["importer"]) for entry in logs}
 
     def find_batch_by_cid(self, cid: str) -> int | None:
         """Fallback when the local DB has no record: scan Attested logs (cid is not indexed)."""
         try:
-            logs = self.attestation.events.Attested().get_logs(from_block=self.deploy_block, to_block="latest")
+            latest, start = int(self.w3.eth.block_number), self.deploy_block
+            while start <= latest:
+                end = min(start + self.LOG_WINDOW - 1, latest)
+                for entry in self.attestation.events.Attested().get_logs(from_block=start, to_block=end):
+                    if entry["args"]["cid"] == cid:
+                        return int(entry["args"]["batchId"])
+                start = end + 1
         except Exception as exc:
             raise self.translate(exc) from exc
-        for entry in logs:
-            if entry["args"]["cid"] == cid:
-                return int(entry["args"]["batchId"])
         return None
 
     # ------------------------------------------------------------------ writes
@@ -281,7 +310,8 @@ class Chain:
         try:
             receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=120, poll_latency=0.05)
         except Exception as exc:
-            raise TxPending(f"no receipt for 0x{tx_hash.hex().removeprefix('0x')}: {exc}") from exc
+            log.warning("no receipt for %s: %s", tx_hash.hex(), exc)
+            raise TxPending(f"no receipt yet for 0x{tx_hash.hex().removeprefix('0x')}") from exc
         if receipt["status"] != 1:
             raise ChainRevert("TransactionReverted", {"txHash": "0x" + tx_hash.hex().removeprefix("0x")})
         return TxResult("0x" + tx_hash.hex().removeprefix("0x"), int(receipt["gasUsed"]),

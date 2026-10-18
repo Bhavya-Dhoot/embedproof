@@ -14,10 +14,8 @@ from attestor.app import create_app
 from attestor.bundle import b64url_decode, cid_v1_raw, digest_from_cid, open_bundle, parse_bundle
 from attestor.canonical import keccak256
 
-from .conftest import ADDR, HONEST_REPORT, KEYS, export_sign, report
+from .conftest import ADDR, HONEST_REPORT, KEYS, NOW, export_sign, report
 
-# FakeScorer and the service share this fixed clock so disclosure timestamps are deterministic.
-NOW = 1_790_000_000
 
 
 @pytest.fixture
@@ -120,7 +118,8 @@ def test_verify_detects_onchain_field_disagreement(client, attestor):
     res = attest(client).json()
     attestor.chain.batches[1]["seeDeclared"] = 1000  # attestor wrote a different number on-chain than it committed
     r = client.get(f"/verify/{res['cid']}").json()
-    assert r["commitmentMatches"] and r["ecdsaValid"] and r["mldsaValid"]
+    assert r["commitmentMatches"] and r["mldsaValid"]
+    assert r["ecdsaValid"] is False  # the EIP-712 signature covers seeDeclared, so the replayed signature no longer fits
     assert r["fieldsMatch"] is False and r["fieldMismatches"] == ["seeDeclared"] and r["allValid"] is False
 
 

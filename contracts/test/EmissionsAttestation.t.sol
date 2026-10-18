@@ -2,7 +2,6 @@
 pragma solidity ^0.8.24;
 
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 import {Base} from "./Base.t.sol";
@@ -179,6 +178,7 @@ contract EmissionsAttestationTest is Base {
         bytes32 rogueModel = sha256("embedproof_model_v2_unreviewed.json");
         AttestInput memory a = _input(EAF_ID, PERIOD, 10, 5000);
         a.modelVersionHash = rogueModel;
+        a.ecdsaSig = _signAttestation(attestorPk, a); // the struct is signed, so re-sign after editing
         vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.ModelNotApproved.selector, rogueModel));
         vm.prank(attestor);
         attestation.attest(a, CID);
@@ -195,7 +195,7 @@ contract EmissionsAttestationTest is Base {
 
     function test_Attest_BadSignature_UnauthorisedSignerReverts() public {
         AttestInput memory a = _input(EAF_ID, PERIOD, 10, 5000);
-        a.ecdsaSig = _sign(roguePk, a.commitment); // valid ECDSA, but the key holds no ATTESTOR_ROLE
+        a.ecdsaSig = _signAttestation(roguePk, a); // valid EIP-712 signature, but the key holds no ATTESTOR_ROLE
         vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.BadAttestorSignature.selector, rogue));
         vm.prank(attestor);
         attestation.attest(a, CID);
@@ -203,10 +203,11 @@ contract EmissionsAttestationTest is Base {
 
     function test_Attest_BadSignature_OverDifferentCommitmentReverts() public {
         AttestInput memory a = _input(EAF_ID, PERIOD, 10, 5000);
-        // Attestor signed another document; swapping in this commitment must not verify.
-        bytes memory other = _sign(attestorPk, keccak256("some other document"));
+        // Attestor signed another document; swapping that signature in must not verify.
+        AttestInput memory otherDoc = _input(EAF_ID, 202601, 10, 5000);
+        bytes memory other = otherDoc.ecdsaSig;
         a.ecdsaSig = other;
-        address recovered = ECDSA.recover(MessageHashUtils.toEthSignedMessageHash(a.commitment), other);
+        address recovered = ECDSA.recover(_digest(a), other);
         assertTrue(recovered != attestor, "sanity: recovers a different, unauthorised address");
         vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.BadAttestorSignature.selector, recovered));
         vm.prank(attestor);
@@ -216,7 +217,7 @@ contract EmissionsAttestationTest is Base {
     function test_Attest_BadSignature_TamperedCommitmentReverts() public {
         AttestInput memory a = _input(EAF_ID, PERIOD, 10, 5000);
         a.commitment = bytes32(uint256(a.commitment) ^ 1); // one flipped bit after signing
-        address recovered = ECDSA.recover(MessageHashUtils.toEthSignedMessageHash(a.commitment), a.ecdsaSig);
+        address recovered = ECDSA.recover(_digest(a), a.ecdsaSig);
         vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.BadAttestorSignature.selector, recovered));
         vm.prank(attestor);
         attestation.attest(a, CID);
@@ -254,7 +255,7 @@ contract EmissionsAttestationTest is Base {
         // (r, n - s, v ^ 1) recovers the same signer under raw ecrecover; the contract must refuse it.
         bytes32 sHigh = bytes32(SECP256K1_N - uint256(s));
         uint8 vFlip = v == 27 ? 28 : 27;
-        assertEq(ecrecover(MessageHashUtils.toEthSignedMessageHash(a.commitment), vFlip, r, sHigh), attestor, "twin is a valid ecrecover signature");
+        assertEq(ecrecover(_digest(a), vFlip, r, sHigh), attestor, "twin is a valid ecrecover signature");
         a.ecdsaSig = abi.encodePacked(r, sHigh, vFlip);
         vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.BadAttestorSignature.selector, address(0)));
         vm.prank(attestor);
@@ -370,7 +371,7 @@ contract EmissionsAttestationTest is Base {
         for (uint256 i; i < callers.length; i++) {
             vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.MissingRole.selector, VERIFIER_ROLE, callers[i]));
             vm.prank(callers[i]);
-            attestation.verifierSign(id, true, bytes32(0));
+            attestation.verifierSign(id, true, REASON);
         }
         assertEq(uint8(attestation.getBatch(id).status), uint8(Status.PendingVerifier));
     }
@@ -379,7 +380,7 @@ contract EmissionsAttestationTest is Base {
         uint256 id = _greenBatch(5000);
         vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.NotPending.selector, id));
         vm.prank(verifier);
-        attestation.verifierSign(id, false, bytes32(0));
+        attestation.verifierSign(id, false, REASON);
         assertEq(uint8(attestation.getBatch(id).status), uint8(Status.Attested), "green batch cannot be rejected after the fact");
     }
 
@@ -388,22 +389,22 @@ contract EmissionsAttestationTest is Base {
         _verify(id, true);
         vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.NotPending.selector, id));
         vm.prank(verifier);
-        attestation.verifierSign(id, false, bytes32(0));
+        attestation.verifierSign(id, false, REASON);
 
         uint256 id2 = _attest(EAF_ID, 202611, 99, 100);
         _verify(id2, false);
         vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.NotPending.selector, id2));
         vm.prank(verifier);
-        attestation.verifierSign(id2, true, bytes32(0));
+        attestation.verifierSign(id2, true, REASON);
     }
 
     function test_VerifierSign_UnknownBatchReverts() public {
         vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.UnknownBatch.selector, uint256(0)));
         vm.prank(verifier);
-        attestation.verifierSign(0, true, bytes32(0));
+        attestation.verifierSign(0, true, REASON);
         vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.UnknownBatch.selector, uint256(77)));
         vm.prank(verifier);
-        attestation.verifierSign(77, true, bytes32(0));
+        attestation.verifierSign(77, true, REASON);
     }
 
     // --------------------------------------------------------------- views
@@ -418,19 +419,21 @@ contract EmissionsAttestationTest is Base {
     }
 
     function test_AllocInfo_ReflectsStatusAndTonnes() public {
-        (Status s0, uint64 t0, bytes32 i0) = attestation.allocInfo(1);
+        (Status s0, uint64 t0, bytes32 i0, address at0) = attestation.allocInfo(1);
         assertEq(uint8(s0), uint8(Status.None));
         assertEq(t0, 0);
         assertEq(i0, bytes32(0));
+        assertEq(at0, address(0));
 
         uint256 id = _redBatch(250_000);
-        (Status s1, uint64 t1, bytes32 i1) = attestation.allocInfo(id);
+        (Status s1, uint64 t1, bytes32 i1, address at1) = attestation.allocInfo(id);
         assertEq(uint8(s1), uint8(Status.PendingVerifier));
         assertEq(t1, 250_000);
         assertEq(i1, BOF_ID);
+        assertEq(at1, attestor, "allocInfo returns the recovered attestor");
 
         _verify(id, true);
-        (Status s2,,) = attestation.allocInfo(id);
+        (Status s2,,,) = attestation.allocInfo(id);
         assertEq(uint8(s2), uint8(Status.Attested));
     }
 
@@ -441,6 +444,7 @@ contract EmissionsAttestationTest is Base {
     function test_Attest_MaxFieldValuesRoundTrip() public {
         AttestInput memory a = _input(EAF_ID, type(uint32).max, 0, type(uint64).max);
         a.seeDeclared = type(uint32).max;
+        a.ecdsaSig = _signAttestation(attestorPk, a); // the struct is signed, so re-sign after editing
         vm.prank(attestor);
         uint256 id = attestation.attest(a, CID);
         Batch memory b = attestation.getBatch(id);
@@ -453,17 +457,19 @@ contract EmissionsAttestationTest is Base {
 
     // ---------------------------------------------------------- admin knobs
 
-    function test_SetRiskThreshold_AdminOnlyAndEmits() public {
-        vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.MissingRole.selector, ADMIN_ROLE, stranger));
-        vm.prank(stranger);
-        attestation.setRiskThreshold(10);
-        vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.MissingRole.selector, ADMIN_ROLE, attestor));
-        vm.prank(attestor);
-        attestation.setRiskThreshold(10);
+    function test_SetRiskThreshold_TimelockOnlyAndEmits() public {
+        // Everyone except the timelock - including the admin - is refused.
+        address[5] memory callers = [stranger, attestor, admin, verifier, regulator];
+        for (uint256 i; i < callers.length; i++) {
+            vm.expectRevert(IEmissionsAttestation.NotTimelock.selector);
+            vm.prank(callers[i]);
+            attestation.setRiskThreshold(10);
+        }
+        assertEq(attestation.riskThreshold(), 60);
 
         vm.expectEmit(false, false, false, true, address(attestation));
         emit IEmissionsAttestation.RiskThresholdSet(10);
-        vm.prank(admin);
+        vm.prank(address(timelock));
         attestation.setRiskThreshold(10);
         assertEq(attestation.riskThreshold(), 10);
 
@@ -472,8 +478,27 @@ contract EmissionsAttestationTest is Base {
         assertEq(uint8(attestation.getBatch(_attest(EAF_ID, 202602, 11, 1)).status), uint8(Status.PendingVerifier));
     }
 
+    function test_SetRiskThreshold_AdminReachesItOnlyThroughTheTimelockDelay() public {
+        bytes memory data = abi.encodeCall(attestation.setRiskThreshold, (25));
+        bytes32 salt = keccak256("threshold");
+        vm.prank(admin);
+        timelock.schedule(address(attestation), 0, data, bytes32(0), salt, TIMELOCK_DELAY);
+
+        uint256 t0 = block.timestamp;
+        vm.warp(t0 + TIMELOCK_DELAY - 1);
+        vm.expectRevert();
+        vm.prank(admin);
+        timelock.execute(address(attestation), 0, data, bytes32(0), salt);
+        assertEq(attestation.riskThreshold(), 60, "not before 24 h");
+
+        vm.warp(t0 + TIMELOCK_DELAY);
+        vm.prank(admin);
+        timelock.execute(address(attestation), 0, data, bytes32(0), salt);
+        assertEq(attestation.riskThreshold(), 25);
+    }
+
     function test_SetRiskThreshold_ZeroAndHundredBounds() public {
-        vm.startPrank(admin);
+        vm.startPrank(address(timelock));
         attestation.setRiskThreshold(0);
         attestation.setRiskThreshold(100);
         vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.InvalidRiskScore.selector, uint8(101)));
@@ -571,6 +596,7 @@ contract EmissionsAttestationTest is Base {
         assertTrue(attestation.isModelApproved(m2));
         AttestInput memory a = _input(EAF_ID, PERIOD, 10, 5000);
         a.modelVersionHash = m2;
+        a.ecdsaSig = _signAttestation(attestorPk, a); // the struct is signed, so re-sign after editing
         vm.prank(attestor);
         uint256 id = attestation.attest(a, CID);
         assertEq(attestation.getBatch(id).modelVersionHash, m2);
@@ -646,12 +672,362 @@ contract EmissionsAttestationTest is Base {
         assertTrue(attestation.isModelApproved(bytes32(uint256(7))));
     }
 
+    // ------------------------------------------- EIP-712 signature (section 9.A)
+
+    function _clone(AttestInput memory a) internal pure returns (AttestInput memory c) {
+        c = AttestInput({
+            installationId: a.installationId,
+            period: a.period,
+            commitment: a.commitment,
+            seeDeclared: a.seeDeclared,
+            verifiedTonnes: a.verifiedTonnes,
+            riskScore: a.riskScore,
+            modelVersionHash: a.modelVersionHash,
+            algId: a.algId,
+            pqSigHash: a.pqSigHash,
+            cidDigest: a.cidDigest,
+            ecdsaSig: a.ecdsaSig
+        });
+    }
+
+    /// @dev Submitting `t` (a tampered copy carrying the ORIGINAL signature) must revert with the address
+    ///      that signature recovers to for the tampered fields - never with the attestor.
+    function _assertSignatureRejected(AttestInput memory t) internal {
+        address recovered = ECDSA.recover(_digest(t), t.ecdsaSig);
+        assertTrue(recovered != attestor, "sanity: tampered fields recover to a stranger");
+        vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.BadAttestorSignature.selector, recovered));
+        vm.prank(attestor);
+        attestation.attest(t, CID);
+    }
+
+    function test_Eip712_HashAttestationMatchesIndependentImplementation() public view {
+        AttestInput memory a = _input(EAF_ID, PERIOD, 10, 5000);
+        assertEq(attestation.hashAttestation(a), _digest(a));
+        assertEq(attestation.domainSeparator(), _domainSeparator(block.chainid, address(attestation)));
+        assertEq(
+            attestation.hashAttestation(a),
+            keccak256(abi.encodePacked("\x19\x01", attestation.domainSeparator(), _structHash(a)))
+        );
+    }
+
+    function test_Eip712_DigestIgnoresCidDigestAndSignatureButBindsEverySignedField() public view {
+        AttestInput memory a = _input(EAF_ID, PERIOD, 10, 5000);
+        bytes32 base = attestation.hashAttestation(a);
+
+        AttestInput memory c = _clone(a);
+        c.cidDigest = bytes32(uint256(1234));
+        c.ecdsaSig = hex"00";
+        assertEq(attestation.hashAttestation(c), base, "cidDigest and ecdsaSig are not part of the struct");
+
+        // Each of the nine signed fields moves the digest.
+        AttestInput memory t = _clone(a);
+        t.installationId = BOF_ID;
+        assertTrue(attestation.hashAttestation(t) != base, "installationId");
+        t = _clone(a);
+        t.period = a.period + 1;
+        assertTrue(attestation.hashAttestation(t) != base, "period");
+        t = _clone(a);
+        t.commitment = bytes32(uint256(a.commitment) ^ 1);
+        assertTrue(attestation.hashAttestation(t) != base, "commitment");
+        t = _clone(a);
+        t.seeDeclared = a.seeDeclared + 1;
+        assertTrue(attestation.hashAttestation(t) != base, "seeDeclared");
+        t = _clone(a);
+        t.verifiedTonnes = a.verifiedTonnes + 1;
+        assertTrue(attestation.hashAttestation(t) != base, "verifiedTonnes");
+        t = _clone(a);
+        t.riskScore = a.riskScore + 1;
+        assertTrue(attestation.hashAttestation(t) != base, "riskScore");
+        t = _clone(a);
+        t.modelVersionHash = bytes32(uint256(a.modelVersionHash) ^ 1);
+        assertTrue(attestation.hashAttestation(t) != base, "modelVersionHash");
+        t = _clone(a);
+        t.algId = 2;
+        assertTrue(attestation.hashAttestation(t) != base, "algId");
+        t = _clone(a);
+        t.pqSigHash = bytes32(uint256(a.pqSigHash) ^ 1);
+        assertTrue(attestation.hashAttestation(t) != base, "pqSigHash");
+    }
+
+    function test_Eip712_CidDigestIsDeliberatelyUnsigned() public {
+        AttestInput memory a = _input(EAF_ID, PERIOD, 10, 5000);
+        a.cidDigest = bytes32(uint256(0xC1D)); // the bundle carries the signature, so it cannot sign its own digest
+        vm.prank(attestor);
+        uint256 id = attestation.attest(a, CID);
+        assertEq(attestation.getBatch(id).cidDigest, bytes32(uint256(0xC1D)));
+    }
+
+    function test_Replay_ValidSignatureWithAlteredFieldsReverts() public {
+        bytes32 m2 = sha256("model-two");
+        vm.prank(admin);
+        attestation.approveModel(m2); // so a model swap is rejected by the signature, not by ModelNotApproved
+        AttestInput memory a = _input(EAF_ID, PERIOD, 10, 5000);
+
+        AttestInput memory t = _clone(a);
+        t.period = 202610;
+        _assertSignatureRejected(t); // replay to another period
+
+        t = _clone(a);
+        t.riskScore = 11;
+        _assertSignatureRejected(t); // altered score
+
+        t = _clone(a);
+        t.verifiedTonnes = 5001;
+        _assertSignatureRejected(t); // inflated tonnes
+
+        t = _clone(a);
+        t.seeDeclared = 1;
+        _assertSignatureRejected(t); // altered SEE
+
+        t = _clone(a);
+        t.installationId = BOF_ID;
+        _assertSignatureRejected(t); // another installation
+
+        t = _clone(a);
+        t.commitment = bytes32(uint256(a.commitment) ^ 1);
+        _assertSignatureRejected(t); // another document
+
+        t = _clone(a);
+        t.modelVersionHash = m2;
+        _assertSignatureRejected(t); // another model
+
+        t = _clone(a);
+        t.pqSigHash = bytes32(uint256(a.pqSigHash) ^ 1);
+        _assertSignatureRejected(t); // another PQ signature
+
+        assertEq(attestation.batchCount(), 0, "none of the replays was recorded");
+        // The untouched original is still good.
+        vm.prank(attestor);
+        assertEq(attestation.attest(a, CID), 1);
+    }
+
+    function test_Replay_AfterOriginalSucceeded_ReusedSignatureForNextPeriodReverts() public {
+        AttestInput memory a = _input(EAF_ID, PERIOD, 10, 5000);
+        vm.prank(attestor);
+        attestation.attest(a, CID);
+
+        AttestInput memory t = _clone(a);
+        t.period = PERIOD + 1; // the live attack: re-file the same signed report for the next month
+        _assertSignatureRejected(t);
+        assertEq(attestation.batchOf(EAF_ID, PERIOD + 1), 0);
+    }
+
+    function test_Replay_SignatureForAnotherVerifyingContractReverts() public {
+        AttestInput memory a = _input(EAF_ID, PERIOD, 10, 5000);
+        // Same fields, same chain, but signed for a different contract address.
+        address elsewhere = makeAddr("some other attestation contract");
+        a.ecdsaSig = _signDigest(attestorPk, _digestFor(a, block.chainid, elsewhere));
+        _assertSignatureRejected(a);
+    }
+
+    function test_Replay_SignatureFromASecondDeploymentDoesNotCrossOver() public {
+        // A second, fully functional attestation proxy on the same chain and the same registry.
+        EmissionsAttestation second = EmissionsAttestation(
+            address(new ERC1967Proxy(attestationImpl, abi.encodeCall(EmissionsAttestation.initialize, (address(registry)))))
+        );
+        vm.prank(admin);
+        second.approveModel(MODEL);
+
+        AttestInput memory a = _input(EAF_ID, PERIOD, 10, 5000); // signed for `attestation`
+        assertTrue(second.domainSeparator() != attestation.domainSeparator());
+        assertTrue(second.hashAttestation(a) != attestation.hashAttestation(a));
+
+        address recovered = ECDSA.recover(second.hashAttestation(a), a.ecdsaSig);
+        vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.BadAttestorSignature.selector, recovered));
+        vm.prank(attestor);
+        second.attest(a, CID);
+
+        vm.prank(attestor);
+        attestation.attest(a, CID); // the intended contract accepts it
+    }
+
+    function test_Replay_SignatureFromAnotherChainOrAfterAForkReverts() public {
+        AttestInput memory a = _input(EAF_ID, PERIOD, 10, 5000);
+        uint256 original = block.chainid;
+
+        // Signed with a foreign chain id baked in: rejected on this chain.
+        AttestInput memory foreign = _clone(a);
+        foreign.ecdsaSig = _signDigest(attestorPk, _digestFor(foreign, 1, address(attestation)));
+        _assertSignatureRejected(foreign);
+
+        // Signed for this chain, replayed after the chain id changes (e.g. a fork): rejected too.
+        vm.chainId(original + 1);
+        address recovered = ECDSA.recover(attestation.hashAttestation(a), a.ecdsaSig);
+        assertTrue(recovered != attestor);
+        vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.BadAttestorSignature.selector, recovered));
+        vm.prank(attestor);
+        attestation.attest(a, CID);
+
+        vm.chainId(original);
+        vm.prank(attestor);
+        attestation.attest(a, CID);
+    }
+
+    function test_Replay_LegacyEip191SignatureOverCommitmentIsRejected() public {
+        AttestInput memory a = _input(EAF_ID, PERIOD, 10, 5000);
+        bytes32 eip191 = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", a.commitment));
+        a.ecdsaSig = _signDigest(attestorPk, eip191);
+        _assertSignatureRejected(a);
+    }
+
+    // ------------------------------------------ verifier separation (section 9.D)
+
+    function test_VerifierSign_ZeroReasonHashReverts() public {
+        uint256 id = _redBatch(250_000);
+        vm.expectRevert(EmissionsAttestation.ZeroReasonHash.selector);
+        vm.prank(verifier);
+        attestation.verifierSign(id, true, bytes32(0));
+        vm.expectRevert(EmissionsAttestation.ZeroReasonHash.selector);
+        vm.prank(verifier);
+        attestation.verifierSign(id, false, bytes32(0));
+        assertEq(uint8(attestation.getBatch(id).status), uint8(Status.PendingVerifier));
+    }
+
+    function test_VerifierSign_AttestorCannotVerifyItsOwnBatch() public {
+        uint256 id = _redBatch(250_000);
+        vm.prank(admin);
+        registry.grantRole(VERIFIER_ROLE, attestor); // an accredited verifier who is also the attestor key
+        vm.expectRevert(abi.encodeWithSelector(EmissionsAttestation.VerifierConflict.selector, id, attestor));
+        vm.prank(attestor);
+        attestation.verifierSign(id, true, REASON);
+        assertEq(uint8(attestation.getBatch(id).status), uint8(Status.PendingVerifier));
+        assertEq(attestation.getBatch(id).verifier, address(0));
+    }
+
+    function test_VerifierSign_InstallationOperatorCannotVerifyItsOwnBatch() public {
+        uint256 id = _redBatch(250_000); // BOF, operator exporterB
+        vm.prank(admin);
+        registry.grantRole(VERIFIER_ROLE, exporterB);
+        vm.expectRevert(abi.encodeWithSelector(EmissionsAttestation.VerifierConflict.selector, id, exporterB));
+        vm.prank(exporterB);
+        attestation.verifierSign(id, true, REASON);
+
+        // exporterA operates a different installation: no conflict for a BOF batch.
+        vm.prank(admin);
+        registry.grantRole(VERIFIER_ROLE, exporterA);
+        vm.prank(exporterA);
+        attestation.verifierSign(id, true, REASON);
+        assertEq(attestation.getBatch(id).verifier, exporterA);
+    }
+
+    function test_VerifierSign_ConflictTracksTheCurrentOperator() public {
+        uint256 id = _redBatch(250_000);
+        vm.startPrank(admin);
+        registry.grantRole(VERIFIER_ROLE, exporterB);
+        registry.grantRole(VERIFIER_ROLE, importerA);
+        registry.setOperator(BOF_ID, importerA); // exporterB is no longer the operator; importerA is
+        vm.stopPrank();
+
+        vm.expectRevert(abi.encodeWithSelector(EmissionsAttestation.VerifierConflict.selector, id, importerA));
+        vm.prank(importerA);
+        attestation.verifierSign(id, true, REASON);
+
+        vm.prank(exporterB); // the former operator is free to verify
+        attestation.verifierSign(id, true, REASON);
+    }
+
+    // ------------------------------------------------- revokeBatch (section 9.C)
+
+    function test_RevokeBatch_AdminOnly() public {
+        uint256 id = _greenBatch(5000);
+        address[5] memory callers = [stranger, attestor, verifier, exporterA, regulator];
+        for (uint256 i; i < callers.length; i++) {
+            vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.MissingRole.selector, ADMIN_ROLE, callers[i]));
+            vm.prank(callers[i]);
+            attestation.revokeBatch(id, REASON);
+        }
+        assertEq(uint8(attestation.getBatch(id).status), uint8(Status.Attested));
+    }
+
+    function test_RevokeBatch_AttestedBatch_EmitsAndRejects() public {
+        uint256 id = _greenBatch(5000);
+        bytes32 reason = keccak256("figures withdrawn by regulator");
+        vm.expectEmit(true, true, false, true, address(attestation));
+        emit EmissionsAttestation.BatchRevoked(id, admin, reason);
+        vm.prank(admin);
+        attestation.revokeBatch(id, reason);
+
+        Batch memory b = attestation.getBatch(id);
+        assertEq(uint8(b.status), uint8(Status.Rejected));
+        assertEq(b.verifiedTonnes, 5000, "record kept for audit");
+        (Status s,,,) = attestation.allocInfo(id);
+        assertEq(uint8(s), uint8(Status.Rejected));
+    }
+
+    function test_RevokeBatch_PendingBatch_RejectsAndVerifierCanNoLongerDecide() public {
+        uint256 id = _redBatch(250_000);
+        vm.prank(admin);
+        attestation.revokeBatch(id, REASON);
+        assertEq(uint8(attestation.getBatch(id).status), uint8(Status.Rejected));
+        vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.NotPending.selector, id));
+        vm.prank(verifier);
+        attestation.verifierSign(id, true, REASON);
+    }
+
+    function test_RevokeBatch_KeepsTheOriginalVerifierDecisionOnRecord() public {
+        uint256 id = _redBatch(250_000);
+        bytes32 verifierReason = keccak256("verifier approved");
+        vm.prank(verifier);
+        attestation.verifierSign(id, true, verifierReason);
+        vm.prank(admin);
+        attestation.revokeBatch(id, keccak256("later revoked"));
+        Batch memory b = attestation.getBatch(id);
+        assertEq(uint8(b.status), uint8(Status.Rejected));
+        assertEq(b.verifier, verifier);
+        assertEq(b.reasonHash, verifierReason);
+    }
+
+    function test_RevokeBatch_FreesThePeriodForResubmission() public {
+        uint256 id = _greenBatch(5000);
+        vm.prank(admin);
+        attestation.revokeBatch(id, REASON);
+        uint256 again = _attest(EAF_ID, PERIOD, 10, 4000);
+        assertEq(again, 2);
+        assertEq(attestation.batchOf(EAF_ID, PERIOD), 2);
+    }
+
+    function test_RevokeBatch_Reverts_ZeroReason_Unknown_AlreadyRejected() public {
+        uint256 id = _greenBatch(5000);
+        vm.expectRevert(EmissionsAttestation.ZeroReasonHash.selector);
+        vm.prank(admin);
+        attestation.revokeBatch(id, bytes32(0));
+
+        vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.UnknownBatch.selector, uint256(0)));
+        vm.prank(admin);
+        attestation.revokeBatch(0, REASON);
+        vm.expectRevert(abi.encodeWithSelector(IEmissionsAttestation.UnknownBatch.selector, uint256(9)));
+        vm.prank(admin);
+        attestation.revokeBatch(9, REASON);
+
+        vm.prank(admin);
+        attestation.revokeBatch(id, REASON);
+        vm.expectRevert(abi.encodeWithSelector(EmissionsAttestation.AlreadyRejected.selector, id));
+        vm.prank(admin);
+        attestation.revokeBatch(id, REASON);
+
+        // A verifier rejection also counts as already rejected.
+        uint256 red = _redBatch(250_000);
+        _verify(red, false);
+        vm.expectRevert(abi.encodeWithSelector(EmissionsAttestation.AlreadyRejected.selector, red));
+        vm.prank(admin);
+        attestation.revokeBatch(red, REASON);
+    }
+
+    function test_RevokeBatch_WorksWhilePaused() public {
+        uint256 id = _greenBatch(5000);
+        vm.startPrank(admin);
+        registry.pause();
+        attestation.revokeBatch(id, REASON);
+        vm.stopPrank();
+        assertEq(uint8(attestation.getBatch(id).status), uint8(Status.Rejected));
+    }
+
     // -------------------------------------------------------------- fuzzing
 
     function testFuzz_Attest_StatusFollowsThreshold(uint8 risk, uint8 threshold) public {
         risk = uint8(bound(risk, 0, 100));
         threshold = uint8(bound(threshold, 0, 100));
-        vm.prank(admin);
+        vm.prank(address(timelock));
         attestation.setRiskThreshold(threshold);
         uint256 id = _attest(EAF_ID, PERIOD, risk, 1);
         Status expected = risk > threshold ? Status.PendingVerifier : Status.Attested;

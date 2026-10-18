@@ -15,9 +15,10 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from .bundle import BundleError, digest_from_cid
 from .canonical import from_hex
-from .chain import Chain, ChainError, ChainRevert
+from .chain import Chain, ChainError, ChainRevert, TxPending
 from .config import REPO_ROOT, Config
 from .ipfs import IpfsError, IpfsStore
+from .limits import BodyLimitMiddleware, client_key
 from .ratelimit import RateLimiter
 from .service import Attestor, ServiceError, Timings
 from .signing import MLDSASigner
@@ -90,12 +91,7 @@ def create_app(attestor: Attestor | None = None, cfg: Config | None = None) -> F
         CORSMiddleware, allow_origins=list(cfg.cors_origins), allow_methods=["GET", "POST"],
         allow_headers=["Content-Type"], expose_headers=["Server-Timing", "Retry-After"])
 
-    @app.middleware("http")
-    async def body_limit(request: Request, call_next):
-        length = request.headers.get("content-length")
-        if length and length.isdigit() and int(length) > MAX_BODY_BYTES:
-            return JSONResponse({"detail": "request body too large"}, status_code=413)
-        return await call_next(request)
+    app.add_middleware(BodyLimitMiddleware, max_bytes=MAX_BODY_BYTES)
 
     # ---- errors: always {"detail": "..."}
     @app.exception_handler(ServiceError)
@@ -106,14 +102,18 @@ def create_app(attestor: Attestor | None = None, cfg: Config | None = None) -> F
     async def _revert(_: Request, exc: ChainRevert):
         return JSONResponse({"detail": str(exc), "revert": {"name": exc.name, "args": exc.revert_args}}, status_code=409)
 
+    # 502 bodies are generic: RPC / Pinata error text can embed provider URLs with API keys. Details go to the log.
     @app.exception_handler(ChainError)
     async def _chain_error(_: Request, exc: ChainError):
         log.error("chain error: %s", exc)
-        return JSONResponse({"detail": f"chain unavailable or misconfigured: {exc}"}, status_code=502)
+        if isinstance(exc, TxPending):
+            return JSONResponse({"detail": f"{exc}; it may still be mined, check the chain before retrying"}, status_code=502)
+        return JSONResponse({"detail": "chain unavailable or misconfigured (see service log)"}, status_code=502)
 
     @app.exception_handler(IpfsError)
     async def _ipfs_error(_: Request, exc: IpfsError):
-        return JSONResponse({"detail": str(exc)}, status_code=502)
+        log.error("ipfs error: %s", exc)
+        return JSONResponse({"detail": "bundle storage failed (see service log)"}, status_code=502)
 
     @app.exception_handler(BundleError)
     async def _bundle_error(_: Request, exc: BundleError):
@@ -128,7 +128,7 @@ def create_app(attestor: Attestor | None = None, cfg: Config | None = None) -> F
     async def _http(_: Request, exc: StarletteHTTPException):
         return JSONResponse({"detail": str(exc.detail)}, status_code=exc.status_code, headers=exc.headers)
 
-    # ---- rate limiting (per client IP, per route group)
+    # ---- rate limiting (per client address, per route group; IPv6 clients keyed by /64)
     def client_ip(request: Request) -> str:
         if cfg.client_ip_header:
             fwd = request.headers.get(cfg.client_ip_header)
@@ -138,7 +138,7 @@ def create_app(attestor: Attestor | None = None, cfg: Config | None = None) -> F
 
     def limit(group: str):
         def dep(request: Request) -> None:
-            allowed, retry = limiter.check(f"{group}:{client_ip(request)}")
+            allowed, retry = limiter.check(f"{group}:{client_key(client_ip(request))}")
             if not allowed:
                 raise StarletteHTTPException(429, "rate limit exceeded",
                                              headers={"Retry-After": str(max(1, int(retry + 0.999)))})
@@ -163,7 +163,7 @@ def create_app(attestor: Attestor | None = None, cfg: Config | None = None) -> F
         response.headers["Server-Timing"] = timings.header()
         return result
 
-    @app.get("/bundle/{cid}")
+    @app.get("/bundle/{cid}", dependencies=[Depends(limit("bundle"))])
     def bundle(cid: str, a: Attestor = Depends(svc)):
         try:
             digest_from_cid(cid)
@@ -175,15 +175,15 @@ def create_app(attestor: Attestor | None = None, cfg: Config | None = None) -> F
         return Response(data, media_type="application/json",
                         headers={"Cache-Control": "public, max-age=31536000, immutable"})
 
-    @app.get("/verify/{cid}")
+    @app.get("/verify/{cid}", dependencies=[Depends(limit("verify"))])
     def verify_get(cid: str, a: Attestor = Depends(svc)):
         return a.verify(cid)
 
-    @app.post("/verify")
+    @app.post("/verify", dependencies=[Depends(limit("verify"))])
     def verify_post(body: VerifyRequest, a: Attestor = Depends(svc)):
         return a.verify(body.cid, body.document)
 
-    @app.post("/disclosure/{batch_id}")
+    @app.post("/disclosure/{batch_id}", dependencies=[Depends(limit("disclosure"))])
     def disclosure(batch_id: int, body: DisclosureRequest, a: Attestor = Depends(svc)):
         return a.disclosure(batch_id, body.address, body.message, body.signature)
 
@@ -191,7 +191,7 @@ def create_app(attestor: Attestor | None = None, cfg: Config | None = None) -> F
     def post_reason(body: ReasonRequest, a: Attestor = Depends(svc)):
         return a.post_reason(body.batchId, body.text)
 
-    @app.get("/reasons/{reason_hash}")
+    @app.get("/reasons/{reason_hash}", dependencies=[Depends(limit("reasons"))])
     def get_reason(reason_hash: str, a: Attestor = Depends(svc)):
         return a.get_reason(reason_hash)
 

@@ -19,7 +19,7 @@ from .chain import Chain, ChainError, TxPending
 from .ipfs import IpfsStore
 from .report import (ReportError, installation_id_bytes32, period_to_int, see_to_chain, tonnes_to_chain,
                      validate_report)
-from .signing import MLDSASigner, SignatureError, recover_commitment_signer, sign_commitment
+from .signing import MLDSASigner, SignatureError, recover_commitment_signer, sign_attestation
 from .store import Store
 from .verify import verify_bundle
 
@@ -28,7 +28,7 @@ log = logging.getLogger("attestor.service")
 ATTESTATION_SCHEMA = "embedproof.attestation.v1"
 ALG_ID = 1
 MAX_REASON_BYTES = 4000
-_HASH_RE = re.compile(r"^0x[0-9a-fA-F]{64}$")
+_HASH_RE = re.compile(r"0x[0-9a-fA-F]{64}")  # used with fullmatch
 
 
 class ServiceError(Exception):
@@ -83,8 +83,9 @@ class Attestor:
         try:
             registry = self.chain.attestor_pq_key(self.chain.attestor_address)
         except ChainError as exc:
-            return False, (f"attestor ML-DSA key not anchored on-chain: cannot read registry.attestorPqKey ({exc}); "
-                           f"attestor has {hex0x(own)}")
+            log.warning("cannot read registry.attestorPqKey: %s", exc)
+            return False, ("attestor ML-DSA key not anchored on-chain: cannot read registry.attestorPqKey "
+                           f"(chain unavailable); attestor has {hex0x(own)}")
         if registry is None:
             shown = "no attestorPqKey function (registry deployed without PQ-key support)"
         else:
@@ -106,7 +107,7 @@ class Attestor:
     def _validated(self, report: Any) -> dict:
         installation = self._installation_for(report)
         try:
-            validate_report(report, installation)
+            validate_report(report, installation, datetime.fromtimestamp(self._clock(), timezone.utc))
         except ReportError as exc:
             raise ServiceError(422, str(exc), {"errors": exc.errors}) from exc
         assert installation is not None
@@ -123,7 +124,7 @@ class Attestor:
             raise ServiceError(422, f"scorer rejected the report: {exc}") from exc
         except Exception as exc:
             log.exception("scorer failed")
-            raise ServiceError(500, f"scorer failed: {type(exc).__name__}: {exc}") from exc
+            raise ServiceError(500, "scorer failed (see service log)") from exc
         try:
             return to_jsonable(result)  # numpy scalars -> plain JSON types, NaN/inf rejected
         except CanonicalizationError as exc:
@@ -166,6 +167,9 @@ class Attestor:
                 raise ServiceError(
                     403, f"report signed by {exporter}, but the registered operator of "
                          f"{installation['id']} is {installation['operator']}")
+            if not self.chain.has_role("OPERATOR_ROLE", exporter):
+                raise ServiceError(403, f"{exporter} is the registered operator of {installation['id']} but no longer "
+                                        "holds OPERATOR_ROLE")
             installation_id, period = report["installationId"], period_to_int(report["period"])
             existing = self.chain.batch_of(installation_id, period)
             if existing:
@@ -197,8 +201,22 @@ class Attestor:
             commitment = commitment_of(canonical)
 
         with tm.stage("sign"):
-            ecdsa_sig, ecdsa_signer = sign_commitment(commitment, self._key)
             mldsa_sig = self.mldsa.sign(canonical)
+            fields = {
+                "installationId": installation_id_bytes32(installation_id),
+                "period": period,
+                "commitment": commitment,
+                "seeDeclared": see_to_chain(report["seeTco2PerT"]),
+                "verifiedTonnes": tonnes_to_chain(report["productionTonnes"]),
+                "riskScore": int(score["riskScore"]),
+                "modelVersionHash": model_hash,
+                "algId": ALG_ID,
+                "pqSigHash": keccak256(mldsa_sig),
+            }
+            # EIP-712 over the Attestation struct (INTERFACES 9.A): binds period, installation, tonnes, score,
+            # model and the PQ signature hash, so the signature cannot be replayed onto other numbers.
+            ecdsa_sig, ecdsa_signer = sign_attestation(fields, self.chain.chain_id,
+                                                       to_checksum_address(self.chain.attestation_address), self._key)
 
         with tm.stage("bundle+ipfs"):
             key = new_key()
@@ -211,19 +229,7 @@ class Attestor:
             # Persist key + document before broadcasting: an on-chain record must never be undecryptable.
             self.store.put_pending(cid, b64url(key), canonical)
 
-        a = {
-            "installationId": installation_id_bytes32(installation_id),
-            "period": period,
-            "commitment": commitment,
-            "seeDeclared": see_to_chain(report["seeTco2PerT"]),
-            "verifiedTonnes": tonnes_to_chain(report["productionTonnes"]),
-            "riskScore": int(score["riskScore"]),
-            "modelVersionHash": model_hash,
-            "algId": ALG_ID,
-            "pqSigHash": keccak256(mldsa_sig),
-            "cidDigest": sha256(bundle),
-            "ecdsaSig": bytes.fromhex(ecdsa_sig[2:]),
-        }
+        a = {**fields, "cidDigest": sha256(bundle), "ecdsaSig": bytes.fromhex(ecdsa_sig[2:])}
         try:
             with tm.stage("tx"):
                 tx, ev = self.chain.attest(a, cid)
@@ -249,7 +255,7 @@ class Attestor:
             "band": score["band"],
             "cid": cid,
             "commitment": hex0x(commitment),
-            "pqSigHash": hex0x(a["pqSigHash"]),
+            "pqSigHash": hex0x(fields["pqSigHash"]),
             "ecdsaSignature": ecdsa_sig,
             "keyB64url": key_b64url,
             "verifyPath": f"/verify/{batch_id}#k={key_b64url}",
@@ -288,7 +294,7 @@ class Attestor:
         try:
             return verify_bundle(cid=cid, bundle_bytes=bundle, batch=batch, mldsa=self.mldsa,
                                  chain_id=self.chain.chain_id, attestation_address=self.chain.attestation_address,
-                                 pq_key_on_chain=self.chain.attestor_pq_key(batch["attestor"]),
+                                 is_pq_key_anchored=lambda h: self.chain.is_attestor_pq_key(batch["attestor"], h),
                                  key=key, document=document)
         except CanonicalizationError as exc:
             raise ServiceError(422, f"document cannot be canonicalised: {exc}") from exc
@@ -334,7 +340,7 @@ class Attestor:
         return {"reasonHash": reason_hash}
 
     def get_reason(self, reason_hash: str) -> dict:
-        if not _HASH_RE.match(reason_hash):
+        if not isinstance(reason_hash, str) or not _HASH_RE.fullmatch(reason_hash):
             raise ServiceError(422, "reasonHash must be 0x + 64 hex chars")
         text = self.store.get_reason(reason_hash.lower())
         if text is None:

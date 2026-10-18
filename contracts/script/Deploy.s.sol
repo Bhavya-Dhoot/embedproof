@@ -17,7 +17,9 @@ import {Sector, Route} from "../src/interfaces/IEmbedProof.sol";
 /// then InstallationRegistry, EmissionsAttestation and ConsignmentAllocator, each behind an ERC1967
 /// proxy (UUPS), wired registry -> attestation -> allocator.
 ///
-/// Environment (all optional; defaults are the Anvil accounts of INTERFACES.md section 1):
+/// Environment. On chain 31337 everything is optional and defaults to the Anvil accounts of INTERFACES.md
+/// section 1. On ANY OTHER chain ATTESTOR, VERIFIER and REGULATOR are mandatory (`MissingEnv`): the public
+/// Anvil keys must never receive roles on a real network (INTERFACES.md section 9.F).
 ///   ADMIN, ATTESTOR, VERIFIER, REGULATOR           role holders (ADMIN defaults to the broadcaster)
 ///   EXPORTER_A, EXPORTER_B, IMPORTER_A, IMPORTER_B demo personas (recorded in the JSON; exporters
 ///                                                  become installation operators when DEMO=1)
@@ -33,6 +35,10 @@ import {Sector, Route} from "../src/interfaces/IEmbedProof.sol";
 /// with the exact block of the first deployment transaction once the broadcast receipts exist.
 contract Deploy is Script {
     uint256 internal constant TIMELOCK_DELAY = 86400;
+    uint256 internal constant ANVIL_CHAIN_ID = 31337;
+
+    /// @dev A mandatory environment variable is not set (chains other than 31337).
+    error MissingEnv(string name);
 
     // INTERFACES.md section 1 (Anvil default mnemonic accounts)
     address internal constant D_ADMIN = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
@@ -67,6 +73,7 @@ contract Deploy is Script {
     }
 
     function run() external returns (Deployed memory d) {
+        _requireExplicitRoleHolders();
         uint256 headBlock = block.number;
         bytes32 modelHash = vm.envOr("MODEL_VERSION_HASH", bytes32(0));
         bytes32 pqKeyHash = vm.envOr("ATTESTOR_PQ_KEY_HASH", bytes32(0));
@@ -165,6 +172,14 @@ contract Deploy is Script {
     }
 
     // ------------------------------------------------------------------ io
+
+    function _requireExplicitRoleHolders() internal view {
+        if (block.chainid == ANVIL_CHAIN_ID) return;
+        string[3] memory names = ["ATTESTOR", "VERIFIER", "REGULATOR"];
+        for (uint256 i; i < names.length; i++) {
+            if (!vm.envExists(names[i])) revert MissingEnv(names[i]);
+        }
+    }
 
     function _accounts(address deployer) internal view returns (Accounts memory a) {
         a.admin = vm.envOr("ADMIN", deployer);

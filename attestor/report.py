@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import math
 import re
+from datetime import datetime, timezone
 from decimal import ROUND_HALF_UP, Decimal
 from typing import Any
 
@@ -23,8 +24,8 @@ _NUMERIC = (
 TOLERANCE = 0.01  # 1 %
 MAX_SAFE = 2**53 - 1  # JCS / JSON-number interoperability bound
 
-_ID_RE = re.compile(r"[A-Za-z0-9_-]{1,32}")  # all three used with fullmatch: `$` accepts a trailing newline
-_PERIOD_RE = re.compile(r"([0-9]{4})-(0[1-9]|1[0-2])")
+ID_RE = re.compile(r"[A-Za-z0-9_-]{1,32}")  # all three used with fullmatch: `$` accepts a trailing newline
+PERIOD_RE = re.compile(r"([0-9]{4})-(0[1-9]|1[0-2])")
 _CN_RE = re.compile(r"[0-9]{4,8}")
 
 
@@ -37,7 +38,13 @@ class ReportError(ValueError):
 
 
 def _is_num(v: Any) -> bool:
-    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+    """JSON number usable as a double. Integers are range-checked BEFORE any float conversion:
+    math.isfinite(10**400) raises OverflowError (a 500 instead of a 422)."""
+    if isinstance(v, bool):
+        return False
+    if isinstance(v, int):
+        return abs(v) <= MAX_SAFE
+    return isinstance(v, float) and math.isfinite(v)
 
 
 def _close(actual: float, expected: float) -> bool:
@@ -46,10 +53,11 @@ def _close(actual: float, expected: float) -> bool:
     return abs(actual - expected) <= TOLERANCE * abs(expected)
 
 
-def validate_report(report: Any, installation: dict | None) -> None:
+def validate_report(report: Any, installation: dict | None, now: datetime | None = None) -> None:
     """Validate a report against section 4 and the registry entry `installation`.
 
     `installation` is the chain.Installation dict ({"route": "EAF", ...}) or None if unknown.
+    `now` (UTC, default the wall clock) bounds the period: later than the current month is rejected.
     Raises ReportError listing every failure.
     """
     if not isinstance(report, dict):
@@ -67,12 +75,16 @@ def validate_report(report: Any, installation: dict | None) -> None:
         errors.append("unknown fields: " + ", ".join(extra))
 
     iid = report.get("installationId")
-    if not (isinstance(iid, str) and _ID_RE.fullmatch(iid)):
+    if not (isinstance(iid, str) and ID_RE.fullmatch(iid)):
         errors.append("installationId must be 1-32 chars of [A-Za-z0-9_-]")
     period = report.get("period")
-    m = _PERIOD_RE.fullmatch(period) if isinstance(period, str) else None
+    m = PERIOD_RE.fullmatch(period) if isinstance(period, str) else None
     if not m or not (2000 <= int(m.group(1)) <= 2100):
         errors.append("period must be YYYY-MM (year 2000-2100)")
+    else:
+        today = now or datetime.now(timezone.utc)
+        if (int(m.group(1)), int(m.group(2))) > (today.year, today.month):
+            errors.append(f"period {period} is in the future (current UTC month is {today.year:04d}-{today.month:02d})")
     route = report.get("route")
     if route not in ROUTES:
         errors.append("route must be one of " + " | ".join(ROUTES))
@@ -82,7 +94,7 @@ def validate_report(report: Any, installation: dict | None) -> None:
 
     bad_numeric = [f for f in _NUMERIC if f in report and not _is_num(report[f])]
     if bad_numeric:
-        errors.append("must be finite numbers: " + ", ".join(bad_numeric))
+        errors.append("must be finite numbers within +-(2^53-1): " + ", ".join(bad_numeric))
     if errors:  # numeric rules below assume well-typed fields
         raise ReportError(errors)
 

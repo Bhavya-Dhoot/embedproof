@@ -251,6 +251,30 @@
   },
   {
     "type": "function",
+    "name": "isAttestorPqKey",
+    "inputs": [
+      {
+        "name": "attestor",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "pqKeyHash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "operatorOf",
     "inputs": [
       {
@@ -392,6 +416,24 @@
   },
   {
     "type": "function",
+    "name": "revokeAttestorPqKey",
+    "inputs": [
+      {
+        "name": "attestor",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "pqKeyHash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "revokeRole",
     "inputs": [
       {
@@ -421,6 +463,24 @@
         "name": "pqKeyHash",
         "type": "bytes32",
         "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setOperator",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "newOperator",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "outputs": [],
@@ -482,6 +542,25 @@
     ],
     "outputs": [],
     "stateMutability": "payable"
+  },
+  {
+    "type": "event",
+    "name": "AttestorPqKeyRevoked",
+    "inputs": [
+      {
+        "name": "attestor",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "pqKeyHash",
+        "type": "bytes32",
+        "indexed": false,
+        "internalType": "bytes32"
+      }
+    ],
+    "anonymous": false
   },
   {
     "type": "event",
@@ -597,6 +676,31 @@
         "type": "uint64",
         "indexed": false,
         "internalType": "uint64"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "OperatorChanged",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "previous",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "next",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       }
     ],
     "anonymous": false
@@ -814,6 +918,22 @@
     "type": "error",
     "name": "NotTimelock",
     "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "PqKeyNotAnchored",
+    "inputs": [
+      {
+        "name": "attestor",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "pqKeyHash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ]
   },
   {
     "type": "error",

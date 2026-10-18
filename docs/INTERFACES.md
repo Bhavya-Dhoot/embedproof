@@ -325,3 +325,34 @@ the route, clip to [0, 100], round half up to int.
 `NEXT_PUBLIC_IPFS_GATEWAY` (optional; else `<attestor>/bundle/<cid>`).
 Deployments are copied from `../deployments` into `web/src/generated/` by `web/scripts/sync-deployments.mjs`.
 Explorer links: 84532 → `https://sepolia.basescan.org/tx/<hash>`; 31337 → no explorer, show hash + "local Anvil".
+
+## 9. v1.1 security amendments (supersede anything above that conflicts)
+
+From the adversarial review. Every component implements these.
+
+**A. EIP-712 attestor signature (replaces "EIP-191 over commitment").** `AttestInput.ecdsaSig` is an
+EIP-712 signature by the attestor key over:
+- Domain: `{ name: "EmbedProof", version: "1", chainId: <chain id>, verifyingContract: <EmissionsAttestation proxy> }`
+- Type: `Attestation(bytes32 installationId,uint32 period,bytes32 commitment,uint32 seeDeclared,uint64 verifiedTonnes,uint8 riskScore,bytes32 modelVersionHash,uint8 algId,bytes32 pqSigHash)`
+- `cidDigest` is deliberately NOT in the struct (the bundle carries the signature, so it cannot sign its own digest).
+- Contract: build the domain separator from constant name/version hashes + `block.chainid` + `address(this)` (no storage reads), recover with OZ `ECDSA.tryRecover`, signer must hold ATTESTOR_ROLE. View `hashAttestation(AttestInput calldata a) returns (bytes32)` returns the EIP-712 digest.
+- Python: `eth_account.messages.encode_typed_data(full_message=…)` + `Account.sign_message`. viem: `recoverTypedDataAddress`.
+- Bundle `ecdsa.scheme` = `"eip712-embedproof-attestation-v1"`.
+- Verifiers rebuild the struct from the on-chain batch (and, with the key, the commitment recomputed from the document). Because period/installation/tonnes/score are signed, a replay to another period or with altered numbers fails; no extra commitment-uniqueness storage is needed.
+
+**B. Operators.** `allocate` requires `registry.hasRole(OPERATOR_ROLE, msg.sender) && registry.operatorOf(id) == msg.sender`.
+Registry: `setOperator(bytes32 id, address newOperator)` (ADMIN; emits `OperatorChanged(bytes32 indexed id, address indexed previous, address indexed next)`; grants OPERATOR_ROLE to `next`). The attestor's `/attest` exporter check also requires OPERATOR_ROLE.
+
+**C. Batch revocation and live attestor check.** EmissionsAttestation: `revokeBatch(uint256 batchId, bytes32 reasonHash)` (ADMIN; PendingVerifier|Attested → Rejected; emits `BatchRevoked(uint256 indexed batchId, address indexed by, bytes32 reasonHash)`; reasonHash ≠ 0). `allocInfo` now returns `(Status status, uint64 verifiedTonnes, bytes32 installationId, address attestor)`; `allocate` reverts `AttestorRevoked(uint256 batchId, address attestor)` if the batch's attestor no longer holds ATTESTOR_ROLE. `setRiskThreshold` is callable only by the timelock (`NotTimelock`).
+
+**D. Verifier separation of duties.** `verifierSign` reverts `VerifierConflict(uint256 batchId, address verifier)` if the verifier is the batch attestor or the installation operator, and `ZeroReasonHash()` if `reasonHash == 0`.
+
+**E. PQ key history.** Registry keeps every anchored key: `isAttestorPqKey(address attestor, bytes32 pqKeyHash) returns (bool)` (true once anchored via `setAttestorPqKey`, until revoked); `revokeAttestorPqKey(address attestor, bytes32 pqKeyHash)` (ADMIN; emits `AttestorPqKeyRevoked(address indexed attestor, bytes32 pqKeyHash)`). `attestorPqKey(address)` stays = the current key. `pqKeyMatches` uses `isAttestorPqKey(batch.attestor, keccak256(pk))`, so rotation no longer breaks history.
+
+**F. Deploy safety.** On any chain other than 31337, `Deploy.s.sol` reverts unless `ATTESTOR`, `VERIFIER` and `REGULATOR` env addresses are set (never the public Anvil defaults).
+
+**G. Exact SEE rounding (all components).** `seeDeclared = round_half_up(decimal(seeTco2PerT) × 10^4)` computed on the shortest round-trip decimal string of the number (Python `Decimal(repr(x))`; JS `Number.prototype.toString` handled as a decimal string, incl. exponent form) — never binary-float `Math.round(x*1e4)`.
+
+**H. Attestor hardening.** Body-size cap enforced while streaming (chunked bodies included); generic 502 bodies (details only in logs; revert data parsed only from `exc.data`); rate limits on `/disclosure`, `/verify`, `/bundle`, `GET /reasons` too (IPv6 keyed by /64); cache `importers_of`; reject integers beyond 2^53 before float conversion; reject periods later than the current UTC month; `fieldsMatch` uses strict types/formats (ints are ints, `period` must fullmatch `YYYY-MM`, `chainId` int, no bool coercion).
+
+Known and accepted (documented, not fixed): consignment ids are global (FR-C6 literal) so another registered operator can grief an id; cnCode is not bound to the batch; admin can grant roles instantly (only upgrades and the risk threshold are timelocked).

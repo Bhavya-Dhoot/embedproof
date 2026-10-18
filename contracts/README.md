@@ -1,8 +1,8 @@
 # EmbedProof contracts
 
 Solidity 0.8.28 (cancun), OpenZeppelin 5.7.0, Foundry 1.8. Three UUPS proxies behind a 24 h OZ
-`TimelockController`; the external interface is `src/interfaces/IEmbedProof.sol`, a verbatim copy of
-`docs/INTERFACES.md` section 3.
+`TimelockController`; the external interface is `src/interfaces/IEmbedProof.sol` (`docs/INTERFACES.md` section 3 as
+amended by section 9, v1.1 security amendments A-F).
 
 | Contract | Role |
 | --- | --- |
@@ -36,12 +36,14 @@ The budgets are asserted on the receipt basis (`gasUsed` = 21,000 intrinsic + ca
 
 | Call | Receipt `gasUsed` (forge / Anvil) | Budget |
 | --- | --- | --- |
-| `attest()` green, fresh period | 226,490 / 226,478 | 250,000 |
-| `allocate()` first allocation on a batch | 107,996 / 107,996 | 120,000 |
+| `attest()` green, fresh period (EIP-712) | 228,019 / 228,031 | 250,000 |
+| `allocate()` first allocation on a batch | 115,471 / 115,471 | 120,000 |
 
 ## Deploy
 
-Environment (all optional; defaults are the Anvil accounts of INTERFACES section 1):
+Environment. On chain 31337 everything is optional (defaults: the Anvil accounts of INTERFACES section 1). On any
+other chain `ATTESTOR`, `VERIFIER` and `REGULATOR` are mandatory: the script reverts `MissingEnv` rather than grant
+roles to the public Anvil keys.
 `ADMIN` (defaults to the broadcaster), `ATTESTOR`, `VERIFIER`, `REGULATOR`, `EXPORTER_A`, `EXPORTER_B`,
 `IMPORTER_A`, `IMPORTER_B`, `MODEL_VERSION_HASH` (0x + 64 hex; approved when set), `ATTESTOR_PQ_KEY_HASH` (0x + 64 hex; anchored for `ATTESTOR` when set), `DEMO=1` (registers
 `TR-EAF-0001` and `TR-BOF-0002`), `RPC_URL` (recorded in the JSON).
@@ -74,9 +76,22 @@ The timelock has no admin: `ADMIN` is its proposer and executor, and upgrades ta
 - Roles, pause and the timelock live in the registry; the other two contracts query it. `attest`,
   `verifierSign`, `allocate` and `claim` revert with OZ `EnforcedPause()` while paused; `_authorizeUpgrade`
   requires `msg.sender == registry.timelock()` (otherwise `NotTimelock()`).
-- `attest` checks the EIP-191 signature with OZ `ECDSA` (canonical low-s, 65 bytes) and `MessageHashUtils`; both
-  `msg.sender` and the recovered signer need `ATTESTOR_ROLE`, and the signer is stored as `attestor`.
-- Gas packing: a batch is 7 storage words (`verifier` and `reasonHash` are written only by `verifierSign`);
+- `attest` verifies an EIP-712 signature over the nine-field `Attestation` struct (everything in `AttestInput` except
+  `cidDigest`) under the domain `{EmbedProof, 1, block.chainid, address(this)}`, with OZ `ECDSA` (canonical low-s,
+  65 bytes). The domain separator is built from constant hashes, `block.chainid` and `address(this)` (no storage
+  reads), so it is correct behind the proxy and across forks. Installation, period, tonnes, SEE, score, model and PQ
+  signature hash are all signed: a valid signature cannot be replayed for another period, with altered numbers, on
+  another chain or against another contract. `hashAttestation(AttestInput)` and `domainSeparator()` expose the
+  digest; `test/vectors/eip712_vector.json` is a golden vector (Python `eth_account` == contract == forge test).
+  Both `msg.sender` and the recovered signer need `ATTESTOR_ROLE`; the signer is stored as `attestor`.
+- Separation of duties (v1.1): `allocate` needs OPERATOR_ROLE **and** `operatorOf(id) == msg.sender` (admin can
+  re-point an installation with `setOperator`, emitting `OperatorChanged`) and reverts `AttestorRevoked` if the batch's
+  attestor lost ATTESTOR_ROLE; `verifierSign` reverts `VerifierConflict` for the batch attestor or the installation
+  operator and `ZeroReasonHash` for an empty reason; `revokeBatch(batchId, reasonHash)` (ADMIN) turns a
+  PendingVerifier/Attested batch into Rejected (`BatchRevoked`; allocations already made are not unwound);
+  `setRiskThreshold` is callable only by the timelock.
+- Gas packing: a batch is 7 storage words (word 1 holds attestor, tonnes, score, status so `allocInfo` reads two
+  words; `verifier` and `reasonHash` are written only by `verifierSign`);
   the model hash is stored once per approval and batches keep a 1-byte index (hence `ModelApproved(hash, index)`).
   An installation exists iff its operator is non-zero, so registration rejects the zero operator.
   An allocation is ONE word (`importer | cnCode | tonnes(uint32) | batchId(uint32)`); `claimed` lives in a separate
@@ -84,12 +99,15 @@ The timelock has no admin: `ADMIN` is its proposer and executor, and upgrades ta
   `BatchIdTooLarge`. The per-batch running total and the cap check stay uint64, and the cap check runs first, so an
   over-cap request always reports `DoubleClaimBlocked`.
 - Additions beyond INTERFACES section 3 (none change a specified signature): errors `ZeroAddress`,
-  `TooManyModels` (more than 256 models), `TonnesTooLarge`, `BatchIdTooLarge`, `NotAnAttestor`, `ZeroPqKeyHash`
-  and, on `EmissionsAttestation`, `UnknownInstallation`; views `registry()` / `attestation()` on the allocator and
-  the role/algorithm constants.
+  `TooManyModels` (more than 256 models), `TonnesTooLarge`, `BatchIdTooLarge`, `AttestorRevoked`, `NotAnAttestor`,
+  `ZeroPqKeyHash`, `PqKeyNotAnchored`, `VerifierConflict`, `ZeroReasonHash`, `AlreadyRejected` and, on
+  `EmissionsAttestation`, `UnknownInstallation`; views `registry()` / `attestation()` on the allocator and the
+  role/algorithm constants. `allocInfo` returns a fourth value, `attestor` (section 9.C).
 - Attestor PQ key anchor: `setAttestorPqKey(attestor, keccak256(raw ML-DSA-44 public key))` (ADMIN; target must hold
-  ATTESTOR_ROLE; non-zero hash; emits `AttestorPqKeySet`; re-calling rotates) and `attestorPqKey(attestor)` (0 if none)
-  on the registry; storage appended after the original state. `Deploy.s.sol` calls it when `ATTESTOR_PQ_KEY_HASH` is set.
+  ATTESTOR_ROLE; non-zero hash; emits `AttestorPqKeySet`; re-calling rotates) and `attestorPqKey(attestor)` = the
+  current key (0 if none). Every anchored key stays valid history: `isAttestorPqKey(attestor, hash)` is true until
+  `revokeAttestorPqKey` (ADMIN; `AttestorPqKeyRevoked`; also clears the current key if it was current). Storage is
+  appended after the original state. `Deploy.s.sol` calls `setAttestorPqKey` when `ATTESTOR_PQ_KEY_HASH` is set.
 - `remainingTonnes` is `verifiedTonnes - allocatedTonnes` regardless of status (0 for an unknown batch).
   `attestedAt` is the submission time. `approveModel` is idempotent. `revokeModel` blocks new attestations
   (`ModelNotApproved`) but leaves existing batches and their recorded model hash intact; revoking a hash that is not

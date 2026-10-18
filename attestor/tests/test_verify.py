@@ -21,7 +21,8 @@ def run(attestor, chain, res, *, batch=None, document=None):
     key = None if document is not None else b64url_decode(res["keyB64url"])
     return verify_bundle(cid=res["cid"], bundle_bytes=attestor.ipfs.get(res["cid"]), batch=batch, mldsa=attestor.mldsa,
                          chain_id=31337, attestation_address=ATTESTATION_ADDRESS,
-                         pq_key_on_chain=chain.attestor_pq_key(batch["attestor"]), key=key, document=document)
+                         is_pq_key_anchored=lambda h: chain.is_attestor_pq_key(batch["attestor"], h),
+                         key=key, document=document)
 
 
 def test_honest_record_has_matching_fields(attested):
@@ -42,7 +43,8 @@ def test_each_onchain_number_must_agree_with_the_signed_document(attested, field
     batch = dict(chain.batch(res["batchId"]))
     batch[field] = value  # attestor (or a bug) wrote a different number on-chain than it committed
     r = run(attestor, chain, res, batch=batch)
-    assert r["commitmentMatches"] and r["ecdsaValid"] and r["mldsaValid"]  # signatures alone cannot see this
+    assert r["commitmentMatches"] and r["mldsaValid"]  # the document itself is untouched
+    assert r["ecdsaValid"] is False  # all six numbers are inside the EIP-712 struct: a replayed signature fails
     assert r["fieldsMatch"] is False and r["fieldMismatches"] == [reported] and r["allValid"] is False
 
 
@@ -89,7 +91,7 @@ def test_structurally_wrong_document_is_a_mismatch_not_a_crash(garbage):
     batch = {"installationId": bytes(32), "period": 0, "seeDeclared": 0, "verifiedTonnes": 0, "riskScore": 0,
              "modelVersionHash": bytes(32)}
     out = _doc_mismatches(garbage, batch, 31337, ATTESTATION_ADDRESS)
-    assert out and out[0].startswith("document structure")
+    assert out  # structural garbage is reported as mismatches (never raises)
 
 
 def test_different_attestation_contract_case_is_tolerated(attested):
@@ -100,7 +102,7 @@ def test_different_attestation_contract_case_is_tolerated(attested):
                            chain.batch(res["batchId"]), 31337, ATTESTATION_ADDRESS) == []
 
 
-# ---- pqKeyMatches: keccak256(bundle ML-DSA pk) == registry.attestorPqKey(batch.attestor), non-zero
+# ---- pqKeyMatches: registry.isAttestorPqKey(batch.attestor, keccak256(bundle pk)) (anchored key history)
 
 
 def test_pq_key_anchored_on_chain_matches(attested):
@@ -108,25 +110,39 @@ def test_pq_key_anchored_on_chain_matches(attested):
     assert r["pqKeyMatches"] is True and r["allValid"] is True
 
 
-@pytest.mark.parametrize("registry_value", [bytes(32), b"\x07" * 32, None], ids=["unset", "other-key", "old-registry"])
-def test_pq_key_not_anchored_or_different_fails_everything_else_still_true(attested, registry_value):
+@pytest.mark.parametrize("how", ["revoked", "old-registry"])
+def test_pq_key_not_anchored_fails_everything_else_still_true(attested, how):
     attestor, chain, res = attested
-    if registry_value is None:
-        chain.pq_supported = False  # registry ABI predates attestorPqKey -> cannot be confirmed
+    if how == "old-registry":
+        chain.pq_supported = False  # registry ABI predates the PQ-key functions -> cannot be confirmed
     else:
-        chain.pq_keys[ADDR["attestor"]] = registry_value
+        chain.pq_history[ADDR["attestor"]].clear()  # revokeAttestorPqKey
     r = attestor.verify(res["cid"])
     assert r["pqKeyMatches"] is False and r["allValid"] is False
     assert r["commitmentMatches"] and r["ecdsaValid"] and r["mldsaValid"] and r["pqSigHashMatches"] and r["fieldsMatch"]
 
 
+def test_key_rotation_keeps_history_valid_until_revoked(attested):
+    """A newer attestorPqKey must not invalidate batches signed under an earlier, still-anchored key."""
+    attestor, chain, res = attested
+    old = chain.pq_keys[ADDR["attestor"]]
+    new = b"B" * 32
+    chain.anchor_pq_key(ADDR["attestor"], new)  # setAttestorPqKey(new): current = new, old stays in history
+    assert chain.attestor_pq_key(ADDR["attestor"]) == new
+    assert attestor.verify(res["cid"])["pqKeyMatches"] is True
+    chain.pq_history[ADDR["attestor"]].discard(old)  # revokeAttestorPqKey(old)
+    assert attestor.verify(res["cid"])["pqKeyMatches"] is False
+
+
 def test_pq_key_check_uses_the_key_in_the_bundle_not_the_services_current_key(attested, tmp_path):
-    """A bundle signed by a different (e.g. rotated or attacker) ML-DSA key must not satisfy the anchor."""
+    """A bundle signed by a different ML-DSA key must not satisfy an anchor for another key."""
     from attestor.signing import MLDSASigner
     from attestor.canonical import keccak256
 
     attestor, chain, res = attested
+    old_hash = keccak256(attestor.mldsa.public_key)
     attestor.mldsa = MLDSASigner.load_or_create(tmp_path)  # service rotated its key after the batch was made
-    chain.pq_keys[ADDR["attestor"]] = keccak256(attestor.mldsa.public_key)  # registry now anchors the NEW key
+    chain.anchor_pq_key(ADDR["attestor"], keccak256(attestor.mldsa.public_key))
+    chain.pq_history[ADDR["attestor"]].discard(old_hash)  # old key revoked, only the NEW one anchored
     r = attestor.verify(res["cid"])
     assert r["pqKeyMatches"] is False and r["allValid"] is False  # old batch still carries the old key

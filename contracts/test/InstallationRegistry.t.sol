@@ -259,6 +259,130 @@ contract InstallationRegistryTest is Base {
         assertEq(_greenBatch(5000), 1);
     }
 
+    // ------------------------------------------------ setOperator (section 9.B)
+
+    function test_SetOperator_ChangesOperatorEmitsAndGrantsRole() public {
+        address newOp = makeAddr("newOperator");
+        assertFalse(registry.hasRole(OPERATOR_ROLE, newOp));
+        vm.expectEmit(true, true, true, false, address(registry));
+        emit InstallationRegistry.OperatorChanged(EAF_ID, exporterA, newOp);
+        vm.prank(admin);
+        registry.setOperator(EAF_ID, newOp);
+
+        assertEq(registry.operatorOf(EAF_ID), newOp);
+        assertEq(registry.getInstallation(EAF_ID).operator, newOp);
+        assertEq(registry.getInstallation(EAF_ID).capacityTpy, 300_000, "other fields untouched");
+        assertTrue(registry.hasRole(OPERATOR_ROLE, newOp));
+        assertEq(registry.operatorOf(BOF_ID), exporterB, "other installations untouched");
+    }
+
+    function test_SetOperator_AdminOnly() public {
+        address[5] memory callers = [stranger, attestor, verifier, exporterA, regulator];
+        for (uint256 i; i < callers.length; i++) {
+            vm.expectRevert(_unauthorized(callers[i]));
+            vm.prank(callers[i]);
+            registry.setOperator(EAF_ID, callers[i]);
+        }
+        assertEq(registry.operatorOf(EAF_ID), exporterA, "an operator cannot reassign itself");
+    }
+
+    function test_SetOperator_UnknownInstallationAndZeroOperatorRevert() public {
+        vm.expectRevert(abi.encodeWithSelector(IInstallationRegistry.UnknownInstallation.selector, NEW_ID));
+        vm.prank(admin);
+        registry.setOperator(NEW_ID, exporterB);
+
+        vm.expectRevert(ZeroAddress.selector);
+        vm.prank(admin);
+        registry.setOperator(EAF_ID, address(0));
+        assertEq(registry.operatorOf(EAF_ID), exporterA);
+    }
+
+    function test_SetOperator_PreviousOperatorKeepsRoleButIsNoLongerOperatorOf() public {
+        vm.prank(admin);
+        registry.setOperator(EAF_ID, exporterB);
+        assertEq(registry.operatorOf(EAF_ID), exporterB);
+        assertTrue(registry.hasRole(OPERATOR_ROLE, exporterA), "role is separate; admin revokes it explicitly");
+        assertTrue(registry.operatorOf(EAF_ID) != exporterA);
+    }
+
+    function test_SetOperator_SameOperatorIsAllowedAndReEmits() public {
+        vm.expectEmit(true, true, true, false, address(registry));
+        emit InstallationRegistry.OperatorChanged(EAF_ID, exporterA, exporterA);
+        vm.prank(admin);
+        registry.setOperator(EAF_ID, exporterA);
+        assertEq(registry.operatorOf(EAF_ID), exporterA);
+    }
+
+    // ------------------------------------- PQ key history (section 9.E)
+
+    function test_PqKeyHistory_RotationKeepsOldKeyAnchored() public {
+        bytes32 k1 = keccak256("key one");
+        bytes32 k2 = keccak256("key two");
+        assertFalse(registry.isAttestorPqKey(attestor, k1));
+        assertFalse(registry.isAttestorPqKey(attestor, bytes32(0)));
+
+        vm.startPrank(admin);
+        registry.setAttestorPqKey(attestor, k1);
+        registry.setAttestorPqKey(attestor, k2);
+        vm.stopPrank();
+
+        assertEq(registry.attestorPqKey(attestor), k2, "current key is the latest");
+        assertTrue(registry.isAttestorPqKey(attestor, k1), "history survives rotation");
+        assertTrue(registry.isAttestorPqKey(attestor, k2));
+        assertFalse(registry.isAttestorPqKey(stranger, k1), "per-attestor");
+    }
+
+    function test_PqKeyRevoke_AdminOnlyAndNotAnchoredReverts() public {
+        bytes32 k1 = keccak256("key one");
+        vm.prank(admin);
+        registry.setAttestorPqKey(attestor, k1);
+
+        address[4] memory callers = [stranger, attestor, verifier, regulator];
+        for (uint256 i; i < callers.length; i++) {
+            vm.expectRevert(_unauthorized(callers[i]));
+            vm.prank(callers[i]);
+            registry.revokeAttestorPqKey(attestor, k1);
+        }
+        assertTrue(registry.isAttestorPqKey(attestor, k1));
+
+        bytes32 never = keccak256("never anchored");
+        vm.expectRevert(abi.encodeWithSelector(InstallationRegistry.PqKeyNotAnchored.selector, attestor, never));
+        vm.prank(admin);
+        registry.revokeAttestorPqKey(attestor, never);
+        vm.expectRevert(abi.encodeWithSelector(InstallationRegistry.PqKeyNotAnchored.selector, stranger, k1));
+        vm.prank(admin);
+        registry.revokeAttestorPqKey(stranger, k1);
+    }
+
+    function test_PqKeyRevoke_EmitsClearsCurrentOnlyWhenCurrentAndAllowsReAnchor() public {
+        bytes32 k1 = keccak256("key one");
+        bytes32 k2 = keccak256("key two");
+        vm.startPrank(admin);
+        registry.setAttestorPqKey(attestor, k1);
+        registry.setAttestorPqKey(attestor, k2);
+
+        // Revoking a superseded key leaves the current one alone.
+        vm.expectEmit(true, false, false, true, address(registry));
+        emit InstallationRegistry.AttestorPqKeyRevoked(attestor, k1);
+        registry.revokeAttestorPqKey(attestor, k1);
+        assertFalse(registry.isAttestorPqKey(attestor, k1));
+        assertTrue(registry.isAttestorPqKey(attestor, k2));
+        assertEq(registry.attestorPqKey(attestor), k2);
+
+        // Revoking the current key leaves no current key.
+        registry.revokeAttestorPqKey(attestor, k2);
+        assertFalse(registry.isAttestorPqKey(attestor, k2));
+        assertEq(registry.attestorPqKey(attestor), bytes32(0));
+
+        // A revoked hash cannot be revoked twice, but can be anchored again.
+        vm.expectRevert(abi.encodeWithSelector(InstallationRegistry.PqKeyNotAnchored.selector, attestor, k2));
+        registry.revokeAttestorPqKey(attestor, k2);
+        registry.setAttestorPqKey(attestor, k1);
+        vm.stopPrank();
+        assertTrue(registry.isAttestorPqKey(attestor, k1));
+        assertEq(registry.attestorPqKey(attestor), k1);
+    }
+
     // ------------------------------------------------------------ pause
 
     function test_Pause_AdminOnly() public {

@@ -43,6 +43,13 @@ contract InstallationRegistry is
 
     /// @dev `setAttestorPqKey` target does not hold ATTESTOR_ROLE.
     error NotAnAttestor(address account);
+    /// @dev `revokeAttestorPqKey` for a hash that is not currently anchored for that attestor.
+    error PqKeyNotAnchored(address attestor, bytes32 pqKeyHash);
+
+    /// @notice The operator of an installation changed (INTERFACES section 9.B).
+    event OperatorChanged(bytes32 indexed id, address indexed previous, address indexed next);
+    /// @notice An anchored ML-DSA-44 public-key hash was withdrawn for an attestor (INTERFACES section 9.E).
+    event AttestorPqKeyRevoked(address indexed attestor, bytes32 pqKeyHash);
     /// @dev A zero hash would read back as "no key anchored".
     error ZeroPqKeyHash();
 
@@ -51,6 +58,8 @@ contract InstallationRegistry is
     bytes32[] private _ids;
     /// @dev Appended after the original state so upgrades from the first layout stay storage-compatible.
     mapping(address attestor => bytes32 pqKeyHash) private _attestorPqKey;
+    /// @dev Every key hash ever anchored and not revoked, so key rotation keeps old signatures verifiable.
+    mapping(address attestor => mapping(bytes32 pqKeyHash => bool)) private _pqKeyAnchored;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -117,6 +126,23 @@ contract InstallationRegistry is
         emit InstallationRegistered(id, operator, country, sector, route, capacityTpy);
     }
 
+    /// @notice Replace the operator of an installation and grant the new one OPERATOR_ROLE. ADMIN only.
+    /// @dev The previous operator keeps OPERATOR_ROLE (it may operate other installations) but is no longer
+    ///      `operatorOf(id)`, which `allocate` also requires; revoke the role separately if it has no
+    ///      other installation. Setting the same operator again is allowed and re-emits the event.
+    /// @param id A registered installation.
+    /// @param newOperator The new operator wallet. Non-zero.
+    function setOperator(bytes32 id, address newOperator) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        if (newOperator == address(0)) revert ZeroAddress();
+        InstallationStore storage s = _installations[id];
+        address previous = s.operator;
+        if (previous == address(0)) revert UnknownInstallation(id);
+        s.operator = newOperator;
+        _grantRole(OPERATOR_ROLE, newOperator);
+        // forge-lint: disable-next-line(reentrancy-events)
+        emit OperatorChanged(id, previous, newOperator);
+    }
+
     /// @notice Read an installation's master data.
     /// @param id Installation identifier.
     /// @return inst The installation record (`exists` is always true on success).
@@ -159,12 +185,36 @@ contract InstallationRegistry is
         if (pqKeyHash == bytes32(0)) revert ZeroPqKeyHash();
         if (!hasRole(ATTESTOR_ROLE, attestor)) revert NotAnAttestor(attestor);
         _attestorPqKey[attestor] = pqKeyHash;
+        _pqKeyAnchored[attestor][pqKeyHash] = true;
+        // forge-lint: disable-next-line(reentrancy-events)
         emit AttestorPqKeySet(attestor, pqKeyHash);
     }
 
-    /// @notice The anchored ML-DSA-44 public-key hash of an attestor.
+    /// @notice Withdraw an anchored ML-DSA-44 public-key hash (e.g. the key was compromised). ADMIN only.
+    /// @dev Reverts `PqKeyNotAnchored` unless the hash is currently anchored for `attestor`. If it is also the
+    ///      current key, `attestorPqKey(attestor)` becomes bytes32(0). Other anchored keys are unaffected.
+    /// @param attestor The attestor the key was anchored for.
+    /// @param pqKeyHash The key hash to withdraw.
+    function revokeAttestorPqKey(address attestor, bytes32 pqKeyHash) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        if (!_pqKeyAnchored[attestor][pqKeyHash]) revert PqKeyNotAnchored(attestor, pqKeyHash);
+        _pqKeyAnchored[attestor][pqKeyHash] = false;
+        if (_attestorPqKey[attestor] == pqKeyHash) _attestorPqKey[attestor] = bytes32(0);
+        // forge-lint: disable-next-line(reentrancy-events)
+        emit AttestorPqKeyRevoked(attestor, pqKeyHash);
+    }
+
+    /// @notice Whether a key hash is (still) anchored for an attestor, including superseded keys.
+    /// @dev Verifiers use this, not `attestorPqKey`, so a batch signed before a rotation still verifies.
     /// @param attestor The attestor address.
-    /// @return The keccak256 of the raw public key, or bytes32(0) if none is anchored.
+    /// @param pqKeyHash keccak256 of a raw ML-DSA-44 public key.
+    /// @return True from `setAttestorPqKey` until `revokeAttestorPqKey`.
+    function isAttestorPqKey(address attestor, bytes32 pqKeyHash) external view returns (bool) {
+        return _pqKeyAnchored[attestor][pqKeyHash];
+    }
+
+    /// @notice The attestor's CURRENT anchored ML-DSA-44 public-key hash (the last one set).
+    /// @param attestor The attestor address.
+    /// @return The keccak256 of the raw public key, or bytes32(0) if none is anchored or it was revoked.
     function attestorPqKey(address attestor) external view returns (bytes32) {
         return _attestorPqKey[attestor];
     }

@@ -1,0 +1,68 @@
+{
+  "description": "EmbedProof EIP-712 attestor signature golden vector (INTERFACES.md section 9.A). Digest = keccak256(0x1901 || domainSeparator || structHash). Signed with Anvil account #1; verifyingContract is the EmissionsAttestation proxy of a fresh Anvil deploy by account #0.",
+  "domain": {
+    "name": "EmbedProof",
+    "version": "1",
+    "chainId": 31337,
+    "verifyingContract": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
+  },
+  "primaryType": "Attestation",
+  "types": {
+    "Attestation": [
+      {
+        "name": "installationId",
+        "type": "bytes32"
+      },
+      {
+        "name": "period",
+        "type": "uint32"
+      },
+      {
+        "name": "commitment",
+        "type": "bytes32"
+      },
+      {
+        "name": "seeDeclared",
+        "type": "uint32"
+      },
+      {
+        "name": "verifiedTonnes",
+        "type": "uint64"
+      },
+      {
+        "name": "riskScore",
+        "type": "uint8"
+      },
+      {
+        "name": "modelVersionHash",
+        "type": "bytes32"
+      },
+      {
+        "name": "algId",
+        "type": "uint8"
+      },
+      {
+        "name": "pqSigHash",
+        "type": "bytes32"
+      }
+    ]
+  },
+  "message": {
+    "installationId": "0x54522d4541462d30303031000000000000000000000000000000000000000000",
+    "period": 202609,
+    "commitment": "0x6320098f9cbb6feacad81c209b8201cb8e6e06a99f1dd1ace090c4472d3033ee",
+    "seeDeclared": 4190,
+    "verifiedTonnes": 5000,
+    "riskScore": 10,
+    "modelVersionHash": "0x83d653bca132c08183f985fb30e35a317074429d5cb89d1747bab4f81c380a82",
+    "algId": 1,
+    "pqSigHash": "0xf51b6b8e07c8dffd5f6736c7a422a7511443f4e1c121a0857d166b30618af6ef"
+  },
+  "cidDigest": "0x259315d575e4906b7939cb55fc3d6e9b6ed1d4d88ed8a002c31f555020cd46ed",
+  "domainSeparator": "0xb1ed3fc0995980d5fa98af156f26fbf96a9486e8ca4d89815726cf1d388ef6ab",
+  "structHash": "0x1f50b09dd9964b6af8252c21a6e8725a7605a69127dba11cfdfe84c4b08db356",
+  "digest": "0x501892b6ef09f68ce8bad449386144ea7e170be0de60b744d21c76a81ba873a9",
+  "signer": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+  "signature": "0xcd0b3af75b8147fc7e4d9f6e20c90eebe516c4023d5b4ea9d9d7832ab8fdd3f601b3003135e452b8ff0039fa2daee12f5a751a885a3f9bb6629a6665f3303a411c",
+  "crossChecked": "eth_account.encode_typed_data == EmissionsAttestation.hashAttestation() == test/Eip712Vector.t.sol"
+}

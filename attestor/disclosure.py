@@ -8,6 +8,7 @@ from eth_utils import is_address, to_checksum_address
 from .signing import SignatureError, recover_text_signer
 
 WINDOW_SECONDS = 300
+_ADDRESS_RE = re.compile(r"0x[0-9a-fA-F]{40}")  # explicit prefix; eth_utils.is_address alone also takes bare hex
 # fullmatch, not match+$: Python's `$` also matches just before a trailing newline.
 _MESSAGE_RE = re.compile(r"EmbedProof disclosure\nbatch:(0|[1-9][0-9]{0,17})\nts:(0|[1-9][0-9]{0,11})")
 
@@ -34,7 +35,7 @@ def authenticate(batch_id: int, address: str, message: str, signature: str, now:
         raise DisclosureAuthError(403, "message batch id does not match the requested batch")
     if abs(now - int(m.group(2))) > WINDOW_SECONDS:
         raise DisclosureAuthError(403, f"message timestamp outside the +-{WINDOW_SECONDS} s window")
-    if not (isinstance(address, str) and is_address(address)):
+    if not (isinstance(address, str) and _ADDRESS_RE.fullmatch(address) and is_address(address)):
         raise DisclosureAuthError(422, "address is not a valid EVM address")
     try:
         signer = recover_text_signer(message, signature)

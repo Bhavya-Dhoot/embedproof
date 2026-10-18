@@ -15,8 +15,11 @@ remappings = [
     "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
     "forge-std/=lib/forge-std/src/",
 ]
-# The deploy script writes ../deployments/<chainId>.json (repo root), nothing else.
-fs_permissions = [{ access = "read-write", path = "../deployments" }]
+# The deploy script writes ../deployments/<chainId>.json (repo root); tests read the EIP-712 golden vector.
+fs_permissions = [
+    { access = "read-write", path = "../deployments" },
+    { access = "read", path = "test/vectors" },
+]
 
 # Each top-level call from a test is run as its own transaction (intrinsic gas, cold/warm access),
 # which is what test/Gas.t.sol relies on. (Default in Foundry 1.8; pinned so it cannot silently change.)

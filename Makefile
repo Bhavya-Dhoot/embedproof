@@ -11,6 +11,7 @@ SHELL := bash
 setup:
 	source scripts/env.sh
 	command -v forge >/dev/null || { echo "Install Foundry first: https://book.getfoundry.sh/getting-started/installation"; exit 1; }
+	git submodule update --init --recursive
 	[ -d .venv ] || uv venv --python 3.11 .venv || python3.11 -m venv .venv
 	uv pip install --python $$PY -r requirements.txt || $$PY -m pip install -r requirements.txt
 	cd contracts && forge build && cd ..
@@ -47,9 +48,10 @@ train:
 	source scripts/env.sh
 	$$PY -m model.train
 
-# Base Sepolia: needs RPC_URL and a funded PRIVATE_KEY in the environment.
+# Base Sepolia: needs RPC_URL, a funded PRIVATE_KEY and the real role holders
+# (ATTESTOR, VERIFIER, REGULATOR addresses; ATTESTOR_PQ_KEY_HASH from `python -m attestor.keys`).
 deploy-testnet:
 	source scripts/env.sh
-	: "$${RPC_URL:?set RPC_URL}" "$${PRIVATE_KEY:?set PRIVATE_KEY}"
+	: "$${RPC_URL:?set RPC_URL}" "$${PRIVATE_KEY:?set PRIVATE_KEY}" "$${ATTESTOR:?set ATTESTOR}" "$${VERIFIER:?set VERIFIER}" "$${REGULATOR:?set REGULATOR}" "$${ATTESTOR_PQ_KEY_HASH:?set ATTESTOR_PQ_KEY_HASH}"
 	cd contracts && MODEL_VERSION_HASH=$$(tr -d ' \r\n' < ../model/artefacts/model_version.txt) \
 	  forge script script/Deploy.s.sol:Deploy --rpc-url "$$RPC_URL" --private-key "$$PRIVATE_KEY" --broadcast --verify
