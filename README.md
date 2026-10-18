@@ -39,7 +39,7 @@ make web       # http://localhost:3000 — demo personas switch between exporter
 make down
 ```
 
-`make demo` runs in 23 s on the development laptop after `make setup` (the committed model artefact and
+`make demo` runs in 23-26 s on the development laptop after `make setup`, including on a fresh clone (the committed model artefact and
 fixtures mean nothing is downloaded or trained). `make test` runs the contract, model and attestor
 test suites. `make train` regenerates the model and prints its `modelVersionHash`.
 
