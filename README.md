@@ -108,24 +108,28 @@ flowchart LR
 ## AI plausibility model
 
 Trained on Climate TRACE v5.10.0 iron-and-steel plant-months (CC BY 4.0): 52,869 rows, 866 plants,
-77 countries, routes BF-BOF / EAF / DRI-EAF. Features: production route, nameplate capacity and the
-country grid carbon intensity (Ember). Evaluation holds out whole plants (173 test plants):
+77 countries, routes BF-BOF / EAF / DRI-EAF. Features (FR-M1): production route, nameplate capacity,
+country grid carbon intensity (Ember) and the plant's own Climate TRACE emissions factor as a lagged
+prior (months m-14 to m-3, so at least two months old, as Climate TRACE publishes). Evaluation holds
+out whole plants (173 test plants, scored once) and reports the no-history case separately:
 
-| Check | Result | Target |
-| --- | --- | --- |
-| MAE of q50 vs Climate TRACE SEE | 0.079 tCO₂/t vs 0.171 for the route-median baseline (54% better) | ≥ 20% better |
-| 90% interval coverage | 93.0% (CI 90.5–95.2%) | 85–95% |
-| Recall at red, synthetic under-report at 0.5× | 0.86 | ≥ 0.9 — **missed** |
-| Recall at red, synthetic under-report at 0.7× | 0.59 | ≥ 0.6 — **missed** |
-| Recall at red, synthetic under-report at 0.85× | 0.38 | – |
-| False red on unmodified held-out values | 0.5% | – |
-| Inference incl. SHAP | ~8 ms warm | < 500 ms |
+| Check | With prior (9,208 rows) | Without prior (same rows) | Target |
+| --- | --- | --- | --- |
+| MAE of q50 vs route-median baseline | 0.042 vs 0.188 (78% better) | 0.088 (53% better) | ≥ 20% better |
+| 90% interval coverage | 92.0% (CI 89.2–94.4%) | 92.3% | 85–95% |
+| Recall at red, synthetic under-report at 0.5× | 0.97 | 0.84 — **missed** | ≥ 0.9 |
+| Recall at red, synthetic under-report at 0.7× | 0.89 | 0.61 | ≥ 0.6 |
+| Recall at red, synthetic under-report at 0.85× | 0.59 | 0.29 | – |
+| False red on unmodified values | 1.3% | 1.3% | – |
+| Inference incl. SHAP | ~5 ms | | < 500 ms |
 
-Detection is strong for BF-BOF (0.99 at every level) and weak for EAF and DRI-EAF, whose intervals
-are wide relative to a 30% under-report. The ground truth is Climate TRACE's own modelled estimate, so
-these numbers measure agreement with Climate TRACE, not with measured plant emissions. The artefact
-is frozen in `model/artefacts/embedproof_model_v1.json`; its SHA-256 is the on-chain
-`modelVersionHash` (`0x20b809be…9b3d`) and `make train` reproduces it byte for byte.
+With plant history every PRD target is met; a new plant with no Climate TRACE history misses the 0.5×
+recall target, and DRI-EAF detection is weak in both regimes (12 test plants). The ground truth is
+Climate TRACE's own modelled estimate, so these numbers measure consistency with Climate TRACE and its
+history, not accuracy against measured plant emissions; a plain persistence forecast is even closer on
+point error (MAE 0.026), and the model's value is the calibrated interval and the no-history branch.
+The artefact is frozen in `model/artefacts/embedproof_model_v1.json`; its SHA-256 is the on-chain
+`modelVersionHash` (`0x40d9ee13…08c8`) and `make train` reproduces it byte for byte.
 
 Full model card: [`model/MODEL_CARD.md`](model/MODEL_CARD.md). Data sources and licences:
 [`data/SOURCES.md`](data/SOURCES.md).

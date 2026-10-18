@@ -7,8 +7,8 @@
 - ML-DSA-44 backend: PQClean via `pqcrypto` on Windows (liboqs-python needs a C toolchain); liboqs in
   the Docker image (`WITH_LIBOQS=1`); browser verification with `@noble/post-quantum`. Cross-checked.
 - Report bundle AES-256-GCM encrypted; key travels in the certificate URL fragment.
-- Model target = Climate TRACE plant emissions factor; the Climate TRACE facility estimate is NOT a
-  feature (circular with that target). Features: route, capacity, Ember grid intensity.
+- Model (round 2, FR-M1): route, capacity, Ember grid intensity and a LAGGED Climate TRACE facility
+  prior (m-14..m-3). New plant split; test scored once; no-history case reported separately.
 - Demo EAF capacity moved to 300,000 t/yr (inside the training range); real plant names removed
   from demo fixtures.
 - UI: brag-styles `glass-layers` (frosted panels, drifting indigo/teal/rose fields, Inter + Space Grotesk).
@@ -19,14 +19,14 @@
 | `forge test` | 178 passed |
 | `forge coverage` (src) | 100% lines, statements, branches, functions |
 | Gas, receipt | attest 228,019 ≤ 250k; first allocate 115,243 ≤ 120k |
-| `pytest model/tests attestor/tests` | 334 passed |
+| `pytest model/tests attestor/tests` | 341 passed |
 | `pnpm test` / lint (web) | 33 passed (4 opt-in live skipped) / clean |
 | `make demo` | 5/5 scenarios + 13 hardening/replay probes, 23 s |
 | Browser click-through | (a) green attest, (b) red → verifier reject with reason, (c) DoubleClaimBlocked panel + importer claim, (d) tamper flips ECDSA + ML-DSA; amber attest; mobile 375 px and tablet nav |
 | Fresh clone keeps model hash | `20b809be…` byte-identical (`.gitattributes`) |
 
 ## Deltas from the PRD
-- Detection recall targets missed (0.86 at 0.5×, 0.59 at 0.7×); reported honestly.
+- Detection targets met with plant history (0.97 at 0.5×, 0.89 at 0.7×); without history 0.84 at 0.5× misses; DRI-EAF weak. Metrics measure consistency with Climate TRACE, stated in the model card.
 - +20 CBAM-default rule fires for most honest EAF mills (EC steel defaults are BF-BOF-scale, direct-only); implemented as specified, documented in the model card.
 - Sentinel-2 feature and 2-of-3 attestor quorum not built (cut list / roadmap).
 - Privacy as built differs from the PRD text (tonnes public; key also to operator and allocation holders; no per-field disclosure) — documented in README.

@@ -6,8 +6,13 @@
     s.score_report(report, installation)    # -> ScoreResult dict (INTERFACES section 6)
 
 The scorer compares the DECLARED specific embedded emissions (SEE) with a plausible interval predicted from route,
-nameplate capacity and national grid carbon intensity. It does not measure emissions; the training target is Climate
-TRACE's own modelled estimate (see model/MODEL_CARD.md).
+nameplate capacity, national grid carbon intensity and, when available, a LAGGED Climate TRACE prior of the same plant
+(its own direct emissions factor averaged over months m-14..m-3). It does not measure emissions; the training target is
+Climate TRACE's own modelled estimate, so a score measures consistency with Climate TRACE's history (see model/MODEL_CARD.md).
+
+The prior is read from `installation["ctLaggedPriorEf"]` or, for known installations, from
+`data/installations_demo.json -> priors.ctLaggedPriorEf`. Without it the no-history branch (separate, wider calibrated
+intervals) is used.
 """
 from __future__ import annotations
 
@@ -29,7 +34,7 @@ DEFAULT_DEMO_INSTALLATIONS = REPO / "data" / "installations_demo.json"
 
 GREEN_MAX, AMBER_MAX = 30, 60  # green <= 30, amber 31-60, red > 60
 CBAM_HALF_PENALTY = 20
-SHAP_PUBLIC_NAMES = {"route_code": "route", "capacity_tpy": "capacityTpy", "grid_gco2_kwh": "gridIntensity"}
+SHAP_PUBLIC_NAMES = {"route_code": "route", "capacity_tpy": "capacityTpy", "grid_gco2_kwh": "gridIntensity", "ct_prior_ef": "ctPrior"}
 
 
 def band_for(score: int) -> str:
@@ -108,7 +113,8 @@ class Scorer:
 
     def _calibrated_interval(self, route: str, x: np.ndarray) -> tuple[float, float, float]:
         raw = np.sort([float(self._boosters[k].predict(x, num_threads=1)[0]) for k in ("q05", "q50", "q95")])
-        o = self._offsets.get(route) or self._offsets["ALL"]
+        regime = "with_prior" if not math.isnan(x[0, F.FEATURES.index("ct_prior_ef")]) else "no_prior"
+        o = self._offsets[regime][route]
         q50 = float(raw[1])
         lo = max(min(float(raw[0]) - o["lower"], q50), 0.0)
         hi = max(float(raw[2]) + o["upper"], q50)
@@ -137,7 +143,10 @@ class Scorer:
         if grid is None:
             grid = F.grid_lookup(self._grid, iso3, year)  # NaN when the country has no Ember row
 
-        x = F.feature_row(route, cap, grid)
+        prior = installation.get("ctLaggedPriorEf")
+        if prior is None:
+            prior = priors.get("ctLaggedPriorEf")
+        x = F.feature_row(route, cap, grid, prior)
         q05, q50, q95 = self._calibrated_interval(route, x)
 
         default = round(self.cbam_default(iso3, route), 4)
@@ -164,14 +173,14 @@ class Scorer:
             "modelVersionHash": self._hash,
             "shap": shap_out,
             "explanation": self._explain(see, q05, q50, q95, route, cap, country, default, below_half, shap_out[0] if shap_out else None,
-                                       self._ranges.get(route, {}).get("capacity_tpy")),
+                                       self._ranges.get(route, {}).get("capacity_tpy"), x[0, F.FEATURES.index("ct_prior_ef")]),
             "latencyMs": 0.0,
         }
         result["latencyMs"] = round((time.perf_counter() - t0) * 1000.0, 3)
         return result
 
     @staticmethod
-    def _explain(see, q05, q50, q95, route, cap, country, default, below_half, top, cap_range=None) -> str:
+    def _explain(see, q05, q50, q95, route, cap, country, default, below_half, top, cap_range=None, prior=math.nan) -> str:
         article = "an" if route[0] in "AEIOU" else "a"
         where = f"{article} {route} plant" + (f" of {cap:,.0f} t/yr" if cap else "") + (f" in {country}" if country else "")
         if see < q05:
@@ -180,7 +189,9 @@ class Scorer:
             pos = f"is above the 95th-percentile bound {q95:.2f} of the plausible range {q05:.2f}-{q95:.2f} (median {q50:.2f})"
         else:
             pos = f"lies inside the plausible range {q05:.2f}-{q95:.2f} (median {q50:.2f})"
-        text = f"Declared {see:.3f} tCO2/t {pos} for {where}"
+        basis = (f"given its Climate TRACE lagged prior {prior:.2f} tCO2e/t" if not math.isnan(prior)
+                 else "with no Climate TRACE history (route, capacity and grid only)")
+        text = f"Declared {see:.3f} tCO2/t {pos} for {where}, {basis}"
         if below_half:
             text += f", and is under half of the CBAM default {default:.2f}"
         if top:

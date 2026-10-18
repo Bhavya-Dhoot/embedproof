@@ -74,7 +74,9 @@ The transitional-period (Dec 2023) default-value document was not used.
 
 ## 4. Demo installations and reports (synthetic, fictional)
 
-`data/installations_demo.json` holds the grid and capacity priors of the two **fictional** installations (INTERFACES section 2). Each block records the real Climate TRACE asset
-id used only as route/capacity-class provenance (TR-EAF-0001: 1567079; TR-BOF-0002: 1567073); these are not model inputs and nothing is stated or implied about those companies.
+`data/installations_demo.json` holds the grid, capacity and **lagged Climate TRACE prior** of the two **fictional** installations (INTERFACES section 2). The prior (`priors.ctLaggedPriorEf`, the direct emissions
+factor in tCO2e/t averaged over months m-14..m-3) is borrowed from the real Climate TRACE asset of the same route and capacity class and the asset id is recorded (TR-EAF-0001: 1567079, prior 0.08, 12 of 12 window months;
+TR-BOF-0002: 1567073, prior 1.9, 10 of 12 months); the block exists only for provenance and nothing is stated or implied about those companies. The model's training/lookup fixtures are unchanged in round 2
+(the lagged prior is computed in `model/features.py` from the existing `ct_ef_direct` column of `steel_facility_months.csv`).
 The demo EAF's 300,000 t/yr is inside the training range (smallest EAF in the training data: 200,000 t/yr).
 `data/demo_reports/*.json` are synthetic reports for the fictional installations (see `model/MODEL_CARD.md` for how each number was chosen).

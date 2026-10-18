@@ -1,5 +1,5 @@
 {
-  "_comment": "Feature priors for the two FICTIONAL demo installations (INTERFACES section 2). Keyed by installation id. Read by model.scorer.Scorer. The climateTraceReference blocks only record which real Climate TRACE asset supplied the route / capacity-class context; they are provenance, not a model input, and nothing is stated or implied about any real company.",
+  "_comment": "Feature priors for the two FICTIONAL demo installations (INTERFACES section 2). Keyed by installation id. Read by model.scorer.Scorer. priors.ctLaggedPriorEf is the lagged Climate TRACE prior (direct emissions factor, tCO2e per t steel, mean over months m-14..m-3) BORROWED from the referenced real Climate TRACE asset of the same route and capacity class; it is the value that asset had for the demo periods 2026-09 and 2026-10. The climateTraceReference blocks record which real asset supplied the borrowed values; nothing is stated or implied about any real company.",
   "TR-EAF-0001": {
     "displayName": "Marmara Demir Mini-Mill (fictional)",
     "fictional": true,
@@ -10,17 +10,18 @@
     "priors": {
       "capacityTpy": 300000,
       "gridGco2PerKwh": 475.73,
-      "gridSource": "Ember yearly electricity data, power-sector CO2 intensity, TUR 2025 (CC BY 4.0); data/fixtures/grid_intensity_ember_annual.csv"
+      "gridSource": "Ember yearly electricity data, power-sector CO2 intensity, TUR 2025 (CC BY 4.0); data/fixtures/grid_intensity_ember_annual.csv",
+      "ctLaggedPriorEf": 0.08,
+      "ctLaggedPriorSource": "Climate TRACE v5.10.0 asset 1567079 direct emissions factor, mean over 2025-07..2026-06 (12 of 12 months; constant 0.08) for period 2026-09; 2025-08..2026-06 (11 months; constant 0.08) for 2026-10"
     },
     "climateTraceReference": {
-      "role": "provenance of the route / capacity-class context only; NOT a model input",
+      "role": "source of the borrowed lagged prior (priors.ctLaggedPriorEf) and the route / capacity-class context",
       "climateTraceSourceId": 1567079,
       "country": "TUR",
       "route": "EAF",
       "capacityTpy": 690000,
-      "ctMeanSee2025TCO2PerT": 0.4891,
-      "notAModelInput": true,
-      "capacityClassNote": "Closest-capacity Turkish EAF in Climate TRACE v5.10.0. The demo mill's 300,000 t/yr is inside the training range (smallest EAF in the training set is 200,000 t/yr)."
+      "capacityClassNote": "Closest-capacity Turkish EAF in Climate TRACE v5.10.0. The demo mill's 300,000 t/yr is inside the training range (smallest EAF in the training set is 200,000 t/yr).",
+      "ctMeanSee2025TCO2PerT_referenceOnly": 0.4891
     }
   },
   "TR-BOF-0002": {
@@ -33,17 +34,18 @@
     "priors": {
       "capacityTpy": 3500000,
       "gridGco2PerKwh": 475.73,
-      "gridSource": "Ember yearly electricity data, power-sector CO2 intensity, TUR 2025 (CC BY 4.0); data/fixtures/grid_intensity_ember_annual.csv"
+      "gridSource": "Ember yearly electricity data, power-sector CO2 intensity, TUR 2025 (CC BY 4.0); data/fixtures/grid_intensity_ember_annual.csv",
+      "ctLaggedPriorEf": 1.9,
+      "ctLaggedPriorSource": "Climate TRACE v5.10.0 asset 1567073 direct emissions factor, mean over 2025-07..2026-06 (10 of 12 months present; constant 1.9) for period 2026-09; 2025-08..2026-06 (9 months; constant 1.9) for 2026-10"
     },
     "climateTraceReference": {
-      "role": "provenance of the route / capacity-class context only; NOT a model input",
+      "role": "source of the borrowed lagged prior (priors.ctLaggedPriorEf) and the route / capacity-class context",
       "climateTraceSourceId": 1567073,
       "country": "TUR",
       "route": "BF-BOF",
       "capacityTpy": 3501000,
-      "ctMeanSee2025TCO2PerT": 2.2903,
-      "notAModelInput": true,
-      "capacityClassNote": "Turkish BF-BOF plant in Climate TRACE v5.10.0 with essentially the same nameplate capacity (3.501 Mt/yr). The fictional installation is not this company and no inference about it is made."
+      "capacityClassNote": "Turkish BF-BOF plant in Climate TRACE v5.10.0 with essentially the same nameplate capacity (3.501 Mt/yr). The fictional installation is not this company and no inference about it is made.",
+      "ctMeanSee2025TCO2PerT_referenceOnly": 2.2903
     }
   }
 }

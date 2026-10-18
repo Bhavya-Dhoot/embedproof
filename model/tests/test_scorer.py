@@ -8,6 +8,7 @@ import time
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 import pytest
 
 from model import features as F
@@ -126,7 +127,7 @@ def test_published_numbers_reproduce_the_risk_score(scorer):
 
 def test_shap_values_add_up_to_the_q50_prediction(scorer):
     res = scorer.score_report(load_report("implausible_bof.json"), INST_BOF)
-    x = F.feature_row("BF-BOF", 3500000, 475.73)
+    x = F.feature_row("BF-BOF", 3500000, 475.73, 1.9)
     base = float(np.ravel(scorer._explainer.expected_value)[0])
     sv = np.asarray(scorer._explainer.shap_values(x, check_additivity=False))[0]
     assert base + sv.sum() == pytest.approx(float(scorer._boosters["q50"].predict(x)[0]), abs=1e-6)
@@ -137,14 +138,15 @@ def test_quantiles_never_cross(scorer):
     for route in ("BF-BOF", "EAF", "DRI-EAF"):
         for cap in (None, 50_000, 1_000_000, 20_000_000):
             for grid in (None, 5.0, 475.0, 900.0):
-                rep = {"period": "2026-09", "seeTco2PerT": 0.5, "route": route}
-                inst = {"id": "XX", "route": route, "capacityTpy": cap, "country": "ZZ"}
-                if grid is not None:
-                    scorer._demo["XX"] = {"priors": {"gridGco2PerKwh": grid}}
-                else:
-                    scorer._demo.pop("XX", None)
-                res = scorer.score_report(rep, inst)
-                assert 0 <= res["q05"] <= res["q50"] <= res["q95"]
+                for prior in (None, 0.05, 0.4, 1.9, 2.5):
+                    rep = {"period": "2026-09", "seeTco2PerT": 0.5, "route": route}
+                    inst = {"id": "XX", "route": route, "capacityTpy": cap, "country": "ZZ", "ctLaggedPriorEf": prior}
+                    if grid is not None:
+                        scorer._demo["XX"] = {"priors": {"gridGco2PerKwh": grid}}
+                    else:
+                        scorer._demo.pop("XX", None)
+                    res = scorer.score_report(rep, inst)
+                    assert 0 <= res["q05"] <= res["q50"] <= res["q95"]
     scorer._demo.pop("XX", None)
 
 
@@ -152,10 +154,13 @@ def test_quantiles_never_cross(scorer):
 def test_unknown_installation_scores_with_missing_priors(scorer):
     rep = {"schema": "embedproof.report.v1", "installationId": "XX-9999", "period": "2026-09", "route": "EAF", "productionTonnes": 100,
            "seeTco2PerT": 0.5}
-    res = scorer.score_report(rep, {"id": "XX-9999", "route": "EAF"})  # no capacity, no country
+    res = scorer.score_report(rep, {"id": "XX-9999", "route": "EAF"})  # no capacity, no country, no prior
     assert set(res) == RESULT_KEYS and res["riskScore"] in range(101)
-    shap_values = {s["feature"]: s["value"] for s in res["shap"]}
-    assert shap_values["capacityTpy"] is None and shap_values["gridIntensity"] is None
+    assert len(res["shap"]) == 3
+    values = {s["feature"]: s["value"] for s in res["shap"]}
+    for name in ("capacityTpy", "gridIntensity", "ctPrior"):
+        assert values.get(name) is None
+    assert "no Climate TRACE history" in res["explanation"]
 
 
 def test_unknown_country_uses_other_countries_cbam_default(scorer):
@@ -221,3 +226,86 @@ def test_inference_latency_under_500ms_including_shap(scorer):
         t.append((time.perf_counter() - t0) * 1000)
     assert max(t) < 500, f"max latency {max(t):.1f} ms"
     assert res["latencyMs"] < 500 and math.isfinite(res["latencyMs"])
+
+
+# ------------------------------------------------------------------ lagged Climate TRACE prior
+def _plant_frame(values, start=(2022, 1), sid=1):
+    rows = []
+    y, m = start
+    for v in values:
+        rows.append({"source_id": sid, "year": y, "month": m, "ct_ef_direct": v})
+        m += 1
+        if m == 13:
+            y, m = y + 1, 1
+    return pd.DataFrame(rows)
+
+
+def test_lagged_prior_window_is_m_minus_14_to_m_minus_3_and_never_looks_ahead():
+    vals = [float(i) for i in range(1, 31)]  # month index t = 0..29 holds value t+1
+    df = _plant_frame(vals)
+    mean, cnt = F.lagged_mean(df, "ct_ef_direct")
+    t = 20
+    assert mean[t] == pytest.approx(np.mean(vals[t - 14:t - 2]))  # months t-14..t-3 inclusive
+    assert cnt[t] == 12
+    # changing months m-2, m-1, m and the future must not change the prior of month m
+    changed = df.copy()
+    changed.loc[changed.index >= t - 2, "ct_ef_direct"] = 999.0
+    mean2, _ = F.lagged_mean(changed, "ct_ef_direct")
+    assert mean2[t] == mean[t]
+    # ...but changing m-3 must
+    changed = df.copy()
+    changed.loc[t - 3, "ct_ef_direct"] = 999.0
+    assert F.lagged_mean(changed, "ct_ef_direct")[0][t] != mean[t]
+
+
+def test_lagged_prior_is_nan_without_enough_history():
+    df = _plant_frame([1.0] * 12)
+    mean, cnt = F.lagged_mean(df, "ct_ef_direct")
+    assert np.isnan(mean[:8]).all()      # months 0..7: fewer than 6 earlier months inside m-14..m-3
+    assert not np.isnan(mean[8:]).any()  # month 8 is the first with 6 (months 0..5)
+    assert cnt[0] == 0
+
+
+def test_training_frame_prior_uses_only_the_plants_own_earlier_months():
+    df = F.load_training_frame()
+    sample = df[df["ct_prior_ef"].notna()].sample(40, random_state=3)
+    t_all = (df["year"] - 2021) * 12 + df["month"] - 1
+    for idx, r in sample.iterrows():
+        t = (r.year - 2021) * 12 + r.month - 1
+        own = df[(df["source_id"] == r.source_id) & (t_all >= t - 14) & (t_all <= t - 3)]
+        assert len(own) >= F.PRIOR_MIN_MONTHS
+        assert own["ct_ef_direct"].mean() == pytest.approx(r.ct_prior_ef, abs=1e-9)
+        assert (own["source_id"] == r.source_id).all() and ((t_all[own.index]) <= t - 3).all()
+
+
+def test_prior_narrows_the_interval_and_no_prior_uses_the_wider_branch(scorer):
+    rep = load_report("honest_eaf.json")
+    with_prior = scorer.score_report(rep, INST_EAF)  # known installation -> borrowed prior
+    no_prior = scorer.score_report(rep, dict(INST_EAF, id="XX-0001", ctLaggedPriorEf=None))
+    assert "lagged prior" in with_prior["explanation"] and "no Climate TRACE history" in no_prior["explanation"]
+    assert (with_prior["q95"] - with_prior["q05"]) < (no_prior["q95"] - no_prior["q05"])
+
+
+def test_explicit_installation_prior_overrides_the_demo_file(scorer):
+    rep = load_report("honest_eaf.json")
+    a = scorer.score_report(rep, INST_EAF)
+    b = scorer.score_report(rep, dict(INST_EAF, ctLaggedPriorEf=0.45))
+    assert a["q50"] != b["q50"]
+
+
+def test_demo_installations_carry_a_borrowed_lagged_prior():
+    demo = json.loads((REPO / "data" / "installations_demo.json").read_text("utf-8"))
+    for key, ref_id in (("TR-EAF-0001", 1567079), ("TR-BOF-0002", 1567073)):
+        assert demo[key]["fictional"] is True and demo[key]["priors"]["ctLaggedPriorEf"] > 0
+        assert demo[key]["climateTraceReference"]["climateTraceSourceId"] == ref_id
+
+
+def test_artefact_has_per_route_offsets_for_both_regimes():
+    a = json.loads((REPO / "model" / "artefacts" / "embedproof_model_v1.json").read_text("utf-8"))
+    offs = a["post_processing"]["offsets"]
+    assert set(offs) == {"with_prior", "no_prior"}
+    for regime in offs.values():
+        assert set(regime) == {"BF-BOF", "EAF", "DRI-EAF"}
+        for o in regime.values():
+            assert o["n_calibration_plants"] >= 5 and math.isfinite(o["lower"]) and math.isfinite(o["upper"])
+    assert [f["name"] for f in a["features"]] == F.FEATURES

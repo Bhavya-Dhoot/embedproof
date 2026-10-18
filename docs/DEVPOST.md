@@ -50,8 +50,8 @@ Measured on the final build:
 | --- | --- |
 | Contract tests | 178 passing (unit, fuzz, stateful invariants, timelocked upgrade), 100% line and branch coverage |
 | Gas (receipt) | `attest()` 228,019 (budget 250k) · first `allocate()` 115,243 (budget 120k) |
-| Model, 173 held-out plants | q50 MAE 0.079 tCO₂/t vs 0.171 route-median baseline (54% better); 90% interval coverage 93.0% |
-| Detection at red | synthetic under-reports at 0.5× / 0.7×: recall 0.86 / 0.59 (targets 0.9 / 0.6 — missed; strong for BF-BOF, weak for EAF) |
+| Model, 173 held-out plants (lagged Climate TRACE prior) | q50 MAE 0.042 tCO₂/t vs 0.188 route-median baseline (78% better); 90% interval coverage 92.0% |
+| Detection at red | synthetic under-reports at 0.5× / 0.7×: recall 0.97 / 0.89 with plant history (targets 0.9 / 0.6 met); 0.84 / 0.61 for a plant with no history; DRI-EAF weak |
 | Attestor | report submit → attestation tx hash in ~0.3 s locally; 293 unit tests |
 | `make demo` | all four scenarios plus 13 hardening and replay probes, 23 s from a cold start |
 
