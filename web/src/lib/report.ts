@@ -45,6 +45,10 @@ export interface ScoreResult {
   modelVersionHash: Hex;
   shap: ShapItem[];
   explanation: string;
+  /** rule flags raised on top of the model (older bundles lack them); `message` is the text to show */
+  flags?: { code: string; message?: string }[];
+  /** false when the plant has no emissions history: wider interval, lower detection power (older bundles lack this) */
+  hasHistory?: boolean;
   latencyMs?: number;
 }
 

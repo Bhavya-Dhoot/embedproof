@@ -9,9 +9,9 @@ const inter = Inter({ subsets: ["latin", "latin-ext"], weight: ["400", "700"], v
 const space = Space_Grotesk({ subsets: ["latin", "latin-ext"], weight: ["700"], variable: "--font-space", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "EmbedProof: tamper-evident, quantum-safe CO₂ certificates",
+  title: "EmbedProof: tamper-evident, post-quantum-signed CO₂ certificates",
   description:
-    "A steel mill's CO₂-per-tonne claim becomes an AI-checked, dual-signed certificate, and an on-chain ledger blocks the same tonne being claimed twice. Hackathon prototype.",
+    "A steel mill's CO₂-per-tonne claim becomes an attestor-signed certificate, checked against the plant's own history, and an on-chain ledger cannot allocate the same tonnes twice. Hackathon prototype.",
 };
 
 export const viewport: Viewport = { themeColor: "#0B1020", width: "device-width", initialScale: 1 };

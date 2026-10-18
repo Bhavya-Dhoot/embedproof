@@ -1,0 +1,7134 @@
+{
+ "modelVersionHash": "0x40d9ee13d1c9ee9c52d0eb3749353665238712a72e7d8444bdc51be41b1008c8",
+ "how": "Frozen artefact, no refit. Same test plants, fixtures, calibration offsets and rounding as eval.json; only the subset differs. Truth = Climate TRACE v5.10.0 modelled SEE and the prior is the plant's own Climate TRACE history, so these numbers measure persistence/consistency with Climate TRACE, not real-world accuracy (see MODEL_CARD.md section 0).",
+ "feeds_model_version_hash": false,
+ "turkiye": {
+  "definition": "iso3 == TUR among the held-out TEST plants of the round-2 split (seed 20261019)",
+  "with_prior": {
+   "n_plants": 4,
+   "n_plant_months": 230,
+   "plants_by_route": {
+    "BF-BOF": 1,
+    "EAF": 3
+   },
+   "statistically_powered": false,
+   "caveat": "not statistically powered: n = 4 plants (230 plant-months, strongly correlated within plant); treat every number as an anecdote about these plants, not an estimate for Turkiye",
+   "mae_q50": 0.04861611304347827,
+   "mae_route_median_baseline": 0.10430187826086953,
+   "improvement_vs_route_median": 0.53389033971292,
+   "mae_persistence_lagged_total_see": 0.048499996656471596,
+   "q50_mae_relative_to_persistence": 1.0023941524744657,
+   "coverage_90": 0.8652173913043478,
+   "mean_interval_width": 0.21885043478260865,
+   "detection_synthetic": {
+    "0.5x": {
+     "synthetic": true,
+     "red_rate_full_rule": 1.0,
+     "red_rate_interval_only": 1.0
+    },
+    "0.7x": {
+     "synthetic": true,
+     "red_rate_full_rule": 0.6956521739130435,
+     "red_rate_interval_only": 0.6
+    },
+    "0.85x": {
+     "synthetic": true,
+     "red_rate_full_rule": 0.34347826086956523,
+     "red_rate_interval_only": 0.3
+    },
+    "1x": {
+     "synthetic": false,
+     "red_rate_full_rule": 0.034782608695652174,
+     "red_rate_interval_only": 0.034782608695652174
+    },
+    "note": "red_rate at factor < 1 is recall on SYNTHETIC underreports (factor x Climate TRACE value); at 1x it is the false-red rate"
+   },
+   "per_plant": [
+    {
+     "climateTraceSourceId": 1567070,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.05245539655172415,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      0.4209603448275861,
+      0.5158413793103448,
+      0.6838310344827585
+     ],
+     "mean_truth": 0.5330606724137932
+    },
+    {
+     "climateTraceSourceId": 1567073,
+     "route": "BF-BOF",
+     "plant_months": 56,
+     "mae_q50": 0.04765662500000006,
+     "coverage_90": 0.625,
+     "mean_q05_q50_q95": [
+      2.2147875000000004,
+      2.2782625,
+      2.3329714285714287
+     ],
+     "mean_truth": 2.295534017857143
+    },
+    {
+     "climateTraceSourceId": 1567079,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.04745831034482759,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      0.4114275862068966,
+      0.48996206896551725,
+      0.6519310344827586
+     ],
+     "mean_truth": 0.4962606896551724
+    },
+    {
+     "climateTraceSourceId": 1567080,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.046861034482758614,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      0.40892758620689657,
+      0.5009862068965517,
+      0.6593000000000001
+     ],
+     "mean_truth": 0.5054606896551724
+    }
+   ]
+  },
+  "without_prior_same_rows": {
+   "n_plants": 4,
+   "n_plant_months": 230,
+   "plants_by_route": {
+    "BF-BOF": 1,
+    "EAF": 3
+   },
+   "statistically_powered": false,
+   "caveat": "not statistically powered: n = 4 plants (230 plant-months, strongly correlated within plant); treat every number as an anecdote about these plants, not an estimate for Turkiye",
+   "mae_q50": 0.07227286086956523,
+   "mae_route_median_baseline": 0.10430187826086953,
+   "improvement_vs_route_median": 0.307079967545709,
+   "coverage_90": 0.8652173913043478,
+   "mean_interval_width": 0.631057391304348,
+   "detection_synthetic": {
+    "0.5x": {
+     "synthetic": true,
+     "red_rate_full_rule": 1.0,
+     "red_rate_interval_only": 0.9565217391304348
+    },
+    "0.7x": {
+     "synthetic": true,
+     "red_rate_full_rule": 0.46956521739130436,
+     "red_rate_interval_only": 0.32608695652173914
+    },
+    "0.85x": {
+     "synthetic": true,
+     "red_rate_full_rule": 0.2782608695652174,
+     "red_rate_interval_only": 0.26956521739130435
+    },
+    "1x": {
+     "synthetic": false,
+     "red_rate_full_rule": 0.030434782608695653,
+     "red_rate_interval_only": 0.013043478260869565
+    },
+    "note": "red_rate at factor < 1 is recall on SYNTHETIC underreports (factor x Climate TRACE value); at 1x it is the false-red rate"
+   },
+   "per_plant": [
+    {
+     "climateTraceSourceId": 1567070,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.05777956896551724,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      0.4121896551724138,
+      0.5881827586206896,
+      1.2109241379310345
+     ],
+     "mean_truth": 0.5330606724137932
+    },
+    {
+     "climateTraceSourceId": 1567073,
+     "route": "BF-BOF",
+     "plant_months": 56,
+     "mae_q50": 0.05019255357142858,
+     "coverage_90": 0.6071428571428571,
+     "mean_q05_q50_q95": [
+      2.223778571428572,
+      2.272685714285714,
+      2.333135714285714
+     ],
+     "mean_truth": 2.295534017857143
+    },
+    {
+     "climateTraceSourceId": 1567079,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.08899448275862074,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      0.4121275862068966,
+      0.5852551724137932,
+      1.218448275862069
+     ],
+     "mean_truth": 0.4962606896551724
+    },
+    {
+     "climateTraceSourceId": 1567080,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.09136344827586206,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      0.41160689655172417,
+      0.5968241379310346,
+      1.2034344827586205
+     ],
+     "mean_truth": 0.5054606896551724
+    }
+   ]
+  },
+  "without_prior_all_rows": {
+   "n_plants": 4,
+   "n_plant_months": 262,
+   "plants_by_route": {
+    "BF-BOF": 1,
+    "EAF": 3
+   },
+   "statistically_powered": false,
+   "caveat": "not statistically powered: n = 4 plants (262 plant-months, strongly correlated within plant); treat every number as an anecdote about these plants, not an estimate for Turkiye",
+   "mae_q50": 0.07107925572519085,
+   "mae_route_median_baseline": 0.1033091946564885,
+   "improvement_vs_route_median": 0.3119755123294188,
+   "coverage_90": 0.8778625954198473,
+   "mean_interval_width": 0.6273618320610685,
+   "detection_synthetic": {
+    "0.5x": {
+     "synthetic": true,
+     "red_rate_full_rule": 1.0,
+     "red_rate_interval_only": 0.9618320610687023
+    },
+    "0.7x": {
+     "synthetic": true,
+     "red_rate_full_rule": 0.49236641221374045,
+     "red_rate_interval_only": 0.3320610687022901
+    },
+    "0.85x": {
+     "synthetic": true,
+     "red_rate_full_rule": 0.2748091603053435,
+     "red_rate_interval_only": 0.26717557251908397
+    },
+    "1x": {
+     "synthetic": false,
+     "red_rate_full_rule": 0.026717557251908396,
+     "red_rate_interval_only": 0.011450381679389313
+    },
+    "note": "red_rate at factor < 1 is recall on SYNTHETIC underreports (factor x Climate TRACE value); at 1x it is the false-red rate"
+   },
+   "per_plant": [
+    {
+     "climateTraceSourceId": 1567070,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.05701512121212122,
+     "coverage_90": 0.9696969696969697,
+     "mean_q05_q50_q95": [
+      0.41531818181818186,
+      0.5886818181818181,
+      1.2098545454545455
+     ],
+     "mean_truth": 0.5340020606060606
+    },
+    {
+     "climateTraceSourceId": 1567073,
+     "route": "BF-BOF",
+     "plant_months": 64,
+     "mae_q50": 0.04692876562500001,
+     "coverage_90": 0.640625,
+     "mean_q05_q50_q95": [
+      2.2267062500000003,
+      2.2764625,
+      2.3339187499999996
+     ],
+     "mean_truth": 2.296658703125
+    },
+    {
+     "climateTraceSourceId": 1567079,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.08857974242424246,
+     "coverage_90": 0.9393939393939394,
+     "mean_q05_q50_q95": [
+      0.41500909090909094,
+      0.5857818181818183,
+      1.2181636363636363
+     ],
+     "mean_truth": 0.49720207575757575
+    },
+    {
+     "climateTraceSourceId": 1567080,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.09106156060606059,
+     "coverage_90": 0.9545454545454546,
+     "mean_q05_q50_q95": [
+      0.4144909090909091,
+      0.5974636363636365,
+      1.2032727272727273
+     ],
+     "mean_truth": 0.5064020757575758
+    }
+   ]
+  },
+  "rows_without_history_naturally": 32
+ },
+ "all_test_plants_reference": {
+  "definition": "every held-out test plant (the population behind eval.json)",
+  "with_prior": {
+   "n_plants": 172,
+   "n_plant_months": 9208,
+   "plants_by_route": {
+    "BF-BOF": 62,
+    "DRI-EAF": 12,
+    "EAF": 98
+   },
+   "statistically_powered": true,
+   "mae_q50": 0.04218042843179844,
+   "mae_route_median_baseline": 0.1877099158340573,
+   "improvement_vs_route_median": 0.7752892901561602,
+   "mae_persistence_lagged_total_see": 0.026208873727250233,
+   "q50_mae_relative_to_persistence": 1.6093949274875576,
+   "coverage_90": 0.919635099913119,
+   "mean_interval_width": 0.24570327975673328,
+   "detection_synthetic": {
+    "0.5x": {
+     "synthetic": true,
+     "red_rate_full_rule": 0.9691572545612511,
+     "red_rate_interval_only": 0.957971329278888
+    },
+    "0.7x": {
+     "synthetic": true,
+     "red_rate_full_rule": 0.8942224152910513,
+     "red_rate_interval_only": 0.8521937445699392
+    },
+    "0.85x": {
+     "synthetic": true,
+     "red_rate_full_rule": 0.588401390095569,
+     "red_rate_interval_only": 0.5403996524761078
+    },
+    "1x": {
+     "synthetic": false,
+     "red_rate_full_rule": 0.01259774109470026,
+     "red_rate_interval_only": 0.009448305821025196
+    },
+    "note": "red_rate at factor < 1 is recall on SYNTHETIC underreports (factor x Climate TRACE value); at 1x it is the false-red rate"
+   },
+   "per_plant": [
+    {
+     "climateTraceSourceId": 1566426,
+     "route": "DRI-EAF",
+     "plant_months": 58,
+     "mae_q50": 0.10346262068965516,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.33992241379310345,
+      0.7927999999999998,
+      1.6034810344827581
+     ],
+     "mean_truth": 0.6893373793103448
+    },
+    {
+     "climateTraceSourceId": 1566429,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.03398418965517246,
+     "coverage_90": 0.7931034482758621,
+     "mean_q05_q50_q95": [
+      1.9232258620689655,
+      1.988,
+      2.074758620689655
+     ],
+     "mean_truth": 1.9760540172413792
+    },
+    {
+     "climateTraceSourceId": 1566432,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.030349086206896546,
+     "coverage_90": 0.8448275862068966,
+     "mean_q05_q50_q95": [
+      2.307846551724138,
+      2.3745068965517246,
+      2.426022413793103
+     ],
+     "mean_truth": 2.3702748793103448
+    },
+    {
+     "climateTraceSourceId": 1566439,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.040194086206896566,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.5987724137931033,
+      0.6875413793103448,
+      0.884403448275862
+     ],
+     "mean_truth": 0.7277354655172414
+    },
+    {
+     "climateTraceSourceId": 1566440,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.06088734482758623,
+     "coverage_90": 0.7758620689655172,
+     "mean_q05_q50_q95": [
+      1.9051224137931038,
+      1.980791379310345,
+      2.091237931034483
+     ],
+     "mean_truth": 2.0416787241379315
+    },
+    {
+     "climateTraceSourceId": 1566443,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.0204953275862069,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.1420793103448276,
+      0.21864827586206895,
+      0.40288620689655175
+     ],
+     "mean_truth": 0.22850660344827586
+    },
+    {
+     "climateTraceSourceId": 1566452,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.014345275862068942,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      1.8494603448275861,
+      1.974424137931034,
+      2.0251724137931038
+     ],
+     "mean_truth": 1.979225172413793
+    },
+    {
+     "climateTraceSourceId": 1566454,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.07087420689655173,
+     "coverage_90": 0.7931034482758621,
+     "mean_q05_q50_q95": [
+      0.3894655172413793,
+      0.48231724137931037,
+      0.7084034482758621
+     ],
+     "mean_truth": 0.4114430344827586
+    },
+    {
+     "climateTraceSourceId": 1566459,
+     "route": "BF-BOF",
+     "plant_months": 55,
+     "mae_q50": 0.015865727272727243,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      1.8760163636363645,
+      1.992107272727273,
+      2.0877218181818185
+     ],
+     "mean_truth": 1.9798838363636362
+    },
+    {
+     "climateTraceSourceId": 1566468,
+     "route": "DRI-EAF",
+     "plant_months": 58,
+     "mae_q50": 0.10173124137931032,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.2376,
+      0.7264379310344826,
+      1.5732965517241377
+     ],
+     "mean_truth": 0.6247066896551723
+    },
+    {
+     "climateTraceSourceId": 1566472,
+     "route": "BF-BOF",
+     "plant_months": 57,
+     "mae_q50": 0.024706578947368447,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      1.9385526315789472,
+      2.0197877192982454,
+      2.1618210526315793
+     ],
+     "mean_truth": 2.0444942982456142
+    },
+    {
+     "climateTraceSourceId": 1566476,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.01328163793103448,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.09677241379310345,
+      0.11490000000000002,
+      0.2733
+     ],
+     "mean_truth": 0.1281816379310345
+    },
+    {
+     "climateTraceSourceId": 1566477,
+     "route": "BF-BOF",
+     "plant_months": 37,
+     "mae_q50": 0.05137605405405407,
+     "coverage_90": 0.5675675675675675,
+     "mean_q05_q50_q95": [
+      2.1280486486486487,
+      2.1892135135135136,
+      2.216556756756757
+     ],
+     "mean_truth": 2.154109189189189
+    },
+    {
+     "climateTraceSourceId": 1566486,
+     "route": "BF-BOF",
+     "plant_months": 57,
+     "mae_q50": 0.02069101754385966,
+     "coverage_90": 0.9298245614035088,
+     "mean_q05_q50_q95": [
+      2.3621859649122805,
+      2.3998315789473685,
+      2.441401754385965
+     ],
+     "mean_truth": 2.4002079298245613
+    },
+    {
+     "climateTraceSourceId": 1566490,
+     "route": "BF-BOF",
+     "plant_months": 48,
+     "mae_q50": 0.021070791666666682,
+     "coverage_90": 0.9375,
+     "mean_q05_q50_q95": [
+      2.356591666666666,
+      2.397466666666667,
+      2.4387333333333334
+     ],
+     "mean_truth": 2.3964463333333335
+    },
+    {
+     "climateTraceSourceId": 1566491,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02109458620689659,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      2.361870689655172,
+      2.4009086206896546,
+      2.4413724137931037
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566502,
+     "route": "BF-BOF",
+     "plant_months": 57,
+     "mae_q50": 0.021384228070175468,
+     "coverage_90": 0.9298245614035088,
+     "mean_q05_q50_q95": [
+      2.362059649122807,
+      2.4012684210526314,
+      2.4417263157894737
+     ],
+     "mean_truth": 2.4007898070175435
+    },
+    {
+     "climateTraceSourceId": 1566513,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.0210477931034483,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      2.3622568965517234,
+      2.40128275862069,
+      2.441606896551724
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566516,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021034241379310377,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      2.3622000000000005,
+      2.4011241379310344,
+      2.441894827586207
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566524,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02108665517241383,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.3622000000000005,
+      2.4000224137931037,
+      2.4413482758620693
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566537,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02108665517241383,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.3622206896551714,
+      2.400187931034483,
+      2.441205172413793
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566552,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021114551724137957,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.3622000000000005,
+      2.4028000000000005,
+      2.4411844827586204
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566555,
+     "route": "BF-BOF",
+     "plant_months": 46,
+     "mae_q50": 0.021482978260869607,
+     "coverage_90": 0.8695652173913043,
+     "mean_q05_q50_q95": [
+      2.3717673913043478,
+      2.408391304347827,
+      2.4474152173913053
+     ],
+     "mean_truth": 2.409465760869565
+    },
+    {
+     "climateTraceSourceId": 1566566,
+     "route": "EAF",
+     "plant_months": 28,
+     "mae_q50": 0.021439607142857135,
+     "coverage_90": 0.7857142857142857,
+     "mean_q05_q50_q95": [
+      0.7598857142857144,
+      0.7890285714285713,
+      0.98105
+     ],
+     "mean_truth": 0.7801750357142858
+    },
+    {
+     "climateTraceSourceId": 1566573,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021034241379310377,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      2.3622000000000005,
+      2.4011241379310344,
+      2.441894827586207
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566590,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02110734482758622,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.3622000000000005,
+      2.3997224137931035,
+      2.4413482758620693
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566591,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02108665517241383,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.3622000000000005,
+      2.4000224137931037,
+      2.4413482758620693
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566597,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021034000000000035,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      2.3621948275862072,
+      2.4009103448275857,
+      2.4414362068965514
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566599,
+     "route": "BF-BOF",
+     "plant_months": 57,
+     "mae_q50": 0.021148789473684232,
+     "coverage_90": 0.9824561403508771,
+     "mean_q05_q50_q95": [
+      2.326740350877193,
+      2.4016859649122804,
+      2.442235087719298
+     ],
+     "mean_truth": 2.401083947368421
+    },
+    {
+     "climateTraceSourceId": 1566612,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021040103448275893,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      2.3622568965517234,
+      2.40078275862069,
+      2.4443189655172417
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566616,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.020991827586206917,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.3622465517241373,
+      2.400641379310345,
+      2.4412758620689656
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566618,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.022025379310344827,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      0.7628793103448276,
+      0.8115224137931036,
+      0.9653241379310344
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566658,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021039172413793127,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.3622000000000005,
+      2.4021706896551724,
+      2.4413120689655172
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566665,
+     "route": "BF-BOF",
+     "plant_months": 52,
+     "mae_q50": 0.023856596153846173,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      2.3210596153846152,
+      2.3834750000000002,
+      2.461015384615385
+     ],
+     "mean_truth": 2.40222725
+    },
+    {
+     "climateTraceSourceId": 1566666,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021097310344827612,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.361913793103449,
+      2.402182758620689,
+      2.442448275862069
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566667,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.021950689655172405,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7502879310344828,
+      0.8100620689655171,
+      0.9612465517241378
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566677,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02185979310344827,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7415844827586209,
+      0.808006896551724,
+      0.9606431034482757
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566689,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02108665517241383,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.3622000000000005,
+      2.4000224137931037,
+      2.441205172413793
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566691,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.022301379310344822,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      0.7549448275862068,
+      0.8083465517241379,
+      0.9650586206896554
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566718,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.021935655172413793,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      0.7588551724137931,
+      0.8078344827586206,
+      0.9621241379310346
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566727,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.021923586206896554,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      0.7614551724137931,
+      0.8087948275862069,
+      0.9632586206896552
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566734,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.022025379310344827,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      0.7628793103448276,
+      0.8115224137931036,
+      0.9653241379310344
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566737,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021068724137931077,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.3622827586206894,
+      2.40128275862069,
+      2.442505172413793
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566749,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.022596206896551726,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      0.7630275862068967,
+      0.8141844827586205,
+      0.9647448275862069
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566752,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.021823655172413792,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      0.7627999999999998,
+      0.8115034482758621,
+      0.965056896551724
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566756,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021038137931034498,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      2.3622000000000005,
+      2.4010775862068967,
+      2.441463793103448
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566762,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.022025379310344827,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      0.7628793103448276,
+      0.8115224137931036,
+      0.9653241379310344
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566773,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.0299791551724138,
+     "coverage_90": 0.7413793103448276,
+     "mean_q05_q50_q95": [
+      2.1542034482758616,
+      2.2109,
+      2.250551724137931
+     ],
+     "mean_truth": 2.2211205344827585
+    },
+    {
+     "climateTraceSourceId": 1566774,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.0296346034482759,
+     "coverage_90": 0.8448275862068966,
+     "mean_q05_q50_q95": [
+      2.1547017241379307,
+      2.212686206896552,
+      2.2653758620689652
+     ],
+     "mean_truth": 2.2211205344827585
+    },
+    {
+     "climateTraceSourceId": 1566780,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.03337951724137931,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3220379310344828,
+      0.40215862068965513,
+      0.557751724137931
+     ],
+     "mean_truth": 0.4165962413793103
+    },
+    {
+     "climateTraceSourceId": 1566784,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.03300596551724137,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3355896551724139,
+      0.402644827586207,
+      0.5585103448275862
+     ],
+     "mean_truth": 0.4165962413793103
+    },
+    {
+     "climateTraceSourceId": 1566799,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.024652482758620666,
+     "coverage_90": 0.8793103448275862,
+     "mean_q05_q50_q95": [
+      1.9633637931034484,
+      2.014593103448276,
+      2.0737293103448273
+     ],
+     "mean_truth": 2.035137551724138
+    },
+    {
+     "climateTraceSourceId": 1566800,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.029634362068965515,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3980206896551724,
+      0.47788965517241383,
+      0.7578241379310345
+     ],
+     "mean_truth": 0.4516502586206896
+    },
+    {
+     "climateTraceSourceId": 1566809,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.018909672413793106,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.24766379310344827,
+      0.325053448275862,
+      0.4991689655172414
+     ],
+     "mean_truth": 0.31365025862068974
+    },
+    {
+     "climateTraceSourceId": 1566810,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.017864344827586205,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.24781206896551725,
+      0.3154310344827586,
+      0.5044344827586207
+     ],
+     "mean_truth": 0.3136502413793104
+    },
+    {
+     "climateTraceSourceId": 1566826,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.026736620689655176,
+     "coverage_90": 0.6724137931034483,
+     "mean_q05_q50_q95": [
+      2.0674758620689655,
+      2.1047172413793107,
+      2.1532655172413793
+     ],
+     "mean_truth": 2.0831948620689658
+    },
+    {
+     "climateTraceSourceId": 1566837,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.04146270689655185,
+     "coverage_90": 0.27586206896551724,
+     "mean_q05_q50_q95": [
+      2.3861672413793102,
+      2.4167793103448276,
+      2.483375862068965
+     ],
+     "mean_truth": 2.3758591551724133
+    },
+    {
+     "climateTraceSourceId": 1566849,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.031183637931034427,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.4196724137931036,
+      2.4753758620689656,
+      2.510622413793104
+     ],
+     "mean_truth": 2.4661206724137927
+    },
+    {
+     "climateTraceSourceId": 1566850,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.03174396551724129,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.4196724137931036,
+      2.4767810344827588,
+      2.510622413793104
+     ],
+     "mean_truth": 2.4661206551724133
+    },
+    {
+     "climateTraceSourceId": 1566853,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.032658224137930965,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.4196724137931036,
+      2.4789672413793102,
+      2.509122413793104
+     ],
+     "mean_truth": 2.466120637931034
+    },
+    {
+     "climateTraceSourceId": 1566870,
+     "route": "EAF",
+     "plant_months": 57,
+     "mae_q50": 0.04289610526315791,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7950245614035087,
+      0.9303736842105262,
+      1.0665771929824563
+     ],
+     "mean_truth": 0.8913271228070176
+    },
+    {
+     "climateTraceSourceId": 1566877,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.38301836206896556,
+     "coverage_90": 0.0,
+     "mean_q05_q50_q95": [
+      1.085243103448276,
+      1.1042758620689652,
+      1.4282068965517243
+     ],
+     "mean_truth": 1.4872942241379308
+    },
+    {
+     "climateTraceSourceId": 1566885,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.305052827586207,
+     "coverage_90": 0.8448275862068966,
+     "mean_q05_q50_q95": [
+      0.8637758620689656,
+      1.090241379310345,
+      1.4124931034482757
+     ],
+     "mean_truth": 1.395294206896552
+    },
+    {
+     "climateTraceSourceId": 1566897,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02745815517241379,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      0.29736896551724135,
+      0.3897896551724139,
+      0.5291896551724138
+     ],
+     "mean_truth": 0.37707853448275863
+    },
+    {
+     "climateTraceSourceId": 1566906,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.03294889655172413,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.27955172413793106,
+      0.3591862068965516,
+      0.5169689655172413
+     ],
+     "mean_truth": 0.37707855172413796
+    },
+    {
+     "climateTraceSourceId": 1566912,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02707141379310345,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      0.4174586206896552,
+      0.4902827586206897,
+      0.6539241379310344
+     ],
+     "mean_truth": 0.4766307586206897
+    },
+    {
+     "climateTraceSourceId": 1566925,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.023126551724137887,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      2.229996551724138,
+      2.284968965517241,
+      2.3420982758620696
+     ],
+     "mean_truth": 2.2783947586206903
+    },
+    {
+     "climateTraceSourceId": 1566941,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.026917000000000003,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      0.41491034482758626,
+      0.48848275862068974,
+      0.6507931034482758
+     ],
+     "mean_truth": 0.4766307586206897
+    },
+    {
+     "climateTraceSourceId": 1566944,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.029318241379310342,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      0.4177379310344828,
+      0.4992827586206896,
+      0.6539241379310344
+     ],
+     "mean_truth": 0.4766307586206897
+    },
+    {
+     "climateTraceSourceId": 1566945,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02714037931034483,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      0.41573793103448275,
+      0.49063448275862065,
+      0.6481586206896551
+     ],
+     "mean_truth": 0.4766307586206897
+    },
+    {
+     "climateTraceSourceId": 1566953,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.033638948275862064,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3757965517241379,
+      0.40043448275862065,
+      0.6625482758620691
+     ],
+     "mean_truth": 0.4317330862068966
+    },
+    {
+     "climateTraceSourceId": 1566956,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.015252241379310383,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      2.1883155172413793,
+      2.2460637931034486,
+      2.305744827586207
+     ],
+     "mean_truth": 2.235561689655172
+    },
+    {
+     "climateTraceSourceId": 1566958,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.015877879310344824,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3809655172413792,
+      0.4441482758620689,
+      0.6017931034482757
+     ],
+     "mean_truth": 0.43173305172413795
+    },
+    {
+     "climateTraceSourceId": 1566969,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.13590489655172408,
+     "coverage_90": 0.22413793103448276,
+     "mean_q05_q50_q95": [
+      1.0457241379310345,
+      1.0736931034482757,
+      1.1987758620689652
+     ],
+     "mean_truth": 1.209598
+    },
+    {
+     "climateTraceSourceId": 1566979,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.07309424137931035,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.4716931034482758,
+      0.5347637931034481,
+      0.7023517241379311
+     ],
+     "mean_truth": 0.6078580344827588
+    },
+    {
+     "climateTraceSourceId": 1566981,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.015084517241379313,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.40454827586206893,
+      0.49517586206896547,
+      0.6455137931034484
+     ],
+     "mean_truth": 0.5066580344827586
+    },
+    {
+     "climateTraceSourceId": 1566982,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.021282482758620692,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.4016931034482759,
+      0.48590344827586207,
+      0.6458827586206894
+     ],
+     "mean_truth": 0.5066580344827586
+    },
+    {
+     "climateTraceSourceId": 1566991,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.04051989655172405,
+     "coverage_90": 0.8448275862068966,
+     "mean_q05_q50_q95": [
+      2.09073275862069,
+      2.1628241379310342,
+      2.1896293103448277
+     ],
+     "mean_truth": 2.140559827586207
+    },
+    {
+     "climateTraceSourceId": 1566994,
+     "route": "DRI-EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02495862068965509,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      1.1530689655172415,
+      1.4973413793103447,
+      1.9134448275862068
+     ],
+     "mean_truth": 1.5223000000000004
+    },
+    {
+     "climateTraceSourceId": 1567005,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.04696789655172411,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      0.6269034482758621,
+      0.6579448275862071,
+      1.0177793103448274
+     ],
+     "mean_truth": 0.697277172413793
+    },
+    {
+     "climateTraceSourceId": 1567006,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.061009155172413794,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6077689655172414,
+      0.6874241379310345,
+      0.9985241379310342
+     ],
+     "mean_truth": 0.7432771896551723
+    },
+    {
+     "climateTraceSourceId": 1567013,
+     "route": "BF-BOF",
+     "plant_months": 55,
+     "mae_q50": 0.06291436363636368,
+     "coverage_90": 0.3090909090909091,
+     "mean_q05_q50_q95": [
+      2.4166,
+      2.450545454545455,
+      2.491072727272727
+     ],
+     "mean_truth": 2.4962974181818183
+    },
+    {
+     "climateTraceSourceId": 1567015,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.025823310344827603,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.4707310344827586,
+      0.5591517241379311,
+      0.7082034482758621
+     ],
+     "mean_truth": 0.5782516551724137
+    },
+    {
+     "climateTraceSourceId": 1567027,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.0175001551724138,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.4003931034482758,
+      0.46286551724137937,
+      0.6263000000000001
+     ],
+     "mean_truth": 0.4678516379310345
+    },
+    {
+     "climateTraceSourceId": 1567036,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.016882017241379325,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.5768344827586206,
+      0.6666586206896552,
+      0.9549241379310347
+     ],
+     "mean_truth": 0.6679018793103448
+    },
+    {
+     "climateTraceSourceId": 1567037,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.015044982758620686,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.4011137931034483,
+      0.4717655172413794,
+      0.6188000000000001
+     ],
+     "mean_truth": 0.4678516379310345
+    },
+    {
+     "climateTraceSourceId": 1567042,
+     "route": "DRI-EAF",
+     "plant_months": 58,
+     "mae_q50": 0.2572119482758621,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.8964,
+      1.5098000000000005,
+      1.9115551724137934
+     ],
+     "mean_truth": 1.2525880517241381
+    },
+    {
+     "climateTraceSourceId": 1567054,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.029149793103448278,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6016206896551723,
+      0.646196551724138,
+      0.812251724137931
+     ],
+     "mean_truth": 0.6720732068965517
+    },
+    {
+     "climateTraceSourceId": 1567055,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.04397158620689656,
+     "coverage_90": 0.7931034482758621,
+     "mean_q05_q50_q95": [
+      0.7973965517241378,
+      0.8627448275862071,
+      0.9948482758620688
+     ],
+     "mean_truth": 0.8187732413793105
+    },
+    {
+     "climateTraceSourceId": 1567061,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.010597327586206882,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.5157551724137931,
+      0.5572206896551725,
+      0.6866448275862069
+     ],
+     "mean_truth": 0.557973224137931
+    },
+    {
+     "climateTraceSourceId": 1567070,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.05245539655172415,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      0.4209603448275861,
+      0.5158413793103448,
+      0.6838310344827585
+     ],
+     "mean_truth": 0.5330606724137932
+    },
+    {
+     "climateTraceSourceId": 1567073,
+     "route": "BF-BOF",
+     "plant_months": 56,
+     "mae_q50": 0.04765662500000006,
+     "coverage_90": 0.625,
+     "mean_q05_q50_q95": [
+      2.2147875000000004,
+      2.2782625,
+      2.3329714285714287
+     ],
+     "mean_truth": 2.295534017857143
+    },
+    {
+     "climateTraceSourceId": 1567079,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.04745831034482759,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      0.4114275862068966,
+      0.48996206896551725,
+      0.6519310344827586
+     ],
+     "mean_truth": 0.4962606896551724
+    },
+    {
+     "climateTraceSourceId": 1567080,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.046861034482758614,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      0.40892758620689657,
+      0.5009862068965517,
+      0.6593000000000001
+     ],
+     "mean_truth": 0.5054606896551724
+    },
+    {
+     "climateTraceSourceId": 1567090,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.03561449999999997,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6680068965517241,
+      0.7127827586206897,
+      0.8560103448275861
+     ],
+     "mean_truth": 0.7406943620689656
+    },
+    {
+     "climateTraceSourceId": 1567101,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.0201261896551724,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3655172413793103,
+      0.4270241379310345,
+      0.5630827586206897
+     ],
+     "mean_truth": 0.4192759827586207
+    },
+    {
+     "climateTraceSourceId": 1567105,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.019468724137931027,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3628172413793104,
+      0.425044827586207,
+      0.5584034482758621
+     ],
+     "mean_truth": 0.41927596551724144
+    },
+    {
+     "climateTraceSourceId": 1567108,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.020565327586206904,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      2.174108620689655,
+      2.2352034482758625,
+      2.3078310344827586
+     ],
+     "mean_truth": 2.223677086206896
+    },
+    {
+     "climateTraceSourceId": 1567111,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.019329293103448282,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3655172413793103,
+      0.4341534482758621,
+      0.5713862068965517
+     ],
+     "mean_truth": 0.4284759827586207
+    },
+    {
+     "climateTraceSourceId": 1567114,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.021387017241379303,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3655172413793103,
+      0.4306586206896552,
+      0.5647344827586207
+     ],
+     "mean_truth": 0.4192759827586207
+    },
+    {
+     "climateTraceSourceId": 1567115,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.019828931034482758,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.4502758620689656,
+      0.5453931034482759,
+      0.6743724137931033
+     ],
+     "mean_truth": 0.5496759999999999
+    },
+    {
+     "climateTraceSourceId": 1567119,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.07396908620689657,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6773896551724138,
+      0.7777068965517241,
+      1.0173241379310345
+     ],
+     "mean_truth": 0.8516759827586207
+    },
+    {
+     "climateTraceSourceId": 1567120,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.06321708620689656,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.5233448275862069,
+      0.6480931034482759,
+      0.8673517241379309
+     ],
+     "mean_truth": 0.5848760172413792
+    },
+    {
+     "climateTraceSourceId": 1567121,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.01919308620689655,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.41633448275862067,
+      0.4828862068965518,
+      0.6230551724137933
+     ],
+     "mean_truth": 0.4836759482758621
+    },
+    {
+     "climateTraceSourceId": 1567122,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02707939655172412,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.5620241379310345,
+      0.6462689655172413,
+      0.9048172413793105
+     ],
+     "mean_truth": 0.667675948275862
+    },
+    {
+     "climateTraceSourceId": 1567126,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.024582775862068966,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6416896551724139,
+      0.7707172413793103,
+      0.9046793103448276
+     ],
+     "mean_truth": 0.7872760172413794
+    },
+    {
+     "climateTraceSourceId": 1567128,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.01932836206896552,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3881448275862069,
+      0.4623275862068965,
+      0.5861275862068966
+     ],
+     "mean_truth": 0.4560760172413793
+    },
+    {
+     "climateTraceSourceId": 1567134,
+     "route": "EAF",
+     "plant_months": 40,
+     "mae_q50": 0.021203674999999988,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.44835,
+      0.50987,
+      0.65147
+     ],
+     "mean_truth": 0.514606825
+    },
+    {
+     "climateTraceSourceId": 1567135,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.018887931034482757,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3936758620689655,
+      0.46703793103448277,
+      0.5997931034482759
+     ],
+     "mean_truth": 0.46527599999999997
+    },
+    {
+     "climateTraceSourceId": 1567146,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.019291396551724148,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      0.5108758620689655,
+      0.558648275862069,
+      0.6816965517241381
+     ],
+     "mean_truth": 0.5572759827586207
+    },
+    {
+     "climateTraceSourceId": 1567150,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.01989896551724138,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.356948275862069,
+      0.44046206896551726,
+      0.5948241379310344
+     ],
+     "mean_truth": 0.444776
+    },
+    {
+     "climateTraceSourceId": 1567151,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.0586619655172414,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.5371172413793103,
+      0.6619379310344826,
+      0.9275482758620689
+     ],
+     "mean_truth": 0.6032759655172413
+    },
+    {
+     "climateTraceSourceId": 1567156,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02165494827586206,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.45603448275862074,
+      0.5357965517241378,
+      0.6595
+     ],
+     "mean_truth": 0.5467760172413793
+    },
+    {
+     "climateTraceSourceId": 1567159,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.022374586206896564,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.44005862068965523,
+      0.4990396551724137,
+      0.6480586206896554
+     ],
+     "mean_truth": 0.5112760000000001
+    },
+    {
+     "climateTraceSourceId": 1567161,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.019055206896551723,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3966758620689655,
+      0.46516896551724135,
+      0.5877655172413793
+     ],
+     "mean_truth": 0.46527599999999997
+    },
+    {
+     "climateTraceSourceId": 1567164,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.022273844827586202,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3628172413793104,
+      0.4328517241379311,
+      0.5601689655172414
+     ],
+     "mean_truth": 0.41927598275862077
+    },
+    {
+     "climateTraceSourceId": 1567165,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.019433379310344823,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3622241379310344,
+      0.41723448275862063,
+      0.5605758620689656
+     ],
+     "mean_truth": 0.41927600000000004
+    },
+    {
+     "climateTraceSourceId": 1567188,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02276848275862065,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      0.4687137931034483,
+      0.5231379310344827,
+      0.8067327586206896
+     ],
+     "mean_truth": 0.535125724137931
+    },
+    {
+     "climateTraceSourceId": 1567198,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.027977327586206906,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7452293103448278,
+      0.8325517241379311,
+      0.9860775862068965
+     ],
+     "mean_truth": 0.8576486379310344
+    },
+    {
+     "climateTraceSourceId": 1567205,
+     "route": "DRI-EAF",
+     "plant_months": 58,
+     "mae_q50": 0.009643068965517169,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      1.185255172413793,
+      1.4912896551724137,
+      1.919231034482759
+     ],
+     "mean_truth": 1.4872942068965516
+    },
+    {
+     "climateTraceSourceId": 1567207,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.03994370689655173,
+     "coverage_90": 0.2413793103448276,
+     "mean_q05_q50_q95": [
+      2.3916396551724137,
+      2.4155258620689657,
+      2.484544827586207
+     ],
+     "mean_truth": 2.3758591551724133
+    },
+    {
+     "climateTraceSourceId": 1567210,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.012034482758620728,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7358413793103449,
+      0.7646620689655172,
+      0.9195086206896552
+     ],
+     "mean_truth": 0.7547355862068966
+    },
+    {
+     "climateTraceSourceId": 1567213,
+     "route": "DRI-EAF",
+     "plant_months": 28,
+     "mae_q50": 0.028789749999999985,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      1.1966428571428571,
+      1.5220499999999997,
+      1.934621428571429
+     ],
+     "mean_truth": 1.500124892857143
+    },
+    {
+     "climateTraceSourceId": 1567218,
+     "route": "BF-BOF",
+     "plant_months": 40,
+     "mae_q50": 0.019708300000000022,
+     "coverage_90": 0.875,
+     "mean_q05_q50_q95": [
+      2.3530575,
+      2.3901325,
+      2.4324525
+     ],
+     "mean_truth": 2.3897329
+    },
+    {
+     "climateTraceSourceId": 1567225,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02120865517241381,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.36241724137931,
+      2.403424137931035,
+      2.445070689655172
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1567229,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02362277586206896,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      0.7617103448275861,
+      0.8377724137931033,
+      0.9882879310344828
+     ],
+     "mean_truth": 0.8576486379310344
+    },
+    {
+     "climateTraceSourceId": 1567236,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.014184620689655177,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3837862068965517,
+      0.44163793103448273,
+      0.6006965517241378
+     ],
+     "mean_truth": 0.4317330689655172
+    },
+    {
+     "climateTraceSourceId": 1567240,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.03723572413793101,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      0.727755172413793,
+      0.8090275862068966,
+      1.0661120689655172
+     ],
+     "mean_truth": 0.7788425172413794
+    },
+    {
+     "climateTraceSourceId": 1567242,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.01629987931034482,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7608689655172415,
+      0.8385172413793106,
+      0.9909448275862069
+     ],
+     "mean_truth": 0.8487450862068966
+    },
+    {
+     "climateTraceSourceId": 1567256,
+     "route": "BF-BOF",
+     "plant_months": 22,
+     "mae_q50": 0.022547545454545462,
+     "coverage_90": 0.9545454545454546,
+     "mean_q05_q50_q95": [
+      2.3820090909090905,
+      2.4218181818181814,
+      2.461299999999999
+     ],
+     "mean_truth": 2.423637272727273
+    },
+    {
+     "climateTraceSourceId": 1567259,
+     "route": "EAF",
+     "plant_months": 34,
+     "mae_q50": 0.023065117647058823,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7654147058823529,
+      0.8255411764705883,
+      0.98715
+     ],
+     "mean_truth": 0.8216567647058824
+    },
+    {
+     "climateTraceSourceId": 1567261,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02104975862068969,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.3622448275862067,
+      2.4009741379310348,
+      2.4414431034482758
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1567267,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.022146586206896544,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      0.7629758620689654,
+      0.8094844827586205,
+      0.963558620689655
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1567275,
+     "route": "BF-BOF",
+     "plant_months": 38,
+     "mae_q50": 0.021861921052631593,
+     "coverage_90": 0.9473684210526315,
+     "mean_q05_q50_q95": [
+      2.37858947368421,
+      2.4100236842105267,
+      2.456278947368421
+     ],
+     "mean_truth": 2.4145965526315796
+    },
+    {
+     "climateTraceSourceId": 1567279,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.1604245689655172,
+     "coverage_90": 0.6724137931034483,
+     "mean_q05_q50_q95": [
+      1.0242000000000002,
+      1.1065793103448276,
+      1.3405551724137934
+     ],
+     "mean_truth": 1.2670038793103446
+    },
+    {
+     "climateTraceSourceId": 1567285,
+     "route": "BF-BOF",
+     "plant_months": 10,
+     "mae_q50": 0.030477500000000025,
+     "coverage_90": 0.9,
+     "mean_q05_q50_q95": [
+      2.3841200000000002,
+      2.4242399999999997,
+      2.4666999999999994
+     ],
+     "mean_truth": 2.4200349
+    },
+    {
+     "climateTraceSourceId": 1567286,
+     "route": "BF-BOF",
+     "plant_months": 10,
+     "mae_q50": 0.030477500000000025,
+     "coverage_90": 0.9,
+     "mean_q05_q50_q95": [
+      2.3841200000000002,
+      2.4242399999999997,
+      2.4666999999999994
+     ],
+     "mean_truth": 2.4200349
+    },
+    {
+     "climateTraceSourceId": 1567294,
+     "route": "BF-BOF",
+     "plant_months": 10,
+     "mae_q50": 0.030477500000000025,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      2.3839200000000007,
+      2.4244399999999997,
+      2.4669600000000003
+     ],
+     "mean_truth": 2.4200349
+    },
+    {
+     "climateTraceSourceId": 1567300,
+     "route": "BF-BOF",
+     "plant_months": 22,
+     "mae_q50": 0.022492363636363644,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      2.3759272727272736,
+      2.422418181818181,
+      2.4611181818181813
+     ],
+     "mean_truth": 2.423637272727273
+    },
+    {
+     "climateTraceSourceId": 32440386,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02038286206896551,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6705896551724138,
+      0.7724551724137934,
+      0.9619775862068964
+     ],
+     "mean_truth": 0.7661430344827586
+    },
+    {
+     "climateTraceSourceId": 32440460,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021149034482758643,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      2.3622000000000005,
+      2.4033,
+      2.441463793103448
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 32440488,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.33340346551724137,
+     "coverage_90": 0.05172413793103448,
+     "mean_q05_q50_q95": [
+      1.1244172413793103,
+      1.1681,
+      1.446527586206897
+     ],
+     "mean_truth": 1.5015034655172415
+    },
+    {
+     "climateTraceSourceId": 32440554,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02110734482758622,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.3622000000000005,
+      2.3997224137931035,
+      2.4413482758620693
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 32440635,
+     "route": "BF-BOF",
+     "plant_months": 56,
+     "mae_q50": 0.021400339285714314,
+     "coverage_90": 0.9107142857142857,
+     "mean_q05_q50_q95": [
+      2.361805357142857,
+      2.399864285714286,
+      2.441444642857143
+     ],
+     "mean_truth": 2.401359410714286
+    },
+    {
+     "climateTraceSourceId": 32440774,
+     "route": "DRI-EAF",
+     "plant_months": 58,
+     "mae_q50": 0.03342767241379318,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      1.8198620689655174,
+      3.078389655172414,
+      3.5426275862068968
+     ],
+     "mean_truth": 3.0934037413793103
+    },
+    {
+     "climateTraceSourceId": 32440928,
+     "route": "DRI-EAF",
+     "plant_months": 58,
+     "mae_q50": 0.12354224137931034,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.032975862068965515,
+      0.4470413793103448,
+      1.217562068965517
+     ],
+     "mean_truth": 0.3234991379310345
+    },
+    {
+     "climateTraceSourceId": 32441223,
+     "route": "EAF",
+     "plant_months": 10,
+     "mae_q50": 0.031946300000000004,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.74418,
+      0.825,
+      0.98742
+     ],
+     "mean_truth": 0.8251471
+    },
+    {
+     "climateTraceSourceId": 32441252,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.04890434482758618,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      2.1166827586206893,
+      2.3999482758620685,
+      2.4414862068965517
+     ],
+     "mean_truth": 2.3624172068965517
+    },
+    {
+     "climateTraceSourceId": 42741251,
+     "route": "BF-BOF",
+     "plant_months": 16,
+     "mae_q50": 0.01863287500000002,
+     "coverage_90": 0.9375,
+     "mean_q05_q50_q95": [
+      2.325,
+      2.3708,
+      2.4199
+     ],
+     "mean_truth": 2.3648585
+    },
+    {
+     "climateTraceSourceId": 42741747,
+     "route": "EAF",
+     "plant_months": 10,
+     "mae_q50": 0.13136759999999997,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.5782,
+      0.6269,
+      0.8953000000000001
+     ],
+     "mean_truth": 0.7582676
+    },
+    {
+     "climateTraceSourceId": 42741815,
+     "route": "DRI-EAF",
+     "plant_months": 58,
+     "mae_q50": 0.7183764655172414,
+     "coverage_90": 0.1896551724137931,
+     "mean_q05_q50_q95": [
+      1.0497258620689656,
+      1.7767637931034483,
+      2.240896551724138
+     ],
+     "mean_truth": 1.6778029137931039
+    },
+    {
+     "climateTraceSourceId": 42741830,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.06469615517241378,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      0.6265689655172413,
+      0.7047051724137932,
+      0.9235862068965516
+     ],
+     "mean_truth": 0.7559109827586209
+    },
+    {
+     "climateTraceSourceId": 42741851,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.021859793103448273,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7479327586206898,
+      0.8081413793103447,
+      0.9604017241379308
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 42741855,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.01905075862068965,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.36481724137931043,
+      0.4230448275862069,
+      0.5605758620689656
+     ],
+     "mean_truth": 0.41927596551724144
+    },
+    {
+     "climateTraceSourceId": 42741868,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.06711429310344828,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      0.5785879310344827,
+      0.6783931034482759,
+      0.9416379310344829
+     ],
+     "mean_truth": 0.6767629482758621
+    },
+    {
+     "climateTraceSourceId": 52203437,
+     "route": "BF-BOF",
+     "plant_months": 3,
+     "mae_q50": 0.1322833333333331,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      2.3633,
+      2.5462,
+      2.568
+     ],
+     "mean_truth": 2.4139166666666667
+    },
+    {
+     "climateTraceSourceId": 55793399,
+     "route": "DRI-EAF",
+     "plant_months": 10,
+     "mae_q50": 0.006537000000000015,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      1.2683,
+      1.5931,
+      1.9663999999999997
+     ],
+     "mean_truth": 1.586563
+    },
+    {
+     "climateTraceSourceId": 55793400,
+     "route": "DRI-EAF",
+     "plant_months": 28,
+     "mae_q50": 0.015112071428571452,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      1.2043214285714285,
+      1.5664357142857142,
+      1.9699499999999996
+     ],
+     "mean_truth": 1.5810827857142853
+    },
+    {
+     "climateTraceSourceId": 55793453,
+     "route": "DRI-EAF",
+     "plant_months": 16,
+     "mae_q50": 6.299999999992423e-05,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      1.2589,
+      1.5865,
+      1.9674
+     ],
+     "mean_truth": 1.586563
+    },
+    {
+     "climateTraceSourceId": 55793509,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.021916689655172416,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      0.7611465517241378,
+      0.808394827586207,
+      0.9625741379310345
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793510,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.021859793103448273,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7479327586206898,
+      0.8081413793103447,
+      0.9604017241379308
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793512,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.021916689655172416,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      0.7611465517241378,
+      0.808394827586207,
+      0.9625741379310345
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793519,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02185979310344827,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7415844827586209,
+      0.808006896551724,
+      0.9602086206896551
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793522,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.021859793103448273,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7479327586206898,
+      0.8081413793103447,
+      0.9604017241379308
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793525,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02205365517241379,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      0.766901724137931,
+      0.8028655172413792,
+      0.9605741379310343
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793527,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02185979310344827,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7415844827586209,
+      0.808006896551724,
+      0.9602086206896551
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793534,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02103768965517246,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      2.3608879310344832,
+      2.400855172413793,
+      2.441256896551724
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 55793535,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.022189103448275852,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      0.7519431034482756,
+      0.8070293103448278,
+      0.960606896551724
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793542,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.022025379310344827,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      0.7628793103448276,
+      0.8115224137931036,
+      0.9653241379310344
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793543,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.022596206896551726,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      0.7630275862068967,
+      0.8141844827586205,
+      0.9647448275862069
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793546,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.021968999999999995,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7482327586206898,
+      0.8098655172413795,
+      0.9607137931034483
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793588,
+     "route": "BF-BOF",
+     "plant_months": 23,
+     "mae_q50": 0.02182573913043478,
+     "coverage_90": 0.9565217391304348,
+     "mean_q05_q50_q95": [
+      2.382317391304347,
+      2.421652173913043,
+      2.460717391304347
+     ],
+     "mean_truth": 2.4236506956521744
+    }
+   ]
+  },
+  "without_prior_same_rows": {
+   "n_plants": 172,
+   "n_plant_months": 9208,
+   "plants_by_route": {
+    "BF-BOF": 62,
+    "DRI-EAF": 12,
+    "EAF": 98
+   },
+   "statistically_powered": true,
+   "mae_q50": 0.08843413998696785,
+   "mae_route_median_baseline": 0.1877099158340573,
+   "improvement_vs_route_median": 0.5288786977820235,
+   "coverage_90": 0.9232189400521286,
+   "mean_interval_width": 0.5959329061685491,
+   "detection_synthetic": {
+    "0.5x": {
+     "synthetic": true,
+     "red_rate_full_rule": 0.8424196350999131,
+     "red_rate_interval_only": 0.8180929626411816
+    },
+    "0.7x": {
+     "synthetic": true,
+     "red_rate_full_rule": 0.6095786272806255,
+     "red_rate_interval_only": 0.4980451781059948
+    },
+    "0.85x": {
+     "synthetic": true,
+     "red_rate_full_rule": 0.28909643788010425,
+     "red_rate_interval_only": 0.28149435273675066
+    },
+    "1x": {
+     "synthetic": false,
+     "red_rate_full_rule": 0.013466550825369244,
+     "red_rate_interval_only": 0.010642919200695048
+    },
+    "note": "red_rate at factor < 1 is recall on SYNTHETIC underreports (factor x Climate TRACE value); at 1x it is the false-red rate"
+   },
+   "per_plant": [
+    {
+     "climateTraceSourceId": 1566426,
+     "route": "DRI-EAF",
+     "plant_months": 58,
+     "mae_q50": 0.072922275862069,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.0178551724137931,
+      0.6466896551724138,
+      1.9208206896551723
+     ],
+     "mean_truth": 0.6893373793103448
+    },
+    {
+     "climateTraceSourceId": 1566429,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.03684970689655179,
+     "coverage_90": 0.5517241379310345,
+     "mean_q05_q50_q95": [
+      1.9544827586206894,
+      1.9915517241379315,
+      2.067206896551724
+     ],
+     "mean_truth": 1.9760540172413792
+    },
+    {
+     "climateTraceSourceId": 1566432,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.030652017241379285,
+     "coverage_90": 0.8448275862068966,
+     "mean_q05_q50_q95": [
+      2.2683724137931036,
+      2.370262068965517,
+      2.4262793103448277
+     ],
+     "mean_truth": 2.3702748793103448
+    },
+    {
+     "climateTraceSourceId": 1566439,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.13156798275862072,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6197724137931033,
+      0.8593034482758621,
+      1.4522931034482753
+     ],
+     "mean_truth": 0.7277354655172414
+    },
+    {
+     "climateTraceSourceId": 1566440,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.05757872413793105,
+     "coverage_90": 0.6724137931034483,
+     "mean_q05_q50_q95": [
+      1.9507310344827589,
+      1.9841,
+      2.0707551724137927
+     ],
+     "mean_truth": 2.0416787241379315
+    },
+    {
+     "climateTraceSourceId": 1566443,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.04891408620689656,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      0.19140344827586203,
+      0.2774206896551724,
+      0.9667655172413794
+     ],
+     "mean_truth": 0.22850660344827586
+    },
+    {
+     "climateTraceSourceId": 1566452,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.015505827586206885,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      1.8097999999999999,
+      1.97371724137931,
+      2.0365482758620685
+     ],
+     "mean_truth": 1.979225172413793
+    },
+    {
+     "climateTraceSourceId": 1566454,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.10438441379310343,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.2147,
+      0.30705862068965517,
+      0.9725999999999999
+     ],
+     "mean_truth": 0.4114430344827586
+    },
+    {
+     "climateTraceSourceId": 1566459,
+     "route": "BF-BOF",
+     "plant_months": 55,
+     "mae_q50": 0.023056490909090854,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      1.806523636363636,
+      1.9996781818181826,
+      2.1132000000000004
+     ],
+     "mean_truth": 1.9798838363636362
+    },
+    {
+     "climateTraceSourceId": 1566468,
+     "route": "DRI-EAF",
+     "plant_months": 58,
+     "mae_q50": 0.05007565517241376,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.0,
+      0.5746310344827588,
+      1.8617482758620694
+     ],
+     "mean_truth": 0.6247066896551723
+    },
+    {
+     "climateTraceSourceId": 1566472,
+     "route": "BF-BOF",
+     "plant_months": 57,
+     "mae_q50": 0.009487982456140355,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      1.9752000000000005,
+      2.039957894736842,
+      2.1664999999999996
+     ],
+     "mean_truth": 2.0444942982456142
+    },
+    {
+     "climateTraceSourceId": 1566476,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.004053362068965518,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.09719999999999998,
+      0.1251896551724138,
+      0.9050999999999999
+     ],
+     "mean_truth": 0.1281816379310345
+    },
+    {
+     "climateTraceSourceId": 1566477,
+     "route": "BF-BOF",
+     "plant_months": 37,
+     "mae_q50": 0.046253837837837875,
+     "coverage_90": 0.43243243243243246,
+     "mean_q05_q50_q95": [
+      2.118991891891891,
+      2.1728027027027026,
+      2.2008621621621622
+     ],
+     "mean_truth": 2.154109189189189
+    },
+    {
+     "climateTraceSourceId": 1566486,
+     "route": "BF-BOF",
+     "plant_months": 57,
+     "mae_q50": 0.02135607017543863,
+     "coverage_90": 0.9473684210526315,
+     "mean_q05_q50_q95": [
+      2.292856140350877,
+      2.395150877192983,
+      2.447973684210527
+     ],
+     "mean_truth": 2.4002079298245613
+    },
+    {
+     "climateTraceSourceId": 1566490,
+     "route": "BF-BOF",
+     "plant_months": 48,
+     "mae_q50": 0.021149958333333357,
+     "coverage_90": 0.9583333333333334,
+     "mean_q05_q50_q95": [
+      2.277029166666667,
+      2.3940499999999996,
+      2.4454541666666665
+     ],
+     "mean_truth": 2.3964463333333335
+    },
+    {
+     "climateTraceSourceId": 1566491,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02142262068965518,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      2.2927586206896553,
+      2.3985689655172417,
+      2.447786206896552
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566502,
+     "route": "BF-BOF",
+     "plant_months": 57,
+     "mae_q50": 0.02151650877192984,
+     "coverage_90": 0.9473684210526315,
+     "mean_q05_q50_q95": [
+      2.2936929824561405,
+      2.399405263157895,
+      2.44839649122807
+     ],
+     "mean_truth": 2.4007898070175435
+    },
+    {
+     "climateTraceSourceId": 1566513,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021374344827586222,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      2.2948724137931036,
+      2.3992379310344827,
+      2.448337931034483
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566516,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02139158620689657,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      2.2946862068965515,
+      2.398841379310345,
+      2.449537931034483
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566524,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021422620689655197,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      2.2940448275862066,
+      2.3978999999999995,
+      2.4477620689655173
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566537,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021422620689655197,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      2.2940655172413797,
+      2.3980448275862063,
+      2.4475758620689656
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566552,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021347896551724147,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      2.2940448275862066,
+      2.4003275862068962,
+      2.4474000000000005
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566555,
+     "route": "BF-BOF",
+     "plant_months": 46,
+     "mae_q50": 0.02192919565217392,
+     "coverage_90": 0.9347826086956522,
+     "mean_q05_q50_q95": [
+      2.3423956521739133,
+      2.4070652173913043,
+      2.4536173913043475
+     ],
+     "mean_truth": 2.409465760869565
+    },
+    {
+     "climateTraceSourceId": 1566566,
+     "route": "EAF",
+     "plant_months": 28,
+     "mae_q50": 0.02149696428571426,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6166285714285715,
+      0.7731642857142857,
+      1.2605642857142858
+     ],
+     "mean_truth": 0.7801750357142858
+    },
+    {
+     "climateTraceSourceId": 1566573,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02139158620689657,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      2.2946862068965515,
+      2.398841379310345,
+      2.449537931034483
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566590,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021862655172413824,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      2.2940448275862066,
+      2.3950206896551727,
+      2.447917241379311
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566591,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021422620689655197,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      2.2940448275862066,
+      2.3978999999999995,
+      2.4477620689655173
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566597,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02140882758620692,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      2.2951551724137937,
+      2.39846551724138,
+      2.448006896551724
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566599,
+     "route": "BF-BOF",
+     "plant_months": 57,
+     "mae_q50": 0.021605771929824564,
+     "coverage_90": 0.9824561403508771,
+     "mean_q05_q50_q95": [
+      2.2538456140350878,
+      2.3967947368421054,
+      2.4509824561403506
+     ],
+     "mean_truth": 2.401083947368421
+    },
+    {
+     "climateTraceSourceId": 1566612,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02139158620689657,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      2.2948724137931036,
+      2.398737931034483,
+      2.456044827586207
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566616,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021302172413793136,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      2.2941586206896547,
+      2.398124137931034,
+      2.447834482758622
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566618,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02295275862068965,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6581344827586206,
+      0.8012206896551723,
+      1.2602379310344831
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566658,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02139962068965518,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      2.2943034482758615,
+      2.399706896551724,
+      2.4480931034482767
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566665,
+     "route": "BF-BOF",
+     "plant_months": 52,
+     "mae_q50": 0.026920442307692416,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      2.249751923076923,
+      2.3789423076923075,
+      2.482051923076923
+     ],
+     "mean_truth": 2.40222725
+    },
+    {
+     "climateTraceSourceId": 1566666,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021329517241379322,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.297668965517241,
+      2.400234482758621,
+      2.449962068965518
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566667,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02344955172413792,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.625693103448276,
+      0.798648275862069,
+      1.2647172413793104
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566677,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02356679310344827,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6069793103448274,
+      0.7974310344827585,
+      1.2672379310344826
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566689,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021422620689655197,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      2.2940448275862066,
+      2.3978999999999995,
+      2.447431034482758
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566691,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.024425517241379306,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6458275862068965,
+      0.7941827586206898,
+      1.267437931034483
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566718,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.023146103448275848,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6501103448275862,
+      0.7996724137931035,
+      1.2739862068965517
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566727,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.023456448275862067,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.653903448275862,
+      0.7978724137931034,
+      1.2709034482758619
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566734,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02295275862068965,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6581344827586206,
+      0.8012206896551723,
+      1.2602379310344831
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566737,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021377793103448298,
+     "coverage_90": 0.9137931034482759,
+     "mean_q05_q50_q95": [
+      2.297668965517241,
+      2.398834482758621,
+      2.448603448275862
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566749,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.022926413793103447,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.657451724137931,
+      0.801493103448276,
+      1.2694724137931035
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566752,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02276482758620689,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6580844827586205,
+      0.8011396551724137,
+      1.260748275862069
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566756,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021398482758620708,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      2.2946862068965515,
+      2.39863448275862,
+      2.448196551724138
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1566762,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02295275862068965,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6581344827586206,
+      0.8012206896551723,
+      1.2602379310344831
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1566773,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.031812120689655214,
+     "coverage_90": 0.5344827586206896,
+     "mean_q05_q50_q95": [
+      2.1640827586206894,
+      2.205268965517241,
+      2.2351896551724137
+     ],
+     "mean_truth": 2.2211205344827585
+    },
+    {
+     "climateTraceSourceId": 1566774,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.031584534482758615,
+     "coverage_90": 0.603448275862069,
+     "mean_q05_q50_q95": [
+      2.1650896551724137,
+      2.206024137931035,
+      2.250489655172413
+     ],
+     "mean_truth": 2.2211205344827585
+    },
+    {
+     "climateTraceSourceId": 1566780,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.03349806896551725,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.32311724137931036,
+      0.4182103448275863,
+      1.136603448275862
+     ],
+     "mean_truth": 0.4165962413793103
+    },
+    {
+     "climateTraceSourceId": 1566784,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.0341391724137931,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3366379310344828,
+      0.42315517241379313,
+      1.1318137931034484
+     ],
+     "mean_truth": 0.4165962413793103
+    },
+    {
+     "climateTraceSourceId": 1566799,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.0341405517241379,
+     "coverage_90": 0.5,
+     "mean_q05_q50_q95": [
+      1.987662068965517,
+      2.0044931034482754,
+      2.0699344827586206
+     ],
+     "mean_truth": 2.035137551724138
+    },
+    {
+     "climateTraceSourceId": 1566800,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.14592612068965521,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.1895344827586207,
+      0.3057241379310345,
+      1.0623172413793105
+     ],
+     "mean_truth": 0.4516502586206896
+    },
+    {
+     "climateTraceSourceId": 1566809,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02786825862068965,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.18852413793103448,
+      0.2926,
+      1.0715241379310347
+     ],
+     "mean_truth": 0.31365025862068974
+    },
+    {
+     "climateTraceSourceId": 1566810,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.028255551724137934,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.1737448275862069,
+      0.2920551724137931,
+      1.1814758620689658
+     ],
+     "mean_truth": 0.3136502413793104
+    },
+    {
+     "climateTraceSourceId": 1566826,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.06736762068965514,
+     "coverage_90": 0.7758620689655172,
+     "mean_q05_q50_q95": [
+      2.041141379310345,
+      2.1503862068965516,
+      2.224286206896552
+     ],
+     "mean_truth": 2.0831948620689658
+    },
+    {
+     "climateTraceSourceId": 1566837,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.03419512068965512,
+     "coverage_90": 0.43103448275862066,
+     "mean_q05_q50_q95": [
+      2.3749103448275863,
+      2.40498275862069,
+      2.4989620689655174
+     ],
+     "mean_truth": 2.3758591551724133
+    },
+    {
+     "climateTraceSourceId": 1566849,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.029285224137930978,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      2.401786206896552,
+      2.469675862068965,
+      2.5310758620689655
+     ],
+     "mean_truth": 2.4661206724137927
+    },
+    {
+     "climateTraceSourceId": 1566850,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02949065517241371,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      2.401786206896552,
+      2.4712965517241376,
+      2.5310758620689655
+     ],
+     "mean_truth": 2.4661206551724133
+    },
+    {
+     "climateTraceSourceId": 1566853,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.029773396551724052,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      2.401786206896552,
+      2.4730172413793103,
+      2.529279310344828
+     ],
+     "mean_truth": 2.466120637931034
+    },
+    {
+     "climateTraceSourceId": 1566870,
+     "route": "EAF",
+     "plant_months": 57,
+     "mae_q50": 0.050168035087719276,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6958947368421052,
+      0.9397228070175438,
+      1.4563052631578948
+     ],
+     "mean_truth": 0.8913271228070176
+    },
+    {
+     "climateTraceSourceId": 1566877,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.6612700862068964,
+     "coverage_90": 0.0,
+     "mean_q05_q50_q95": [
+      0.6465551724137932,
+      0.8260241379310346,
+      1.3864275862068962
+     ],
+     "mean_truth": 1.4872942241379308
+    },
+    {
+     "climateTraceSourceId": 1566885,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.5517459310344828,
+     "coverage_90": 0.20689655172413793,
+     "mean_q05_q50_q95": [
+      0.6475137931034484,
+      0.8435482758620689,
+      1.3874
+     ],
+     "mean_truth": 1.395294206896552
+    },
+    {
+     "climateTraceSourceId": 1566897,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.0374066724137931,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      0.2972448275862069,
+      0.4050655172413793,
+      1.1040379310344828
+     ],
+     "mean_truth": 0.37707853448275863
+    },
+    {
+     "climateTraceSourceId": 1566906,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.030550275862068956,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.28136551724137926,
+      0.39082758620689656,
+      1.0812172413793104
+     ],
+     "mean_truth": 0.37707855172413796
+    },
+    {
+     "climateTraceSourceId": 1566912,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.11054855172413797,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      0.4201862068965517,
+      0.5871793103448275,
+      1.2023586206896555
+     ],
+     "mean_truth": 0.4766307586206897
+    },
+    {
+     "climateTraceSourceId": 1566925,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.02265282758620686,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      2.230027586206896,
+      2.279034482758621,
+      2.3472034482758617
+     ],
+     "mean_truth": 2.2783947586206903
+    },
+    {
+     "climateTraceSourceId": 1566941,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.10840027586206898,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      0.41535862068965507,
+      0.5850310344827588,
+      1.2174448275862066
+     ],
+     "mean_truth": 0.4766307586206897
+    },
+    {
+     "climateTraceSourceId": 1566944,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.1190485517241379,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      0.4204586206896553,
+      0.5956793103448276,
+      1.2028103448275862
+     ],
+     "mean_truth": 0.4766307586206897
+    },
+    {
+     "climateTraceSourceId": 1566945,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.09610027586206893,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      0.4151862068965517,
+      0.5727310344827585,
+      1.2001586206896553
+     ],
+     "mean_truth": 0.4766307586206897
+    },
+    {
+     "climateTraceSourceId": 1566953,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.0758496724137931,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3814172413793104,
+      0.5075827586206898,
+      1.2808310344827585
+     ],
+     "mean_truth": 0.4317330862068966
+    },
+    {
+     "climateTraceSourceId": 1566956,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.01388158620689652,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      2.1955379310344827,
+      2.2393,
+      2.2944275862068966
+     ],
+     "mean_truth": 2.235561689655172
+    },
+    {
+     "climateTraceSourceId": 1566958,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.08236350000000003,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.38274827586206894,
+      0.5140965517241379,
+      1.2611827586206898
+     ],
+     "mean_truth": 0.43173305172413795
+    },
+    {
+     "climateTraceSourceId": 1566969,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.3762704137931034,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6865034482758621,
+      0.8333275862068965,
+      1.2800896551724135
+     ],
+     "mean_truth": 1.209598
+    },
+    {
+     "climateTraceSourceId": 1566979,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.019378724137931038,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.40734482758620694,
+      0.5884793103448276,
+      1.2083586206896553
+     ],
+     "mean_truth": 0.6078580344827588
+    },
+    {
+     "climateTraceSourceId": 1566981,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.0810488620689655,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.40734482758620694,
+      0.5877068965517241,
+      1.208286206896552
+     ],
+     "mean_truth": 0.5066580344827586
+    },
+    {
+     "climateTraceSourceId": 1566982,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.0719281724137931,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.402244827586207,
+      0.5785862068965517,
+      1.2295241379310344
+     ],
+     "mean_truth": 0.5066580344827586
+    },
+    {
+     "climateTraceSourceId": 1566991,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.03851337931034477,
+     "coverage_90": 0.8103448275862069,
+     "mean_q05_q50_q95": [
+      2.085831034482759,
+      2.1566448275862067,
+      2.205958620689655
+     ],
+     "mean_truth": 2.140559827586207
+    },
+    {
+     "climateTraceSourceId": 1566994,
+     "route": "DRI-EAF",
+     "plant_months": 58,
+     "mae_q50": 0.26652758620689665,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.5280344827586206,
+      1.2557724137931037,
+      1.896255172413793
+     ],
+     "mean_truth": 1.5223000000000004
+    },
+    {
+     "climateTraceSourceId": 1567005,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.13415041379310344,
+     "coverage_90": 0.6379310344827587,
+     "mean_q05_q50_q95": [
+      0.6823000000000001,
+      0.8314275862068965,
+      1.59548275862069
+     ],
+     "mean_truth": 0.697277172413793
+    },
+    {
+     "climateTraceSourceId": 1567006,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.07965608620689656,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      0.6223103448275861,
+      0.8228896551724139,
+      1.6482758620689655
+     ],
+     "mean_truth": 0.7432771896551723
+    },
+    {
+     "climateTraceSourceId": 1567013,
+     "route": "BF-BOF",
+     "plant_months": 55,
+     "mae_q50": 0.06084589090909099,
+     "coverage_90": 0.509090909090909,
+     "mean_q05_q50_q95": [
+      2.3949854545454543,
+      2.4520509090909086,
+      2.504494545454545
+     ],
+     "mean_truth": 2.4962974181818183
+    },
+    {
+     "climateTraceSourceId": 1567015,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.04818144827586206,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.4020724137931034,
+      0.5301137931034482,
+      1.2121103448275863
+     ],
+     "mean_truth": 0.5782516551724137
+    },
+    {
+     "climateTraceSourceId": 1567027,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.05945277586206898,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.4010724137931035,
+      0.5271103448275862,
+      1.300910344827586
+     ],
+     "mean_truth": 0.4678516379310345
+    },
+    {
+     "climateTraceSourceId": 1567036,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.14749153448275865,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.4030931034482758,
+      0.5204103448275862,
+      1.2094103448275864
+     ],
+     "mean_truth": 0.6679018793103448
+    },
+    {
+     "climateTraceSourceId": 1567037,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.06955870689655172,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.4030931034482758,
+      0.5374103448275862,
+      1.2112103448275864
+     ],
+     "mean_truth": 0.4678516379310345
+    },
+    {
+     "climateTraceSourceId": 1567042,
+     "route": "DRI-EAF",
+     "plant_months": 58,
+     "mae_q50": 0.3696912586206897,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7651,
+      1.6222793103448274,
+      2.2523655172413792
+     ],
+     "mean_truth": 1.2525880517241381
+    },
+    {
+     "climateTraceSourceId": 1567054,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.07859575862068967,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6118172413793104,
+      0.7506689655172413,
+      1.2607655172413792
+     ],
+     "mean_truth": 0.6720732068965517
+    },
+    {
+     "climateTraceSourceId": 1567055,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.06447668965517245,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6267724137931033,
+      0.754296551724138,
+      1.2607655172413792
+     ],
+     "mean_truth": 0.8187732413793105
+    },
+    {
+     "climateTraceSourceId": 1567061,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.18338194827586204,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.5211310344827585,
+      0.7413551724137931,
+      1.2477068965517244
+     ],
+     "mean_truth": 0.557973224137931
+    },
+    {
+     "climateTraceSourceId": 1567070,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.05777956896551724,
+     "coverage_90": 0.9655172413793104,
+     "mean_q05_q50_q95": [
+      0.4121896551724138,
+      0.5881827586206896,
+      1.2109241379310345
+     ],
+     "mean_truth": 0.5330606724137932
+    },
+    {
+     "climateTraceSourceId": 1567073,
+     "route": "BF-BOF",
+     "plant_months": 56,
+     "mae_q50": 0.05019255357142858,
+     "coverage_90": 0.6071428571428571,
+     "mean_q05_q50_q95": [
+      2.223778571428572,
+      2.272685714285714,
+      2.333135714285714
+     ],
+     "mean_truth": 2.295534017857143
+    },
+    {
+     "climateTraceSourceId": 1567079,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.08899448275862074,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      0.4121275862068966,
+      0.5852551724137932,
+      1.218448275862069
+     ],
+     "mean_truth": 0.4962606896551724
+    },
+    {
+     "climateTraceSourceId": 1567080,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.09136344827586206,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      0.41160689655172417,
+      0.5968241379310346,
+      1.2034344827586205
+     ],
+     "mean_truth": 0.5054606896551724
+    },
+    {
+     "climateTraceSourceId": 1567090,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.08575046551724144,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6871137931034484,
+      0.826444827586207,
+      1.3006620689655173
+     ],
+     "mean_truth": 0.7406943620689656
+    },
+    {
+     "climateTraceSourceId": 1567101,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.04540015517241379,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.36721724137931033,
+      0.4646413793103448,
+      1.1435758620689653
+     ],
+     "mean_truth": 0.4192759827586207
+    },
+    {
+     "climateTraceSourceId": 1567105,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.03489072413793103,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3618241379310345,
+      0.4530206896551725,
+      1.1395551724137933
+     ],
+     "mean_truth": 0.41927596551724144
+    },
+    {
+     "climateTraceSourceId": 1567108,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.01837536206896552,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      2.1772103448275866,
+      2.228179310344828,
+      2.293993103448276
+     ],
+     "mean_truth": 2.223677086206896
+    },
+    {
+     "climateTraceSourceId": 1567111,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.040443017241379324,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.36721724137931033,
+      0.46863448275862074,
+      1.1421551724137933
+     ],
+     "mean_truth": 0.4284759827586207
+    },
+    {
+     "climateTraceSourceId": 1567114,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.05365849999999999,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.36721724137931033,
+      0.47293448275862066,
+      1.1421551724137933
+     ],
+     "mean_truth": 0.4192759827586207
+    },
+    {
+     "climateTraceSourceId": 1567115,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.07972082758620692,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.36721724137931033,
+      0.469955172413793,
+      1.1421551724137933
+     ],
+     "mean_truth": 0.5496759999999999
+    },
+    {
+     "climateTraceSourceId": 1567119,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.3253587413793103,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.362351724137931,
+      0.5263172413793102,
+      1.1646896551724137
+     ],
+     "mean_truth": 0.8516759827586207
+    },
+    {
+     "climateTraceSourceId": 1567120,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.025277672413793115,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.36441724137931036,
+      0.6040620689655173,
+      1.2739103448275861
+     ],
+     "mean_truth": 0.5848760172413792
+    },
+    {
+     "climateTraceSourceId": 1567121,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.025475534482758626,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.36721724137931033,
+      0.4646413793103448,
+      1.1435758620689653
+     ],
+     "mean_truth": 0.4836759482758621
+    },
+    {
+     "climateTraceSourceId": 1567122,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.20005525862068965,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.36696551724137927,
+      0.46762068965517234,
+      1.1466103448275862
+     ],
+     "mean_truth": 0.667675948275862
+    },
+    {
+     "climateTraceSourceId": 1567126,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.24780015517241377,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.36251034482758615,
+      0.5394758620689657,
+      1.1646896551724137
+     ],
+     "mean_truth": 0.7872760172413794
+    },
+    {
+     "climateTraceSourceId": 1567128,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.01944656896551724,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3618241379310345,
+      0.4574310344827586,
+      1.1434586206896553
+     ],
+     "mean_truth": 0.4560760172413793
+    },
+    {
+     "climateTraceSourceId": 1567134,
+     "route": "EAF",
+     "plant_months": 40,
+     "mae_q50": 0.04720682500000002,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3637250000000001,
+      0.4673999999999999,
+      1.1415
+     ],
+     "mean_truth": 0.514606825
+    },
+    {
+     "climateTraceSourceId": 1567135,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.019688655172413798,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.36721724137931033,
+      0.46989999999999993,
+      1.1421551724137933
+     ],
+     "mean_truth": 0.46527599999999997
+    },
+    {
+     "climateTraceSourceId": 1567146,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.09324494827586205,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3623655172413793,
+      0.4640310344827587,
+      1.1555758620689658
+     ],
+     "mean_truth": 0.5572759827586207
+    },
+    {
+     "climateTraceSourceId": 1567150,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.019419000000000002,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3521172413793104,
+      0.4453310344827587,
+      1.2135862068965513
+     ],
+     "mean_truth": 0.444776
+    },
+    {
+     "climateTraceSourceId": 1567151,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.10024493103448273,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3618241379310345,
+      0.5030310344827587,
+      1.2136379310344827
+     ],
+     "mean_truth": 0.6032759655172413
+    },
+    {
+     "climateTraceSourceId": 1567156,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.08624498275862068,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.35040344827586206,
+      0.4605310344827586,
+      1.142937931034483
+     ],
+     "mean_truth": 0.5467760172413793
+    },
+    {
+     "climateTraceSourceId": 1567159,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.04724496551724138,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3623655172413793,
+      0.4640310344827587,
+      1.1555758620689658
+     ],
+     "mean_truth": 0.5112760000000001
+    },
+    {
+     "climateTraceSourceId": 1567161,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.020699000000000002,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3651655172413792,
+      0.4724310344827586,
+      1.1555758620689658
+     ],
+     "mean_truth": 0.46527599999999997
+    },
+    {
+     "climateTraceSourceId": 1567164,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.04665532758620689,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3618241379310345,
+      0.46593103448275863,
+      1.1569000000000005
+     ],
+     "mean_truth": 0.41927598275862077
+    },
+    {
+     "climateTraceSourceId": 1567165,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.0448208275862069,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3623655172413793,
+      0.4640310344827587,
+      1.1555758620689658
+     ],
+     "mean_truth": 0.41927600000000004
+    },
+    {
+     "climateTraceSourceId": 1567188,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.18713951724137928,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.26376551724137937,
+      0.34798620689655185,
+      1.0786172413793105
+     ],
+     "mean_truth": 0.535125724137931
+    },
+    {
+     "climateTraceSourceId": 1567198,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.043310189655172394,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.624196551724138,
+      0.8164862068965517,
+      1.2774896551724138
+     ],
+     "mean_truth": 0.8576486379310344
+    },
+    {
+     "climateTraceSourceId": 1567205,
+     "route": "DRI-EAF",
+     "plant_months": 58,
+     "mae_q50": 0.05927820689655173,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7656620689655173,
+      1.5465724137931034,
+      2.174406896551724
+     ],
+     "mean_truth": 1.4872942068965516
+    },
+    {
+     "climateTraceSourceId": 1567207,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.03470463793103453,
+     "coverage_90": 0.3793103448275862,
+     "mean_q05_q50_q95": [
+      2.3836310344827583,
+      2.405706896551724,
+      2.501262068965517
+     ],
+     "mean_truth": 2.3758591551724133
+    },
+    {
+     "climateTraceSourceId": 1567210,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.009526034482758622,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.636341379310345,
+      0.7594758620689654,
+      1.3011999999999997
+     ],
+     "mean_truth": 0.7547355862068966
+    },
+    {
+     "climateTraceSourceId": 1567213,
+     "route": "DRI-EAF",
+     "plant_months": 28,
+     "mae_q50": 0.17315346428571426,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.5296928571428572,
+      1.326971428571429,
+      1.9664428571428572
+     ],
+     "mean_truth": 1.500124892857143
+    },
+    {
+     "climateTraceSourceId": 1567218,
+     "route": "BF-BOF",
+     "plant_months": 40,
+     "mae_q50": 0.019880800000000032,
+     "coverage_90": 0.975,
+     "mean_q05_q50_q95": [
+      2.255375,
+      2.38717,
+      2.438205
+     ],
+     "mean_truth": 2.3897329
+    },
+    {
+     "climateTraceSourceId": 1567225,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021327206896551733,
+     "coverage_90": 0.896551724137931,
+     "mean_q05_q50_q95": [
+      2.297803448275862,
+      2.4004931034482757,
+      2.446596551724138
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1567229,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.03537225862068965,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6425827586206897,
+      0.8248379310344827,
+      1.2823517241379307
+     ],
+     "mean_truth": 0.8576486379310344
+    },
+    {
+     "climateTraceSourceId": 1567236,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.051295448275862056,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.38554827586206886,
+      0.48302758620689645,
+      1.1795172413793105
+     ],
+     "mean_truth": 0.4317330689655172
+    },
+    {
+     "climateTraceSourceId": 1567240,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.04532958620689652,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6249172413793103,
+      0.8223448275862068,
+      1.4665689655172414
+     ],
+     "mean_truth": 0.7788425172413794
+    },
+    {
+     "climateTraceSourceId": 1567242,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.03493791379310342,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6420965517241379,
+      0.8146793103448277,
+      1.3035137931034484
+     ],
+     "mean_truth": 0.8487450862068966
+    },
+    {
+     "climateTraceSourceId": 1567256,
+     "route": "BF-BOF",
+     "plant_months": 22,
+     "mae_q50": 0.022483272727272754,
+     "coverage_90": 0.9090909090909091,
+     "mean_q05_q50_q95": [
+      2.3818818181818187,
+      2.423227272727273,
+      2.4667545454545454
+     ],
+     "mean_truth": 2.423637272727273
+    },
+    {
+     "climateTraceSourceId": 1567259,
+     "route": "EAF",
+     "plant_months": 34,
+     "mae_q50": 0.023718941176470585,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6326411764705882,
+      0.8178764705882353,
+      1.2769058823529411
+     ],
+     "mean_truth": 0.8216567647058824
+    },
+    {
+     "climateTraceSourceId": 1567261,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021395034482758625,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      2.294355172413793,
+      2.399024137931035,
+      2.447982758620691
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 1567267,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.023421965517241367,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6579017241379311,
+      0.7983724137931034,
+      1.2600672413793106
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 1567275,
+     "route": "BF-BOF",
+     "plant_months": 38,
+     "mae_q50": 0.02275760526315787,
+     "coverage_90": 0.8947368421052632,
+     "mean_q05_q50_q95": [
+      2.3818421052631575,
+      2.4053263157894738,
+      2.4633842105263164
+     ],
+     "mean_truth": 2.4145965526315796
+    },
+    {
+     "climateTraceSourceId": 1567279,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.3866521551724138,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6553896551724139,
+      0.8803517241379311,
+      1.7725379310344827
+     ],
+     "mean_truth": 1.2670038793103446
+    },
+    {
+     "climateTraceSourceId": 1567285,
+     "route": "BF-BOF",
+     "plant_months": 10,
+     "mae_q50": 0.030736100000000023,
+     "coverage_90": 0.8,
+     "mean_q05_q50_q95": [
+      2.3849199999999997,
+      2.42596,
+      2.472
+     ],
+     "mean_truth": 2.4200349
+    },
+    {
+     "climateTraceSourceId": 1567286,
+     "route": "BF-BOF",
+     "plant_months": 10,
+     "mae_q50": 0.030736100000000023,
+     "coverage_90": 0.8,
+     "mean_q05_q50_q95": [
+      2.3849199999999997,
+      2.42596,
+      2.472
+     ],
+     "mean_truth": 2.4200349
+    },
+    {
+     "climateTraceSourceId": 1567294,
+     "route": "BF-BOF",
+     "plant_months": 10,
+     "mae_q50": 0.030776100000000018,
+     "coverage_90": 0.9,
+     "mean_q05_q50_q95": [
+      2.38292,
+      2.4262,
+      2.4718
+     ],
+     "mean_truth": 2.4200349
+    },
+    {
+     "climateTraceSourceId": 1567300,
+     "route": "BF-BOF",
+     "plant_months": 22,
+     "mae_q50": 0.02245600000000001,
+     "coverage_90": 0.9090909090909091,
+     "mean_q05_q50_q95": [
+      2.381854545454545,
+      2.4237454545454535,
+      2.4667909090909093
+     ],
+     "mean_truth": 2.423637272727273
+    },
+    {
+     "climateTraceSourceId": 32440386,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.45638441379310346,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.2147,
+      0.3097586206896552,
+      0.973051724137931
+     ],
+     "mean_truth": 0.7661430344827586
+    },
+    {
+     "climateTraceSourceId": 32440460,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021344448275862085,
+     "coverage_90": 0.9310344827586207,
+     "mean_q05_q50_q95": [
+      2.2946862068965515,
+      2.401820689655173,
+      2.448196551724138
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 32440488,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.7090827758620691,
+     "coverage_90": 0.0,
+     "mean_q05_q50_q95": [
+      0.6579689655172414,
+      0.7924206896551725,
+      1.2609655172413792
+     ],
+     "mean_truth": 1.5015034655172415
+    },
+    {
+     "climateTraceSourceId": 32440554,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021862655172413824,
+     "coverage_90": 0.9482758620689655,
+     "mean_q05_q50_q95": [
+      2.2940448275862066,
+      2.3950206896551727,
+      2.447917241379311
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 32440635,
+     "route": "BF-BOF",
+     "plant_months": 56,
+     "mae_q50": 0.02182508928571433,
+     "coverage_90": 0.9464285714285714,
+     "mean_q05_q50_q95": [
+      2.2916250000000002,
+      2.397978571428571,
+      2.4475571428571428
+     ],
+     "mean_truth": 2.401359410714286
+    },
+    {
+     "climateTraceSourceId": 32440774,
+     "route": "DRI-EAF",
+     "plant_months": 58,
+     "mae_q50": 1.5370589137931034,
+     "coverage_90": 0.06896551724137931,
+     "mean_q05_q50_q95": [
+      0.733258620689655,
+      1.5563448275862066,
+      2.5277241379310347
+     ],
+     "mean_truth": 3.0934037413793103
+    },
+    {
+     "climateTraceSourceId": 32440928,
+     "route": "DRI-EAF",
+     "plant_months": 58,
+     "mae_q50": 0.2824146551724138,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.0,
+      0.6059137931034483,
+      2.0136724137931035
+     ],
+     "mean_truth": 0.3234991379310345
+    },
+    {
+     "climateTraceSourceId": 32441223,
+     "route": "EAF",
+     "plant_months": 10,
+     "mae_q50": 0.031946300000000004,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.63548,
+      0.80992,
+      1.2902200000000001
+     ],
+     "mean_truth": 0.8251471
+    },
+    {
+     "climateTraceSourceId": 32441252,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.05180603448275865,
+     "coverage_90": 0.6724137931034483,
+     "mean_q05_q50_q95": [
+      2.2942827586206898,
+      2.3998965517241384,
+      2.4490517241379313
+     ],
+     "mean_truth": 2.3624172068965517
+    },
+    {
+     "climateTraceSourceId": 42741251,
+     "route": "BF-BOF",
+     "plant_months": 16,
+     "mae_q50": 0.018157875000000018,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      2.1104,
+      2.367,
+      2.425
+     ],
+     "mean_truth": 2.3648585
+    },
+    {
+     "climateTraceSourceId": 42741747,
+     "route": "EAF",
+     "plant_months": 10,
+     "mae_q50": 0.28816759999999997,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3649,
+      0.4701000000000001,
+      1.1431
+     ],
+     "mean_truth": 0.7582676
+    },
+    {
+     "climateTraceSourceId": 42741815,
+     "route": "DRI-EAF",
+     "plant_months": 58,
+     "mae_q50": 1.0574706034482757,
+     "coverage_90": 0.5862068965517241,
+     "mean_q05_q50_q95": [
+      0.6875034482758622,
+      1.5565689655172414,
+      2.1761068965517243
+     ],
+     "mean_truth": 1.6778029137931039
+    },
+    {
+     "climateTraceSourceId": 42741830,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.13805077586206896,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.46062068965517244,
+      0.6290344827586207,
+      1.2349655172413792
+     ],
+     "mean_truth": 0.7559109827586209
+    },
+    {
+     "climateTraceSourceId": 42741851,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.023552999999999984,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6109137931034482,
+      0.7975379310344828,
+      1.2660896551724137
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 42741855,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.05315506896551724,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3651655172413792,
+      0.4724310344827586,
+      1.1555758620689658
+     ],
+     "mean_truth": 0.41927596551724144
+    },
+    {
+     "climateTraceSourceId": 42741868,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.13051363793103452,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3942275862068966,
+      0.5466379310344828,
+      1.1992310344827586
+     ],
+     "mean_truth": 0.6767629482758621
+    },
+    {
+     "climateTraceSourceId": 52203437,
+     "route": "BF-BOF",
+     "plant_months": 3,
+     "mae_q50": 0.14988333333333337,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      2.3627,
+      2.5638,
+      2.5997
+     ],
+     "mean_truth": 2.4139166666666667
+    },
+    {
+     "climateTraceSourceId": 55793399,
+     "route": "DRI-EAF",
+     "plant_months": 10,
+     "mae_q50": 0.01256299999999988,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7687999999999999,
+      1.574,
+      2.2124999999999995
+     ],
+     "mean_truth": 1.586563
+    },
+    {
+     "climateTraceSourceId": 55793400,
+     "route": "DRI-EAF",
+     "plant_months": 28,
+     "mae_q50": 0.0922827857142856,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7552428571428573,
+      1.4887999999999997,
+      2.1208928571428567
+     ],
+     "mean_truth": 1.5810827857142853
+    },
+    {
+     "climateTraceSourceId": 55793453,
+     "route": "DRI-EAF",
+     "plant_months": 16,
+     "mae_q50": 0.05296299999999987,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7687,
+      1.5336,
+      2.2391
+     ],
+     "mean_truth": 1.586563
+    },
+    {
+     "climateTraceSourceId": 55793509,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.023585965517241382,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6581344827586206,
+      0.7971172413793103,
+      1.2597586206896552
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793510,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.023552999999999984,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6109137931034482,
+      0.7975379310344828,
+      1.2660896551724137
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793512,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.023585965517241382,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6581344827586206,
+      0.7971172413793103,
+      1.2597586206896552
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793519,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02356679310344827,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6100137931034482,
+      0.7974310344827585,
+      1.266844827586207
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793522,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.023552999999999984,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6109137931034482,
+      0.7975379310344828,
+      1.2660896551724137
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793525,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.025382551724137916,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6581344827586206,
+      0.790662068965517,
+      1.2584
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793527,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02356679310344827,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6100137931034482,
+      0.7974310344827585,
+      1.266844827586207
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793534,
+     "route": "BF-BOF",
+     "plant_months": 58,
+     "mae_q50": 0.021388137931034494,
+     "coverage_90": 0.9827586206896551,
+     "mean_q05_q50_q95": [
+      2.289031034482758,
+      2.3988172413793105,
+      2.4476965517241385
+     ],
+     "mean_truth": 2.4008653448275856
+    },
+    {
+     "climateTraceSourceId": 55793535,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.024121793103448263,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.649455172413793,
+      0.7957137931034484,
+      1.299062068965517
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793542,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.02295275862068965,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6581344827586206,
+      0.8012206896551723,
+      1.2602379310344831
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793543,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.022926413793103447,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.657451724137931,
+      0.801493103448276,
+      1.2694724137931035
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793546,
+     "route": "EAF",
+     "plant_months": 58,
+     "mae_q50": 0.022883482758620684,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6115068965517243,
+      0.8045689655172413,
+      1.2667931034482758
+     ],
+     "mean_truth": 0.8050537586206896
+    },
+    {
+     "climateTraceSourceId": 55793588,
+     "route": "BF-BOF",
+     "plant_months": 23,
+     "mae_q50": 0.021733826086956554,
+     "coverage_90": 0.9130434782608695,
+     "mean_q05_q50_q95": [
+      2.38214347826087,
+      2.4230304347826093,
+      2.4661434782608693
+     ],
+     "mean_truth": 2.4236506956521744
+    }
+   ]
+  },
+  "without_prior_all_rows": {
+   "n_plants": 173,
+   "n_plant_months": 10590,
+   "plants_by_route": {
+    "BF-BOF": 63,
+    "DRI-EAF": 12,
+    "EAF": 98
+   },
+   "statistically_powered": true,
+   "mae_q50": 0.08792911246458923,
+   "mae_route_median_baseline": 0.18702705278564682,
+   "improvement_vs_route_median": 0.5298588564865775,
+   "coverage_90": 0.9277620396600567,
+   "mean_interval_width": 0.595091746931067,
+   "detection_synthetic": {
+    "0.5x": {
+     "synthetic": true,
+     "red_rate_full_rule": 0.841643059490085,
+     "red_rate_interval_only": 0.8195467422096318
+    },
+    "0.7x": {
+     "synthetic": true,
+     "red_rate_full_rule": 0.6166194523135033,
+     "red_rate_interval_only": 0.5079320113314447
+    },
+    "0.85x": {
+     "synthetic": true,
+     "red_rate_full_rule": 0.30113314447592066,
+     "red_rate_interval_only": 0.2929178470254957
+    },
+    "1x": {
+     "synthetic": false,
+     "red_rate_full_rule": 0.013125590179414542,
+     "red_rate_interval_only": 0.010481586402266289
+    },
+    "note": "red_rate at factor < 1 is recall on SYNTHETIC underreports (factor x Climate TRACE value); at 1x it is the false-red rate"
+   },
+   "per_plant": [
+    {
+     "climateTraceSourceId": 1566426,
+     "route": "DRI-EAF",
+     "plant_months": 66,
+     "mae_q50": 0.08085422727272729,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.02222424242424242,
+      0.6483151515151516,
+      1.9155575757575756
+     ],
+     "mean_truth": 0.7025644696969696
+    },
+    {
+     "climateTraceSourceId": 1566429,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.037508212121212185,
+     "coverage_90": 0.5454545454545454,
+     "mean_q05_q50_q95": [
+      1.957854545454545,
+      1.9912181818181822,
+      2.0725272727272728
+     ],
+     "mean_truth": 1.976942484848485
+    },
+    {
+     "climateTraceSourceId": 1566432,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.02860399999999998,
+     "coverage_90": 0.8636363636363636,
+     "mean_q05_q50_q95": [
+      2.2824,
+      2.3777454545454546,
+      2.431881818181818
+     ],
+     "mean_truth": 2.379322636363636
+    },
+    {
+     "climateTraceSourceId": 1566439,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.12982713636363638,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6167454545454544,
+      0.8556181818181819,
+      1.446063636363636
+     ],
+     "mean_truth": 0.7257910454545454
+    },
+    {
+     "climateTraceSourceId": 1566440,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.05508860606060607,
+     "coverage_90": 0.7121212121212122,
+     "mean_q05_q50_q95": [
+      1.953418181818182,
+      1.9850454545454546,
+      2.077318181818182
+     ],
+     "mean_truth": 2.0401340606060607
+    },
+    {
+     "climateTraceSourceId": 1566443,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.049476121212121214,
+     "coverage_90": 0.9242424242424242,
+     "mean_q05_q50_q95": [
+      0.19026363636363633,
+      0.27636363636363637,
+      0.9669272727272729
+     ],
+     "mean_truth": 0.22688751515151515
+    },
+    {
+     "climateTraceSourceId": 1566452,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.017186212121212102,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      1.8296545454545452,
+      1.9806727272727274,
+      2.0702999999999996
+     ],
+     "mean_truth": 1.984607787878788
+    },
+    {
+     "climateTraceSourceId": 1566454,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.10802139393939394,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.2113545454545454,
+      0.30906363636363643,
+      1.001618181818182
+     ],
+     "mean_truth": 0.4170850303030303
+    },
+    {
+     "climateTraceSourceId": 1566459,
+     "route": "BF-BOF",
+     "plant_months": 63,
+     "mae_q50": 0.024200936507936456,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      1.8267999999999998,
+      2.005039682539683,
+      2.1232952380952375
+     ],
+     "mean_truth": 1.985439126984127
+    },
+    {
+     "climateTraceSourceId": 1566468,
+     "route": "DRI-EAF",
+     "plant_months": 66,
+     "mae_q50": 0.04717453030303028,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.0,
+      0.5765545454545455,
+      1.8775363636363638
+     ],
+     "mean_truth": 0.6237290757575756
+    },
+    {
+     "climateTraceSourceId": 1566472,
+     "route": "BF-BOF",
+     "plant_months": 65,
+     "mae_q50": 0.010890630769230783,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      1.9752000000000005,
+      2.0419569230769237,
+      2.1734661538461535
+     ],
+     "mean_truth": 2.043541246153847
+    },
+    {
+     "climateTraceSourceId": 1566476,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.0037836363636363645,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.09719999999999998,
+      0.12544545454545453,
+      0.9050999999999999
+     ],
+     "mean_truth": 0.12823239393939395
+    },
+    {
+     "climateTraceSourceId": 1566477,
+     "route": "BF-BOF",
+     "plant_months": 45,
+     "mae_q50": 0.04572644444444445,
+     "coverage_90": 0.4666666666666667,
+     "mean_q05_q50_q95": [
+      2.133873333333333,
+      2.185673333333333,
+      2.21838
+     ],
+     "mean_truth": 2.1772924444444444
+    },
+    {
+     "climateTraceSourceId": 1566486,
+     "route": "BF-BOF",
+     "plant_months": 65,
+     "mae_q50": 0.020875046153846187,
+     "coverage_90": 0.9538461538461539,
+     "mean_q05_q50_q95": [
+      2.306793846153846,
+      2.399193846153846,
+      2.4508200000000007
+     ],
+     "mean_truth": 2.4051732307692304
+    },
+    {
+     "climateTraceSourceId": 1566490,
+     "route": "BF-BOF",
+     "plant_months": 56,
+     "mae_q50": 0.02152346428571431,
+     "coverage_90": 0.9464285714285714,
+     "mean_q05_q50_q95": [
+      2.294289285714286,
+      2.3991821428571423,
+      2.449142857142857
+     ],
+     "mean_truth": 2.4021431785714285
+    },
+    {
+     "climateTraceSourceId": 1566491,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.02089175757575758,
+     "coverage_90": 0.9848484848484849,
+     "mean_q05_q50_q95": [
+      2.3055757575757574,
+      2.402572727272728,
+      2.450587878787879
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 1566502,
+     "route": "BF-BOF",
+     "plant_months": 65,
+     "mae_q50": 0.020965923076923087,
+     "coverage_90": 0.9538461538461539,
+     "mean_q05_q50_q95": [
+      2.307527692307692,
+      2.4034292307692304,
+      2.4512399999999994
+     ],
+     "mean_truth": 2.4056834923076917
+    },
+    {
+     "climateTraceSourceId": 1566513,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.02084933333333334,
+     "coverage_90": 0.9545454545454546,
+     "mean_q05_q50_q95": [
+      2.3083545454545447,
+      2.4032090909090913,
+      2.4511454545454545
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 1566516,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.02086448484848486,
+     "coverage_90": 0.9393939393939394,
+     "mean_q05_q50_q95": [
+      2.308263636363636,
+      2.4028363636363634,
+      2.4522
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 1566524,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.02089177272727275,
+     "coverage_90": 0.9545454545454546,
+     "mean_q05_q50_q95": [
+      2.3076272727272724,
+      2.4019,
+      2.4505909090909093
+     ],
+     "mean_truth": 2.405675742424242
+    },
+    {
+     "climateTraceSourceId": 1566537,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.02089177272727275,
+     "coverage_90": 0.9545454545454546,
+     "mean_q05_q50_q95": [
+      2.3076454545454546,
+      2.4020272727272727,
+      2.450427272727273
+     ],
+     "mean_truth": 2.405675742424242
+    },
+    {
+     "climateTraceSourceId": 1566552,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.020826090909090912,
+     "coverage_90": 0.9545454545454546,
+     "mean_q05_q50_q95": [
+      2.3076272727272724,
+      2.4043363636363635,
+      2.4502727272727274
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 1566555,
+     "route": "BF-BOF",
+     "plant_months": 54,
+     "mae_q50": 0.02120531481481482,
+     "coverage_90": 0.9444444444444444,
+     "mean_q05_q50_q95": [
+      2.351833333333334,
+      2.4107,
+      2.456177777777778
+     ],
+     "mean_truth": 2.414070981481481
+    },
+    {
+     "climateTraceSourceId": 1566566,
+     "route": "EAF",
+     "plant_months": 36,
+     "mae_q50": 0.022908583333333312,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6297666666666668,
+      0.7823000000000001,
+      1.2738166666666668
+     ],
+     "mean_truth": 0.7904669166666667
+    },
+    {
+     "climateTraceSourceId": 1566573,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.020864500000000015,
+     "coverage_90": 0.9393939393939394,
+     "mean_q05_q50_q95": [
+      2.308263636363636,
+      2.4028363636363634,
+      2.4522
+     ],
+     "mean_truth": 2.405675742424242
+    },
+    {
+     "climateTraceSourceId": 1566590,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.021327515151515184,
+     "coverage_90": 0.9545454545454546,
+     "mean_q05_q50_q95": [
+      2.3076272727272724,
+      2.3990181818181817,
+      2.4507272727272733
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 1566591,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.020891757575757595,
+     "coverage_90": 0.9545454545454546,
+     "mean_q05_q50_q95": [
+      2.3076272727272724,
+      2.4019,
+      2.4505909090909093
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 1566597,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.02087963636363638,
+     "coverage_90": 0.9545454545454546,
+     "mean_q05_q50_q95": [
+      2.3084818181818183,
+      2.4025181818181824,
+      2.450781818181818
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 1566599,
+     "route": "BF-BOF",
+     "plant_months": 65,
+     "mae_q50": 0.0210442,
+     "coverage_90": 0.9846153846153847,
+     "mean_q05_q50_q95": [
+      2.2671815384615384,
+      2.40093076923077,
+      2.453446153846154
+     ],
+     "mean_truth": 2.405941430769231
+    },
+    {
+     "climateTraceSourceId": 1566612,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.02086448484848486,
+     "coverage_90": 0.9696969696969697,
+     "mean_q05_q50_q95": [
+      2.3083545454545447,
+      2.402709090909091,
+      2.4588636363636365
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 1566616,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.02083496969696973,
+     "coverage_90": 0.9545454545454546,
+     "mean_q05_q50_q95": [
+      2.3077272727272726,
+      2.4017454545454546,
+      2.4506545454545465
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 1566618,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.022335999999999995,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6636090909090908,
+      0.8055090909090908,
+      1.2579909090909096
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 1566658,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.020871560606060612,
+     "coverage_90": 0.9545454545454546,
+     "mean_q05_q50_q95": [
+      2.3078545454545454,
+      2.4037909090909086,
+      2.450881818181818
+     ],
+     "mean_truth": 2.405675742424242
+    },
+    {
+     "climateTraceSourceId": 1566665,
+     "route": "BF-BOF",
+     "plant_months": 60,
+     "mae_q50": 0.027337850000000108,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      2.2637050000000003,
+      2.3831500000000005,
+      2.4840316666666675
+     ],
+     "mean_truth": 2.4073370833333336
+    },
+    {
+     "climateTraceSourceId": 1566666,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.0208099393939394,
+     "coverage_90": 0.9242424242424242,
+     "mean_q05_q50_q95": [
+      2.310945454545454,
+      2.404218181818182,
+      2.452645454545455
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 1566667,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.02277257575757575,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6351,
+      0.8032727272727274,
+      1.261927272727273
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 1566677,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.022909515151515143,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6131636363636362,
+      0.8018636363636364,
+      1.2644090909090908
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 1566689,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.020891757575757595,
+     "coverage_90": 0.9545454545454546,
+     "mean_q05_q50_q95": [
+      2.3076272727272724,
+      2.4019,
+      2.4502999999999995
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 1566691,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.025471151515151506,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6496181818181818,
+      0.7965363636363636,
+      1.271118181818182
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 1566718,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.022518606060606048,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6556000000000002,
+      0.8039181818181818,
+      1.2768727272727272
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 1566727,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.022818606060606057,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6595272727272726,
+      0.8022272727272727,
+      1.2687454545454542
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 1566734,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.022335999999999995,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6636090909090908,
+      0.8055090909090908,
+      1.2579909090909096
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 1566737,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.02085236363636365,
+     "coverage_90": 0.9242424242424242,
+     "mean_q05_q50_q95": [
+      2.310945454545454,
+      2.402818181818182,
+      2.4512818181818186
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 1566749,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.022312848484848484,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6630090909090909,
+      0.8057727272727272,
+      1.2676454545454547
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 1566752,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.022170848484848477,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6635651515151515,
+      0.8054378787878786,
+      1.258439393939394
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 1566756,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.020870545454545468,
+     "coverage_90": 0.9393939393939394,
+     "mean_q05_q50_q95": [
+      2.308263636363636,
+      2.402581818181818,
+      2.4509727272727275
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 1566762,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.022335999999999995,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6636090909090908,
+      0.8055090909090908,
+      1.2579909090909096
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 1566773,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.031069484848484874,
+     "coverage_90": 0.5606060606060606,
+     "mean_q05_q50_q95": [
+      2.1658909090909093,
+      2.2092000000000005,
+      2.238754545454545
+     ],
+     "mean_truth": 2.2214626060606064
+    },
+    {
+     "climateTraceSourceId": 1566774,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.03090584848484849,
+     "coverage_90": 0.6212121212121212,
+     "mean_q05_q50_q95": [
+      2.1669090909090913,
+      2.2099363636363636,
+      2.2532545454545456
+     ],
+     "mean_truth": 2.2214626060606064
+    },
+    {
+     "climateTraceSourceId": 1566780,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.03515287878787879,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.32712727272727277,
+      0.42344545454545457,
+      1.1388454545454547
+     ],
+     "mean_truth": 0.4169548181818182
+    },
+    {
+     "climateTraceSourceId": 1566784,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.036098090909090906,
+     "coverage_90": 0.9848484848484849,
+     "mean_q05_q50_q95": [
+      0.3406454545454546,
+      0.42830000000000007,
+      1.1341636363636365
+     ],
+     "mean_truth": 0.4169548181818182
+    },
+    {
+     "climateTraceSourceId": 1566799,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.03425736363636362,
+     "coverage_90": 0.5606060606060606,
+     "mean_q05_q50_q95": [
+      1.9861272727272725,
+      2.0040454545454547,
+      2.0706090909090915
+     ],
+     "mean_truth": 2.0348950606060607
+    },
+    {
+     "climateTraceSourceId": 1566800,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.14434157575757578,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.18889999999999998,
+      0.30705454545454547,
+      1.0618181818181816
+     ],
+     "mean_truth": 0.45139612121212114
+    },
+    {
+     "climateTraceSourceId": 1566809,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.027036696969696964,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.1878545454545455,
+      0.2943090909090909,
+      1.0699090909090907
+     ],
+     "mean_truth": 0.31339612121212124
+    },
+    {
+     "climateTraceSourceId": 1566810,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.02747098484848485,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.17307272727272727,
+      0.2934545454545454,
+      1.1716000000000002
+     ],
+     "mean_truth": 0.3133961060606061
+    },
+    {
+     "climateTraceSourceId": 1566826,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.06318836363636358,
+     "coverage_90": 0.803030303030303,
+     "mean_q05_q50_q95": [
+      2.0442636363636364,
+      2.1513818181818185,
+      2.2223
+     ],
+     "mean_truth": 2.0883483636363636
+    },
+    {
+     "climateTraceSourceId": 1566837,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.039986757575757516,
+     "coverage_90": 0.42424242424242425,
+     "mean_q05_q50_q95": [
+      2.3786181818181817,
+      2.413227272727273,
+      2.499718181818182
+     ],
+     "mean_truth": 2.377697303030303
+    },
+    {
+     "climateTraceSourceId": 1566849,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.03052057575757572,
+     "coverage_90": 0.9848484848484849,
+     "mean_q05_q50_q95": [
+      2.4035818181818183,
+      2.4730727272727275,
+      2.545163636363636
+     ],
+     "mean_truth": 2.4674541515151516
+    },
+    {
+     "climateTraceSourceId": 1566850,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.030701106060605998,
+     "coverage_90": 0.9848484848484849,
+     "mean_q05_q50_q95": [
+      2.4035818181818183,
+      2.4746909090909086,
+      2.545163636363636
+     ],
+     "mean_truth": 2.4674541363636364
+    },
+    {
+     "climateTraceSourceId": 1566853,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.03094957575757569,
+     "coverage_90": 0.9848484848484849,
+     "mean_q05_q50_q95": [
+      2.4035818181818183,
+      2.476372727272727,
+      2.5428818181818182
+     ],
+     "mean_truth": 2.4674541212121213
+    },
+    {
+     "climateTraceSourceId": 1566870,
+     "route": "EAF",
+     "plant_months": 65,
+     "mae_q50": 0.044723876923076895,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6915261538461537,
+      0.9328153846153846,
+      1.4513692307692307
+     ],
+     "mean_truth": 0.8910758153846153
+    },
+    {
+     "climateTraceSourceId": 1566877,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.659215712121212,
+     "coverage_90": 0.0,
+     "mean_q05_q50_q95": [
+      0.6473727272727273,
+      0.8273909090909093,
+      1.3867999999999994
+     ],
+     "mean_truth": 1.4866066212121212
+    },
+    {
+     "climateTraceSourceId": 1566885,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.5506157121212122,
+     "coverage_90": 0.22727272727272727,
+     "mean_q05_q50_q95": [
+      0.6466636363636363,
+      0.8439909090909091,
+      1.3875454545454544
+     ],
+     "mean_truth": 1.3946066212121213
+    },
+    {
+     "climateTraceSourceId": 1566897,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.039689348484848494,
+     "coverage_90": 0.9696969696969697,
+     "mean_q05_q50_q95": [
+      0.30155454545454546,
+      0.4075909090909091,
+      1.105536363636364
+     ],
+     "mean_truth": 0.3761794696969697
+    },
+    {
+     "climateTraceSourceId": 1566906,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.03174889393939394,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.2857090909090909,
+      0.3931636363636364,
+      1.0825727272727275
+     ],
+     "mean_truth": 0.3761794696969697
+    },
+    {
+     "climateTraceSourceId": 1566912,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.10910125757575762,
+     "coverage_90": 0.9848484848484849,
+     "mean_q05_q50_q95": [
+      0.4223454545454545,
+      0.5877999999999999,
+      1.2023272727272727
+     ],
+     "mean_truth": 0.4786987424242424
+    },
+    {
+     "climateTraceSourceId": 1566925,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.023669106060606022,
+     "coverage_90": 0.9090909090909091,
+     "mean_q05_q50_q95": [
+      2.2321818181818185,
+      2.281963636363636,
+      2.3481363636363635
+     ],
+     "mean_truth": 2.280367651515152
+    },
+    {
+     "climateTraceSourceId": 1566941,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.10694671212121214,
+     "coverage_90": 0.9848484848484849,
+     "mean_q05_q50_q95": [
+      0.4175090909090909,
+      0.5856454545454547,
+      1.2172818181818181
+     ],
+     "mean_truth": 0.4786987424242424
+    },
+    {
+     "climateTraceSourceId": 1566944,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.11760125757575757,
+     "coverage_90": 0.9848484848484849,
+     "mean_q05_q50_q95": [
+      0.42260909090909093,
+      0.5962999999999999,
+      1.2027727272727273
+     ],
+     "mean_truth": 0.4786987424242424
+    },
+    {
+     "climateTraceSourceId": 1566945,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.09464671212121208,
+     "coverage_90": 0.9848484848484849,
+     "mean_q05_q50_q95": [
+      0.4173454545454546,
+      0.5733454545454544,
+      1.200127272727273
+     ],
+     "mean_truth": 0.4786987424242424
+    },
+    {
+     "climateTraceSourceId": 1566953,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.07422168181818181,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.38397272727272735,
+      0.5109545454545454,
+      1.2765
+     ],
+     "mean_truth": 0.43673286363636366
+    },
+    {
+     "climateTraceSourceId": 1566956,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.015159424242424203,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      2.1980909090909093,
+      2.240863636363637,
+      2.2973818181818184
+     ],
+     "mean_truth": 2.240331545454545
+    },
+    {
+     "climateTraceSourceId": 1566958,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.08483080303030305,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.38533636363636353,
+      0.5215636363636365,
+      1.265027272727273
+     ],
+     "mean_truth": 0.43673283333333335
+    },
+    {
+     "climateTraceSourceId": 1566969,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.3761520909090909,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6864545454545454,
+      0.8316272727272727,
+      1.2797636363636364
+     ],
+     "mean_truth": 1.2077793636363634
+    },
+    {
+     "climateTraceSourceId": 1566979,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.020685530303030313,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.40729090909090915,
+      0.5842636363636363,
+      1.2088727272727273
+     ],
+     "mean_truth": 0.6049491666666668
+    },
+    {
+     "climateTraceSourceId": 1566981,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.07975083333333331,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.40729090909090915,
+      0.5835,
+      1.2088090909090912
+     ],
+     "mean_truth": 0.5037491666666668
+    },
+    {
+     "climateTraceSourceId": 1566982,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.07077810606060607,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.40222727272727277,
+      0.5745272727272729,
+      1.2332545454545456
+     ],
+     "mean_truth": 0.5037491666666668
+    },
+    {
+     "climateTraceSourceId": 1566991,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.03614072727272722,
+     "coverage_90": 0.8333333333333334,
+     "mean_q05_q50_q95": [
+      2.0937181818181823,
+      2.1601545454545454,
+      2.210509090909091
+     ],
+     "mean_truth": 2.147336909090909
+    },
+    {
+     "climateTraceSourceId": 1566994,
+     "route": "DRI-EAF",
+     "plant_months": 66,
+     "mae_q50": 0.25813443939393943,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.532490909090909,
+      1.2642363636363638,
+      1.9004909090909088
+     ],
+     "mean_truth": 1.5223708030303034
+    },
+    {
+     "climateTraceSourceId": 1567005,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.1293325454545455,
+     "coverage_90": 0.6818181818181818,
+     "mean_q05_q50_q95": [
+      0.6824818181818183,
+      0.8396181818181818,
+      1.697218181818182
+     ],
+     "mean_truth": 0.7102856363636363
+    },
+    {
+     "climateTraceSourceId": 1567006,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.07398904545454547,
+     "coverage_90": 0.9848484848484849,
+     "mean_q05_q50_q95": [
+      0.622890909090909,
+      0.8302363636363638,
+      1.7488000000000001
+     ],
+     "mean_truth": 0.7562856515151514
+    },
+    {
+     "climateTraceSourceId": 1567013,
+     "route": "BF-BOF",
+     "plant_months": 63,
+     "mae_q50": 0.059282396825396905,
+     "coverage_90": 0.5238095238095238,
+     "mean_q05_q50_q95": [
+      2.3918761904761894,
+      2.4484634920634902,
+      2.502273015873015
+     ],
+     "mean_truth": 2.4910466190476184
+    },
+    {
+     "climateTraceSourceId": 1567015,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.05068309090909089,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.4005727272727272,
+      0.5239545454545453,
+      1.2118909090909091
+     ],
+     "mean_truth": 0.5745993333333335
+    },
+    {
+     "climateTraceSourceId": 1567027,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.05686213636363637,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3995727272727273,
+      0.5208909090909091,
+      1.300690909090909
+     ],
+     "mean_truth": 0.46419931818181825
+    },
+    {
+     "climateTraceSourceId": 1567036,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.15005868181818183,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.401590909090909,
+      0.514190909090909,
+      1.2091909090909092
+     ],
+     "mean_truth": 0.664249590909091
+    },
+    {
+     "climateTraceSourceId": 1567037,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.0669915909090909,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.401590909090909,
+      0.531190909090909,
+      1.2109909090909092
+     ],
+     "mean_truth": 0.46419931818181825
+    },
+    {
+     "climateTraceSourceId": 1567042,
+     "route": "DRI-EAF",
+     "plant_months": 66,
+     "mae_q50": 0.36999110606060615,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7651,
+      1.6223181818181815,
+      2.270527272727273
+     ],
+     "mean_truth": 1.2523270757575757
+    },
+    {
+     "climateTraceSourceId": 1567054,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.0764538787878788,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6187,
+      0.7501636363636361,
+      1.2672545454545454
+     ],
+     "mean_truth": 0.6737097575757576
+    },
+    {
+     "climateTraceSourceId": 1567055,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.06660980303030306,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6336363636363636,
+      0.7538,
+      1.2672545454545454
+     ],
+     "mean_truth": 0.8204098030303032
+    },
+    {
+     "climateTraceSourceId": 1567061,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.1811447727272727,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.5225090909090908,
+      0.7407545454545456,
+      1.2541909090909091
+     ],
+     "mean_truth": 0.5596097727272725
+    },
+    {
+     "climateTraceSourceId": 1567070,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.05701512121212122,
+     "coverage_90": 0.9696969696969697,
+     "mean_q05_q50_q95": [
+      0.41531818181818186,
+      0.5886818181818181,
+      1.2098545454545455
+     ],
+     "mean_truth": 0.5340020606060606
+    },
+    {
+     "climateTraceSourceId": 1567073,
+     "route": "BF-BOF",
+     "plant_months": 64,
+     "mae_q50": 0.04692876562500001,
+     "coverage_90": 0.640625,
+     "mean_q05_q50_q95": [
+      2.2267062500000003,
+      2.2764625,
+      2.3339187499999996
+     ],
+     "mean_truth": 2.296658703125
+    },
+    {
+     "climateTraceSourceId": 1567079,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.08857974242424246,
+     "coverage_90": 0.9393939393939394,
+     "mean_q05_q50_q95": [
+      0.41500909090909094,
+      0.5857818181818183,
+      1.2181636363636363
+     ],
+     "mean_truth": 0.49720207575757575
+    },
+    {
+     "climateTraceSourceId": 1567080,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.09106156060606059,
+     "coverage_90": 0.9545454545454546,
+     "mean_q05_q50_q95": [
+      0.4144909090909091,
+      0.5974636363636365,
+      1.2032727272727273
+     ],
+     "mean_truth": 0.5064020757575758
+    },
+    {
+     "climateTraceSourceId": 1567090,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.08810821212121217,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6873181818181819,
+      0.8284636363636365,
+      1.3111636363636363
+     ],
+     "mean_truth": 0.7403554242424243
+    },
+    {
+     "climateTraceSourceId": 1567101,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.0435225303030303,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3700636363636364,
+      0.4659818181818182,
+      1.1467909090909087
+     ],
+     "mean_truth": 0.4232165606060606
+    },
+    {
+     "climateTraceSourceId": 1567105,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.03394196969696969,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3646818181818182,
+      0.45436363636363647,
+      1.1427727272727275
+     ],
+     "mean_truth": 0.4232165454545455
+    },
+    {
+     "climateTraceSourceId": 1567108,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.019443636363636364,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      2.180045454545455,
+      2.2306909090909093,
+      2.2951818181818187
+     ],
+     "mean_truth": 2.227436515151515
+    },
+    {
+     "climateTraceSourceId": 1567111,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.03903122727272729,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3700636363636364,
+      0.4703272727272727,
+      1.1453727272727274
+     ],
+     "mean_truth": 0.4324165606060606
+    },
+    {
+     "climateTraceSourceId": 1567114,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.051505196969696965,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3700636363636364,
+      0.4746636363636363,
+      1.1453727272727274
+     ],
+     "mean_truth": 0.4232165606060606
+    },
+    {
+     "climateTraceSourceId": 1567115,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.08193475757575759,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3700636363636364,
+      0.4716818181818181,
+      1.1453727272727274
+     ],
+     "mean_truth": 0.5536165757575757
+    },
+    {
+     "climateTraceSourceId": 1567119,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.3289256515151515,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.36518181818181816,
+      0.5266909090909091,
+      1.1676363636363636
+     ],
+     "mean_truth": 0.8556165606060606
+    },
+    {
+     "climateTraceSourceId": 1567120,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.025494151515151522,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.36726363636363646,
+      0.6070727272727273,
+      1.276854545454545
+     ],
+     "mean_truth": 0.5888166060606059
+    },
+    {
+     "climateTraceSourceId": 1567121,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.02729495454545455,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3700636363636364,
+      0.4659818181818182,
+      1.1467909090909087
+     ],
+     "mean_truth": 0.48761653030303037
+    },
+    {
+     "climateTraceSourceId": 1567122,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.2026528787878788,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3698181818181818,
+      0.46896363636363625,
+      1.1495545454545455
+     ],
+     "mean_truth": 0.671616515151515
+    },
+    {
+     "climateTraceSourceId": 1567126,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.2517620454545454,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.36534545454545453,
+      0.5394545454545454,
+      1.1676363636363636
+     ],
+     "mean_truth": 0.7912165909090909
+    },
+    {
+     "climateTraceSourceId": 1567128,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.020977560606060604,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3646818181818182,
+      0.45873636363636366,
+      1.1520818181818182
+     ],
+     "mean_truth": 0.4600165909090909
+    },
+    {
+     "climateTraceSourceId": 1567134,
+     "route": "EAF",
+     "plant_months": 48,
+     "mae_q50": 0.05016093750000001,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.36468750000000005,
+      0.4683,
+      1.143525
+     ],
+     "mean_truth": 0.5184609375
+    },
+    {
+     "climateTraceSourceId": 1567135,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.020926666666666666,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3700636363636364,
+      0.47186363636363626,
+      1.1453727272727274
+     ],
+     "mean_truth": 0.46921657575757575
+    },
+    {
+     "climateTraceSourceId": 1567146,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.09588019696969696,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3652181818181818,
+      0.46533636363636366,
+      1.1613363636363638
+     ],
+     "mean_truth": 0.5612165606060606
+    },
+    {
+     "climateTraceSourceId": 1567150,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.020977560606060607,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.35496363636363637,
+      0.4466363636363637,
+      1.2228363636363637
+     ],
+     "mean_truth": 0.44871656060606063
+    },
+    {
+     "climateTraceSourceId": 1567151,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.10288016666666662,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3646818181818182,
+      0.5043363636363638,
+      1.2228818181818184
+     ],
+     "mean_truth": 0.6072165303030302
+    },
+    {
+     "climateTraceSourceId": 1567156,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.0885165909090909,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3541,
+      0.46220000000000006,
+      1.1500000000000001
+     ],
+     "mean_truth": 0.5507165909090909
+    },
+    {
+     "climateTraceSourceId": 1567159,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.04988021212121212,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3652181818181818,
+      0.46533636363636366,
+      1.1613363636363638
+     ],
+     "mean_truth": 0.5152165757575756
+    },
+    {
+     "climateTraceSourceId": 1567161,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.021902424242424244,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.36801818181818174,
+      0.47373636363636357,
+      1.1613363636363638
+     ],
+     "mean_truth": 0.46921657575757575
+    },
+    {
+     "climateTraceSourceId": 1567164,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.044686166666666666,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3646818181818182,
+      0.4672363636363636,
+      1.1658090909090912
+     ],
+     "mean_truth": 0.4232165606060606
+    },
+    {
+     "climateTraceSourceId": 1567165,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.04295887878787879,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3652181818181818,
+      0.46533636363636366,
+      1.1613363636363638
+     ],
+     "mean_truth": 0.4232165757575759
+    },
+    {
+     "climateTraceSourceId": 1567188,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.18354401515151514,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.2640363636363636,
+      0.35156363636363647,
+      1.0791363636363638
+     ],
+     "mean_truth": 0.5351076515151517
+    },
+    {
+     "climateTraceSourceId": 1567198,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.04296283333333331,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6239909090909092,
+      0.8147545454545454,
+      1.277163636363636
+     ],
+     "mean_truth": 0.8558299545454545
+    },
+    {
+     "climateTraceSourceId": 1567205,
+     "route": "DRI-EAF",
+     "plant_months": 66,
+     "mae_q50": 0.06155703030303031,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7666727272727274,
+      1.5481636363636362,
+      2.1746363636363637
+     ],
+     "mean_truth": 1.486606606060606
+    },
+    {
+     "climateTraceSourceId": 1567207,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.04036178787878792,
+     "coverage_90": 0.3939393939393939,
+     "mean_q05_q50_q95": [
+      2.385009090909091,
+      2.413790909090909,
+      2.5020181818181815
+     ],
+     "mean_truth": 2.377697303030303
+    },
+    {
+     "climateTraceSourceId": 1567210,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.009852303030303036,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6354636363636365,
+      0.7603636363636365,
+      1.3011999999999997
+     ],
+     "mean_truth": 0.7549795454545454
+    },
+    {
+     "climateTraceSourceId": 1567213,
+     "route": "DRI-EAF",
+     "plant_months": 36,
+     "mae_q50": 0.16558344444444445,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.5422166666666666,
+      1.3448333333333333,
+      1.9799166666666668
+     ],
+     "mean_truth": 1.510416777777778
+    },
+    {
+     "climateTraceSourceId": 1567218,
+     "route": "BF-BOF",
+     "plant_months": 48,
+     "mae_q50": 0.019453145833333352,
+     "coverage_90": 0.9791666666666666,
+     "mean_q05_q50_q95": [
+      2.275325,
+      2.3928749999999996,
+      2.443125
+     ],
+     "mean_truth": 2.3968716875
+    },
+    {
+     "climateTraceSourceId": 1567225,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.020807909090909096,
+     "coverage_90": 0.9090909090909091,
+     "mean_q05_q50_q95": [
+      2.311063636363636,
+      2.404481818181818,
+      2.4493363636363634
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 1567229,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.03614465151515152,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6423909090909091,
+      0.8219363636363634,
+      1.2821272727272726
+     ],
+     "mean_truth": 0.8558299545454545
+    },
+    {
+     "climateTraceSourceId": 1567236,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.054995242424242405,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3881363636363636,
+      0.4917272727272726,
+      1.1835272727272725
+     ],
+     "mean_truth": 0.4367328484848485
+    },
+    {
+     "climateTraceSourceId": 1567240,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.05312746969696967,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6283454545454545,
+      0.832290909090909,
+      1.4778090909090906
+     ],
+     "mean_truth": 0.7807692272727274
+    },
+    {
+     "climateTraceSourceId": 1567242,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.03358159090909088,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6423272727272727,
+      0.8155909090909093,
+      1.3139363636363635
+     ],
+     "mean_truth": 0.8484060757575758
+    },
+    {
+     "climateTraceSourceId": 1567256,
+     "route": "BF-BOF",
+     "plant_months": 30,
+     "mae_q50": 0.021032533333333346,
+     "coverage_90": 0.9333333333333333,
+     "mean_q05_q50_q95": [
+      2.3883400000000004,
+      2.42546,
+      2.467859999999999
+     ],
+     "mean_truth": 2.4281476000000004
+    },
+    {
+     "climateTraceSourceId": 1567259,
+     "route": "EAF",
+     "plant_months": 42,
+     "mae_q50": 0.02266185714285714,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6371857142857144,
+      0.8209285714285715,
+      1.2704857142857142
+     ],
+     "mean_truth": 0.8264177619047618
+    },
+    {
+     "climateTraceSourceId": 1567261,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.02086751515151515,
+     "coverage_90": 0.9393939393939394,
+     "mean_q05_q50_q95": [
+      2.307972727272727,
+      2.4029969696969697,
+      2.450833333333334
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 1567267,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.022748333333333322,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6634045454545454,
+      0.8028363636363637,
+      1.2578409090909093
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 1567275,
+     "route": "BF-BOF",
+     "plant_months": 46,
+     "mae_q50": 0.022225456521739094,
+     "coverage_90": 0.9130434782608695,
+     "mean_q05_q50_q95": [
+      2.3862521739130433,
+      2.408486956521739,
+      2.4652478260869573
+     ],
+     "mean_truth": 2.419110369565218
+    },
+    {
+     "climateTraceSourceId": 1567279,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.38507430303030304,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6591363636363637,
+      0.8833272727272727,
+      1.883381818181818
+     ],
+     "mean_truth": 1.2684015757575757
+    },
+    {
+     "climateTraceSourceId": 1567285,
+     "route": "BF-BOF",
+     "plant_months": 18,
+     "mae_q50": 0.024650277777777778,
+     "coverage_90": 0.8888888888888888,
+     "mean_q05_q50_q95": [
+      2.3943333333333334,
+      2.4283333333333337,
+      2.4716
+     ],
+     "mean_truth": 2.4291531666666666
+    },
+    {
+     "climateTraceSourceId": 1567286,
+     "route": "BF-BOF",
+     "plant_months": 18,
+     "mae_q50": 0.024650277777777778,
+     "coverage_90": 0.8888888888888888,
+     "mean_q05_q50_q95": [
+      2.3943333333333334,
+      2.4283333333333337,
+      2.4716
+     ],
+     "mean_truth": 2.4291531666666666
+    },
+    {
+     "climateTraceSourceId": 1567294,
+     "route": "BF-BOF",
+     "plant_months": 18,
+     "mae_q50": 0.0246725,
+     "coverage_90": 0.9444444444444444,
+     "mean_q05_q50_q95": [
+      2.392333333333333,
+      2.4286000000000008,
+      2.4714
+     ],
+     "mean_truth": 2.4291531666666666
+    },
+    {
+     "climateTraceSourceId": 1567300,
+     "route": "BF-BOF",
+     "plant_months": 30,
+     "mae_q50": 0.021012533333333337,
+     "coverage_90": 0.9333333333333333,
+     "mean_q05_q50_q95": [
+      2.3883199999999998,
+      2.4259999999999993,
+      2.467939999999999
+     ],
+     "mean_truth": 2.4281476000000004
+    },
+    {
+     "climateTraceSourceId": 1567323,
+     "route": "BF-BOF",
+     "plant_months": 6,
+     "mae_q50": 0.02051666666666659,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      2.4055,
+      2.4319,
+      2.4709
+     ],
+     "mean_truth": 2.445642
+    },
+    {
+     "climateTraceSourceId": 32440386,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.46002139393939395,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.2113545454545454,
+      0.31176363636363646,
+      1.0020636363636362
+     ],
+     "mean_truth": 0.7717850303030303
+    },
+    {
+     "climateTraceSourceId": 32440460,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.020823060606060616,
+     "coverage_90": 0.9393939393939394,
+     "mean_q05_q50_q95": [
+      2.308263636363636,
+      2.4058181818181827,
+      2.4509727272727275
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 32440488,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.7099456515151515,
+     "coverage_90": 0.0,
+     "mean_q05_q50_q95": [
+      0.6634636363636364,
+      0.7966000000000001,
+      1.2584
+     ],
+     "mean_truth": 1.5065456515151514
+    },
+    {
+     "climateTraceSourceId": 32440554,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.021327515151515184,
+     "coverage_90": 0.9545454545454546,
+     "mean_q05_q50_q95": [
+      2.3076272727272724,
+      2.3990181818181817,
+      2.4507272727272733
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 32440635,
+     "route": "BF-BOF",
+     "plant_months": 64,
+     "mae_q50": 0.021227328125000035,
+     "coverage_90": 0.953125,
+     "mean_q05_q50_q95": [
+      2.3059343749999996,
+      2.4020312499999994,
+      2.4505
+     ],
+     "mean_truth": 2.406258359375
+    },
+    {
+     "climateTraceSourceId": 32440774,
+     "route": "DRI-EAF",
+     "plant_months": 66,
+     "mae_q50": 1.5342923636363637,
+     "coverage_90": 0.18181818181818182,
+     "mean_q05_q50_q95": [
+      0.7348272727272726,
+      1.5605090909090906,
+      2.6460727272727276
+     ],
+     "mean_truth": 3.094801454545454
+    },
+    {
+     "climateTraceSourceId": 32440928,
+     "route": "DRI-EAF",
+     "plant_months": 66,
+     "mae_q50": 0.2854410909090909,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.0,
+      0.6049545454545455,
+      2.0132636363636367
+     ],
+     "mean_truth": 0.31951345454545454
+    },
+    {
+     "climateTraceSourceId": 32441223,
+     "route": "EAF",
+     "plant_months": 18,
+     "mae_q50": 0.032259944444444466,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.637,
+      0.8117333333333333,
+      1.2920333333333336
+     ],
+     "mean_truth": 0.8347048333333333
+    },
+    {
+     "climateTraceSourceId": 32441252,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.0594757575757576,
+     "coverage_90": 0.5909090909090909,
+     "mean_q05_q50_q95": [
+      2.307909090909091,
+      2.403763636363636,
+      2.4517727272727274
+     ],
+     "mean_truth": 2.3568779999999996
+    },
+    {
+     "climateTraceSourceId": 42741251,
+     "route": "BF-BOF",
+     "plant_months": 24,
+     "mae_q50": 0.020158791666666676,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      2.173275,
+      2.37305,
+      2.429925
+     ],
+     "mean_truth": 2.3764150416666667
+    },
+    {
+     "climateTraceSourceId": 42741747,
+     "route": "EAF",
+     "plant_months": 18,
+     "mae_q50": 0.3190564444444445,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3307333333333334,
+      0.44100000000000006,
+      1.1137333333333335
+     ],
+     "mean_truth": 0.7600564444444445
+    },
+    {
+     "climateTraceSourceId": 42741815,
+     "route": "DRI-EAF",
+     "plant_months": 66,
+     "mae_q50": 1.0247815757575758,
+     "coverage_90": 0.6363636363636364,
+     "mean_q05_q50_q95": [
+      0.686909090909091,
+      1.5572636363636365,
+      2.177718181818182
+     ],
+     "mean_truth": 1.5683133333333334
+    },
+    {
+     "climateTraceSourceId": 42741830,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.14693706060606057,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.4544727272727273,
+      0.6251272727272726,
+      1.233309090909091
+     ],
+     "mean_truth": 0.7622445151515153
+    },
+    {
+     "climateTraceSourceId": 42741851,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.02289133333333332,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6176999999999999,
+      0.8019818181818182,
+      1.2632545454545454
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 42741855,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.050792000000000004,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.36801818181818174,
+      0.47373636363636357,
+      1.1613363636363638
+     ],
+     "mean_truth": 0.4232165454545455
+    },
+    {
+     "climateTraceSourceId": 42741868,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.13306077272727274,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.3958,
+      0.5492272727272728,
+      1.1993727272727273
+     ],
+     "mean_truth": 0.6819465303030304
+    },
+    {
+     "climateTraceSourceId": 52203437,
+     "route": "BF-BOF",
+     "plant_months": 11,
+     "mae_q50": 0.13051290909090918,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      2.3627,
+      2.5638,
+      2.5996999999999995
+     ],
+     "mean_truth": 2.433287090909091
+    },
+    {
+     "climateTraceSourceId": 55793399,
+     "route": "DRI-EAF",
+     "plant_months": 18,
+     "mae_q50": 0.01256299999999988,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7688000000000001,
+      1.5740000000000003,
+      2.2125
+     ],
+     "mean_truth": 1.5865629999999997
+    },
+    {
+     "climateTraceSourceId": 55793400,
+     "route": "DRI-EAF",
+     "plant_months": 36,
+     "mae_q50": 0.08964197222222214,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.7506333333333335,
+      1.4914999999999998,
+      2.131233333333334
+     ],
+     "mean_truth": 1.581141972222222
+    },
+    {
+     "climateTraceSourceId": 55793453,
+     "route": "DRI-EAF",
+     "plant_months": 24,
+     "mae_q50": 0.05692949999999991,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.76765,
+      1.5273,
+      2.23955
+     ],
+     "mean_truth": 1.5842295
+    },
+    {
+     "climateTraceSourceId": 55793509,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.022961818181818177,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6636090909090908,
+      0.801490909090909,
+      1.257509090909091
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 55793510,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.02289133333333332,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6176999999999999,
+      0.8019818181818182,
+      1.2632545454545454
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 55793512,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.022961818181818177,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6636090909090908,
+      0.801490909090909,
+      1.257509090909091
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 55793519,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.022909515151515143,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6159999999999999,
+      0.8018636363636364,
+      1.2640636363636364
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 55793522,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.02289133333333332,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6176999999999999,
+      0.8019818181818182,
+      1.2632545454545454
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 55793525,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.024922454545454532,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6636090909090908,
+      0.7950545454545453,
+      1.2561454545454545
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 55793527,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.022909515151515143,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6159999999999999,
+      0.8018636363636364,
+      1.2640636363636364
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 55793534,
+     "route": "BF-BOF",
+     "plant_months": 66,
+     "mae_q50": 0.020861454545454555,
+     "coverage_90": 0.9848484848484849,
+     "mean_q05_q50_q95": [
+      2.3023,
+      2.402790909090909,
+      2.450509090909091
+     ],
+     "mean_truth": 2.405675727272727
+    },
+    {
+     "climateTraceSourceId": 55793535,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.023363333333333323,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6556909090909091,
+      0.8005363636363636,
+      1.293490909090909
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 55793542,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.022335999999999995,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6636090909090908,
+      0.8055090909090908,
+      1.2579909090909096
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 55793543,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.022312848484848484,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6630090909090909,
+      0.8057727272727272,
+      1.2676454545454547
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 55793546,
+     "route": "EAF",
+     "plant_months": 66,
+     "mae_q50": 0.022275121212121208,
+     "coverage_90": 1.0,
+     "mean_q05_q50_q95": [
+      0.6182818181818183,
+      0.8090090909090909,
+      1.2639454545454545
+     ],
+     "mean_truth": 0.8100959696969696
+    },
+    {
+     "climateTraceSourceId": 55793588,
+     "route": "BF-BOF",
+     "plant_months": 31,
+     "mae_q50": 0.020523290322580663,
+     "coverage_90": 0.9354838709677419,
+     "mean_q05_q50_q95": [
+      2.3883258064516135,
+      2.425241935483871,
+      2.467370967741934
+     ],
+     "mean_truth": 2.428012064516129
+    }
+   ]
+  },
+  "rows_without_history_naturally": 1382
+ }
+}

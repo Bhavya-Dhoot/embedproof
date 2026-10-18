@@ -8,7 +8,7 @@ import { NeedsDeployment, PageHeader, cx } from "@/components/ui";
 
 const TABS = [
   { id: "attest", label: "1 · Attest", blurb: "Score and sign a monthly report" },
-  { id: "allocate", label: "2 · Allocate", blurb: "Assign verified tonnes to importers" },
+  { id: "allocate", label: "2 · Allocate", blurb: "Assign attested tonnes to importers" },
   { id: "installations", label: "Installations", blurb: "Registry and onboarding" },
 ] as const;
 type Tab = (typeof TABS)[number]["id"];
@@ -29,8 +29,8 @@ export default function ExporterPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader eyebrow="Exporter" title="Prove the claim, then sell the tonnes once">
-        Submit a monthly report, see how plausible the AI finds it and why, sign it, and allocate the verified tonnes to importers.
+      <PageHeader eyebrow="Exporter" title="Attest the claim, then allocate the tonnes">
+        Submit a monthly report, see how the AI scores it and why, sign it, and allocate the attested tonnes to importers.
       </PageHeader>
 
       <div role="tablist" aria-label="Exporter workflow" className="flex flex-wrap gap-2">

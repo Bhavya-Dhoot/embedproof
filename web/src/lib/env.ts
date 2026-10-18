@@ -32,3 +32,9 @@ export function bundleUrl(cid: string): string {
   }
   return `${ATTESTOR_URL}/bundle/${cid}`;
 }
+
+/** Optional full certificate link (path or URL, with its #k= key) that the "Verify a certificate" entry points use. */
+export const SAMPLE_CERT_URL: string = process.env.NEXT_PUBLIC_SAMPLE_CERT_URL || "";
+
+/** Hosted demo runner UI: also needs GET {attestor}/demo/status to answer enabled:true. */
+export const DEMO_RUNNER: boolean = process.env.NEXT_PUBLIC_DEMO_RUNNER === "1";

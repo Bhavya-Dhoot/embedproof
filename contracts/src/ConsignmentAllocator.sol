@@ -16,6 +16,10 @@ import {IRegistryView, IAttestationView, ZeroAddress} from "./interfaces/IRegist
 /// @dev UUPS upgradeable; roles, pause flag, operators and the upgrade timelock live in the registry,
 ///      batch data in `EmissionsAttestation`. An Attested batch is final (no transition leaves
 ///      Attested), so an allocation can never be orphaned by a later status change.
+///      The cap is per (installationId, period), not per batch id: `_allocated` is keyed by
+///      keccak256(abi.encode(installationId, period)), read from the batch. A batch that is revoked and
+///      resubmitted for the same period therefore inherits what was already allocated and cannot be
+///      allocated a second time (PRD: sum of allocations <= verified tonnes per installation-period).
 ///      Storage: an allocation is ONE word, `importer(20) | cnCode(4) | tonnes(4) | batchId(4)`, so the
 ///      first allocation on a batch costs two cold writes (record + running total). A consignment is
 ///      "used" iff its importer is non-zero. `claimed` is a separate mapping written only by `claim`.
@@ -46,7 +50,8 @@ contract ConsignmentAllocator is Initializable, UUPSUpgradeable, IConsignmentAll
     address private _attestation;
     mapping(bytes32 consignmentId => AllocationStore) private _allocations;
     mapping(bytes32 consignmentId => bool) private _claimed;
-    mapping(uint256 batchId => uint64) private _allocated;
+    /// @dev Running total of allocated tonnes per keccak256(abi.encode(installationId, period)).
+    mapping(bytes32 periodKey => uint64) private _allocated;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -87,20 +92,20 @@ contract ConsignmentAllocator is Initializable, UUPSUpgradeable, IConsignmentAll
         if (tonnes == 0) revert ZeroTonnes();
         if (importer == address(0)) revert ZeroImporter();
 
-        uint64 verified = _authoriseBatch(reg, batchId);
+        (uint64 verified, bytes32 periodKey) = _authoriseBatch(reg, batchId);
 
         AllocationStore storage rec = _allocations[consignmentId];
         if (rec.importer != address(0)) revert ConsignmentReused(consignmentId);
 
-        uint64 already = _allocated[batchId];
-        // `already <= verified` is an invariant: it only grows through the check below and
-        // `verified` is immutable once a batch is Attested.
-        uint64 remaining = verified - already;
+        uint64 already = _allocated[periodKey];
+        // After revokeBatch + resubmission with fewer tonnes `already` can exceed the new `verified`:
+        // nothing more can then be allocated (remaining is floored at 0, never an underflow).
+        uint64 remaining = verified > already ? verified - already : 0;
         if (tonnes > remaining) revert DoubleClaimBlocked(batchId, tonnes, remaining);
         if (tonnes > type(uint32).max) revert TonnesTooLarge(tonnes);
 
-        // effects (both narrowing casts are guarded above)
-        _allocated[batchId] = already + tonnes;
+        // effects (both narrowing casts are guarded above; already + tonnes <= verified)
+        _allocated[periodKey] = already + tonnes;
         // forge-lint: disable-next-line(unsafe-typecast)
         _allocations[consignmentId] = AllocationStore(importer, cnCode, uint32(tonnes), uint32(batchId));
 
@@ -138,23 +143,33 @@ contract ConsignmentAllocator is Initializable, UUPSUpgradeable, IConsignmentAll
         });
     }
 
-    /// @notice Tonnes of a batch already allocated to consignments.
+    /// @notice Tonnes already allocated for the (installation, period) of a batch.
+    /// @dev The total is per installation-period, not per batch id: allocations made against an earlier,
+    ///      since revoked batch of the same period are included. Signature unchanged from v1.
     /// @param batchId The batch.
-    /// @return The allocated tonnes (0 for an unknown or untouched batch).
+    /// @return The allocated tonnes for the batch's period (0 for an unknown batch).
     function allocatedTonnes(uint256 batchId) external view returns (uint64) {
-        return _allocated[batchId];
+        // verified tonnes and attestor are not needed for the period total.
+        // forge-lint: disable-next-line(unused-return)
+        (Status status,, bytes32 installationId,, uint32 period) = IAttestationView(_attestation).allocData(batchId);
+        if (status == Status.None) return 0;
+        return _allocated[_periodKey(installationId, period)];
     }
 
-    /// @notice Verified tonnes of a batch not yet allocated (`verifiedTonnes - allocatedTonnes`).
-    /// @dev Pure arithmetic: it does not look at status, so a PendingVerifier batch reports its full
-    ///      verified tonnage even though `allocate` rejects it until the verifier approves.
+    /// @notice Verified tonnes of a batch not yet allocated for its period:
+    ///         `max(0, verifiedTonnes - allocatedTonnes(batchId))`.
+    /// @dev Pure arithmetic on the period total: it does not look at status, so a PendingVerifier batch
+    ///      reports its full verified tonnage even though `allocate` rejects it until the verifier approves,
+    ///      and a resubmission with fewer tonnes than were already allocated reports 0, not an underflow.
     /// @param batchId The batch.
     /// @return The remaining tonnes (0 for an unknown batch).
     function remainingTonnes(uint256 batchId) external view returns (uint64) {
-        // status and installationId are intentionally ignored: remaining is pure arithmetic.
+        // the attestor is not needed for the remaining total.
         // forge-lint: disable-next-line(unused-return)
-        (, uint64 verified,,) = IAttestationView(_attestation).allocInfo(batchId);
-        return verified - _allocated[batchId];
+        (, uint64 verified, bytes32 installationId,, uint32 period) = IAttestationView(_attestation).allocData(batchId);
+        // An unknown batch reads verified == 0, so the floor below already returns 0.
+        uint64 already = _allocated[_periodKey(installationId, period)];
+        return verified > already ? verified - already : 0;
     }
 
     /// @notice The registry that supplies operators, the pause flag and the timelock.
@@ -178,18 +193,28 @@ contract ConsignmentAllocator is Initializable, UUPSUpgradeable, IConsignmentAll
 
     // ------------------------------------------------------------- internals
 
-    /// @dev Batch-level gates of `allocate`; returns the batch's verified tonnes.
-    function _authoriseBatch(IRegistryView reg, uint256 batchId) private view returns (uint64 verified) {
+    function _periodKey(bytes32 installationId, uint32 period) private pure returns (bytes32) {
+        return keccak256(abi.encode(installationId, period));
+    }
+
+    /// @dev Batch-level gates of `allocate`; returns the batch's verified tonnes and its period key.
+    function _authoriseBatch(IRegistryView reg, uint256 batchId)
+        private
+        view
+        returns (uint64 verified, bytes32 periodKey)
+    {
         Status status;
         bytes32 installationId;
         address attestor;
-        (status, verified, installationId, attestor) = IAttestationView(_attestation).allocInfo(batchId);
+        uint32 period;
+        (status, verified, installationId, attestor, period) = IAttestationView(_attestation).allocData(batchId);
         if (status != Status.Attested) revert BatchNotAttested(batchId);
         if (batchId > type(uint32).max) revert BatchIdTooLarge(batchId);
         if (!reg.hasRole(OPERATOR_ROLE, msg.sender) || reg.operatorOf(installationId) != msg.sender) {
             revert NotBatchOperator(batchId, msg.sender);
         }
         if (!reg.hasRole(ATTESTOR_ROLE, attestor)) revert AttestorRevoked(batchId, attestor);
+        periodKey = _periodKey(installationId, period);
     }
 
     function _enforceNotPaused() private view returns (IRegistryView reg) {

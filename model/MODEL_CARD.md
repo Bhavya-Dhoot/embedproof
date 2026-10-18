@@ -124,6 +124,22 @@ Reference (no model): persisting the plant's own lagged total SEE gives MAE **0.
 **The +20 rule is not discriminating for steel.** EC defaults are 2.3-4.0 tCO2/t, so SEE < 0.5 x default holds for essentially every EAF and DRI plant; it adds 20 points to every EAF mill (the honest demo EAF scores 20, green) without separating honest
 from dishonest claims. The EC steel default is also direct-only while SEE is direct+indirect.
 
+### Türkiye slice (`model/artefacts/eval_slices.json`; frozen artefact, no refit)
+
+**Not statistically powered: 4 held-out test plants** (3 EAF, 1 BF-BOF), 262 plant-months, of which 230 have a prior (32 early-2021 months do not). Plant-months of one plant are strongly correlated, so n = 4 is the real sample size;
+treat these numbers as an anecdote about four plants, not an estimate for Türkiye. Same predictions, calibration offsets and rounding as `eval.json` (the full-test reference block in the slice file reproduces `eval.json` exactly).
+
+| Türkiye test plants | WITH prior (230 rows) | WITHOUT prior, same 230 rows |
+| --- | --- | --- |
+| MAE q50 vs route-median baseline | 0.0486 vs 0.1043 (53.4 % better) | 0.0723 (30.7 % better) |
+| MAE of no-model persistence (lagged own total SEE) | 0.0485 (the model is not more accurate: ratio 1.002) | n/a |
+| 90 % coverage / mean width | 86.5 % / 0.219 | 86.5 % / 0.631 |
+| recall at red, synthetic 0.5x / 0.7x / 0.85x | 100 % / 69.6 % / 34.3 % | 100 % / 47.0 % / 27.8 % |
+| false red at 1.0x | 3.5 % | 3.0 % |
+
+Per plant: the three EAF plants have coverage 93-95 % and MAE 0.047-0.052; the one BF-BOF plant (Climate TRACE id 1567073) has coverage **62.5 %** (MAE 0.048), which is what pulls the slice coverage to 86.5 %.
+Two of the four plants (1567073 and 1567079) are the Climate TRACE reference assets the demo installations borrow their lagged priors from; they are held-out test plants, so they did not influence training.
+
 ## 6. Known failure modes
 
 1. **New plant with no Climate TRACE history.** The prior is NaN (also whenever < 6 of the window months exist). The model falls back to route + capacity + grid: intervals are 2.4x wider, 0.5x recall is 84 %, DRI-EAF detection is zero.
@@ -152,8 +168,10 @@ Requirement < 500 ms met. The prior is read from `installation["ctLaggedPriorEf"
 PYTHONPATH=. .venv/Scripts/python.exe data/fetch_raw.py        # raw snapshots (needs network)
 PYTHONPATH=. .venv/Scripts/python.exe data/build_fixtures.py   # fixtures (byte-identical on re-run)
 PYTHONPATH=. .venv/Scripts/python.exe -m model.train           # ~2 min: CV, fit twice (asserts identical bytes), eval.json, hash
+PYTHONPATH=. .venv/Scripts/python.exe -m model.slices          # eval_slices.json from the FROZEN artefact (no refit)
 PYTHONPATH=. .venv/Scripts/python.exe -m pytest model/tests -q
 ```
+Only `embedproof_model_v1.json` feeds `modelVersionHash` (sha256 of its bytes); `eval.json`, `eval_slices.json` and `model_version.txt` do not (the artefact embeds the sha256 of the data fixtures it was trained on).
 `model/tests/test_scorer.py` also re-fits the artefact in the pytest process and asserts the sha256 equals the committed one (the full `train` pipeline was additionally run twice in separate processes with the same hash).
 
 ## 9. Deviations from the PRD (section 8) and open items
@@ -175,7 +193,7 @@ TR-EAF-0001 (300,000 t/yr) 0.08 tCO2e/t from asset 1567079; TR-BOF-0002 (3,500,0
 | `amber_eaf.json` | TR-EAF-0001, 2026-10, 5,000 t | direct 0.17 t/t, electricity 0.45 MWh/t | 0.384 | 0.403 / 0.488 / 0.637 | **43, amber** (23 from the interval + 20 CBAM rule) |
 | `implausible_bof.json` | TR-BOF-0002, 2026-09, 250,000 t | direct 0.36 t/t, electricity 0.42 MWh/t | 0.560 (EAF-level for a BF-BOF mill) | 2.196 / 2.270 / 2.326 | **100, red** |
 
-The honest EAF values were set from typical mini-mill figures in round 1 and are unchanged; the new tight interval happens to contain them. The amber report was changed in round 2 (production 4,800 -> 5,000 t, SEE 0.404 -> 0.384)
+The honest EAF values (including the electricity intensities 0.62 / 0.45 / 0.42 MWh/t in the three reports) are illustrative choices, **not sourced route norms** (the repo contains none); they were set in round 1 and are unchanged; the new tight interval happens to contain them. The amber report was changed in round 2 (production 4,800 -> 5,000 t, SEE 0.404 -> 0.384)
 because the prior narrowed the interval and the old 0.404 now sat exactly on q05; it **was** chosen using the frozen model's interval (about 23 % of the interval width below q05) so that it lands in the amber band.
 If the model is retrained these three scores must be re-checked (`model/tests/test_scorer.py` does so). Without the prior the honest and amber EAF reports both score 20 (green).
 

@@ -10,6 +10,7 @@ contract MockAttestation {
     uint64 internal _verified;
     bytes32 internal _installation;
     address internal _attestor;
+    uint32 internal _period = 202609;
 
     function set(Status status_, uint64 verified_, bytes32 installation_, address attestor_) external {
         _status = status_;
@@ -18,7 +19,11 @@ contract MockAttestation {
         _attestor = attestor_;
     }
 
-    function allocInfo(uint256) external view returns (Status, uint64, bytes32, address) {
-        return (_status, _verified, _installation, _attestor);
+    function setPeriod(uint32 period_) external {
+        _period = period_;
+    }
+
+    function allocData(uint256) external view returns (Status, uint64, bytes32, address, uint32) {
+        return (_status, _verified, _installation, _attestor, _period);
     }
 }

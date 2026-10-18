@@ -14,7 +14,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "pretypecheck": "node scripts/sync-deployments.mjs",
-    "pretest": "node scripts/sync-deployments.mjs"
+    "pretest": "node scripts/sync-deployments.mjs",
+    "gen:cbam": "node scripts/gen-cbam-defaults.mjs"
   },
   "dependencies": {
     "@noble/hashes": "^2.4.0",

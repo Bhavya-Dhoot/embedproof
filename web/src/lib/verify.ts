@@ -198,7 +198,8 @@ export type CheckId =
   | "commitment"
   | "ecdsaDoc"
   | "mldsa"
-  | "fieldsMatch";
+  | "fieldsMatch"
+  | "reasonHash";
 
 export interface Check {
   id: CheckId;
@@ -218,6 +219,8 @@ export interface VerifyReport {
   recomputedCommitment?: Hex;
   recoveredSigner?: Address | null;
   recoveredSignerOnchain?: Address | null;
+  /** keccak256 of the bundle's raw ML-DSA public key (the value the registry anchors) */
+  pqPublicKeyHash?: Hex;
   bundle?: Bundle;
 }
 
@@ -298,12 +301,14 @@ export async function verifyBundle(input: VerifyInput): Promise<VerifyReport> {
     }
   }
 
+  const pqPublicKeyHash = pk ? keccak256(pk) : undefined;
+
   // ---- sealed path: no key, the document stays encrypted ----
   if (!key) {
     for (const id of ["decrypt", "commitment", "ecdsaDoc", "mldsa", "fieldsMatch"] as const) {
       checks.push({ id, status: "sealed", detail: "sealed: open with the certificate link" });
     }
-    return finish(checks, { sealed: true, bundle, recoveredSignerOnchain: recoveredOnchain });
+    return finish(checks, { sealed: true, bundle, recoveredSignerOnchain: recoveredOnchain, pqPublicKeyHash });
   }
 
   // ---- keyed path ----
@@ -317,7 +322,7 @@ export async function verifyBundle(input: VerifyInput): Promise<VerifyReport> {
     for (const id of ["commitment", "ecdsaDoc", "mldsa", "fieldsMatch"] as const) {
       checks.push({ id, status: "skipped", detail: "needs the decrypted document" });
     }
-    return finish(checks, { sealed: false, bundle, recoveredSignerOnchain: recoveredOnchain });
+    return finish(checks, { sealed: false, bundle, recoveredSignerOnchain: recoveredOnchain, pqPublicKeyHash });
   }
 
   const doc = documentOverride !== undefined ? documentOverride : document;
@@ -331,7 +336,7 @@ export async function verifyBundle(input: VerifyInput): Promise<VerifyReport> {
     for (const id of ["commitment", "ecdsaDoc", "mldsa", "fieldsMatch"] as const) {
       checks.push({ id, status: "fail", detail: "document cannot be canonicalized" });
     }
-    return finish(checks, { sealed: false, bundle, document, recoveredSignerOnchain: recoveredOnchain });
+    return finish(checks, { sealed: false, bundle, document, recoveredSignerOnchain: recoveredOnchain, pqPublicKeyHash });
   }
 
   // 6. recompute keccak256(JCS(document)) and compare with the chain
@@ -358,7 +363,19 @@ export async function verifyBundle(input: VerifyInput): Promise<VerifyReport> {
     recomputedCommitment: recomputed,
     recoveredSigner: recovered,
     recoveredSignerOnchain: recoveredOnchain,
+    pqPublicKeyHash,
   });
+}
+
+/**
+ * The verifier's or admin's reason text is stored off-chain; the chain holds only its hash. The attestor and the
+ * contracts' callers use keccak256(raw UTF-8 bytes of the text) (attestor/service.py post_reason, INTERFACES section 6).
+ */
+export function checkReasonText(text: string, reasonHash: Hex): Check {
+  const h = keccak256(utf8.encode(text));
+  return h.toLowerCase() === reasonHash.toLowerCase()
+    ? { id: "reasonHash", status: "pass", detail: `keccak(text) = ${h}` }
+    : { id: "reasonHash", status: "fail", detail: `keccak(text) = ${h}, on-chain ${reasonHash}` };
 }
 
 function finish(checks: Check[], extra: Partial<VerifyReport> & { sealed: boolean }): VerifyReport {

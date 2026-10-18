@@ -9,7 +9,7 @@ import { ApiError, attestorApi, fetchBundleBytes } from "@/lib/attestor";
 import { getDemoReports } from "@/lib/deployments";
 import { DEMO_MODE } from "@/lib/env";
 import { decodeError, formatArgs } from "@/lib/errors";
-import { useInstallations, useRefreshChain } from "@/lib/hooks";
+import { useInstallations, useRefreshChain, useRoleGate } from "@/lib/hooks";
 import {
   computeIndirect,
   computeSee,
@@ -20,6 +20,7 @@ import {
   type Report,
   type ScoreResult,
 } from "@/lib/report";
+import { rememberCert } from "@/lib/sampleCert";
 import { useSigner } from "@/lib/signer";
 import { b64ToBytes, parseBundle } from "@/lib/verify";
 
@@ -69,6 +70,7 @@ export function AttestFlow({ onAllocate }: { onAllocate?: (batchId: string) => v
   const refresh = useRefreshChain();
   const inst = useInstallations();
   const demo = useMemo(() => getDemoReports(), []);
+  const gate = useRoleGate("operator");
 
   const [form, setForm] = useState<FormState>(() => toForm(demo.honest));
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -158,6 +160,7 @@ export function AttestFlow({ onAllocate }: { onAllocate?: (batchId: string) => v
       setBusy("submit");
       const res = await attestorApi.attest(report, sig);
       setResult(res);
+      rememberCert(res.verifyPath);
       setStep(3);
       refresh();
       fetchBundleBytes(res.cid)
@@ -174,7 +177,7 @@ export function AttestFlow({ onAllocate }: { onAllocate?: (batchId: string) => v
 
   return (
     <div className="flex flex-col gap-5">
-      <ActAs keys={["exporterA", "exporterB"]} need={!!signer.address && !!inst.data && myInstallations.length === 0} reason="Reports are submitted by an installation's registered operator." />
+      <ActAs role="operator" />
 
       {/* ---------------- 1. report ---------------- */}
       <Rack
@@ -192,7 +195,7 @@ export function AttestFlow({ onAllocate }: { onAllocate?: (batchId: string) => v
               Honest EAF mill
             </button>
             <button className="btn btn-ghost btn-sm" onClick={() => prefill(demo.implausible)}>
-              Implausible BF-BOF claim
+              Out-of-range BF-BOF claim
             </button>
             {demo.amber && (
               <button className="btn btn-ghost btn-sm" onClick={() => prefill(demo.amber!)}>
@@ -281,16 +284,16 @@ export function AttestFlow({ onAllocate }: { onAllocate?: (batchId: string) => v
             {score.band === "amber" && <Notice tone="amber" title="Flagged, but it will be attested">Amber claims go through and stay visible as flagged on the public certificate.</Notice>}
             <div className="tile flex flex-col gap-2 p-4">
               <p className="text-sm text-[var(--color-mute)]">
-                You will sign the report&apos;s fingerprint, <span className="font-bold text-white">keccak256(JCS(report))</span>, with your {signer.mode === "demo" ? "demo persona key" : "wallet"} (EIP-191). The attestor checks it
-                came from the registered operator, then signs the attestation twice and anchors it on-chain.
+                Your {signer.mode === "demo" ? "demo account" : "wallet"} signs a fingerprint of this report, so the attestor can prove it came from the registered operator. That signature is not sent on-chain.
+                The attestor then signs the attestation and anchors it on-chain.
               </p>
               <p className="inline-flex items-center gap-2 text-xs text-white/75">
-                report fingerprint <Mono value={reportHash(report)} />
+                fingerprint (keccak256 of the canonical report, signed as EIP-191) <Mono value={reportHash(report)} />
               </p>
             </div>
             <ErrorBox err={step === 2 ? err : null} />
             <div className="flex flex-wrap gap-3">
-              <button className="btn btn-primary" onClick={submit} disabled={busy !== null || !signer.address}>
+              <button className="btn btn-primary" onClick={submit} disabled={busy !== null || !gate.allowed}>
                 {busy === "sign" ? <Spinner label="Waiting for signature…" /> : busy === "submit" ? <Spinner label="Attesting on-chain…" /> : "Sign & submit →"}
               </button>
               <button className="btn btn-ghost" onClick={() => setStep(1)} disabled={busy !== null}>
@@ -358,7 +361,7 @@ export function AttestFlow({ onAllocate }: { onAllocate?: (batchId: string) => v
             </dl>
 
             <ol className="m-0 grid list-none gap-2 p-0 text-sm sm:grid-cols-3">
-              {["Report fingerprinted (JCS + keccak)", "Signed by the operator", "Scored by the AI model", "Signed twice: ECDSA + ML-DSA-44", "Report encrypted, pinned to IPFS", "Anchored on-chain"].map((t) => (
+              {["Report fingerprinted (JCS + keccak)", "Scored by the AI model", "Signed by the operator", "Signed by the attestor (ECDSA + ML-DSA-44)", "Report encrypted, pinned to IPFS", "Anchored on-chain"].map((t) => (
                 <li key={t} className="flex items-center gap-2">
                   <span className="grid h-5 w-5 place-items-center rounded-full bg-[var(--color-teal)] text-xs font-bold text-[var(--color-ink)]" aria-hidden>✓</span>
                   {t}

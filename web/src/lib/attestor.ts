@@ -8,6 +8,8 @@ export class ApiError extends Error {
     public detail: string,
     /** decoded contract revert when the attestor's own tx failed (HTTP 409) */
     public revert?: { name: string; args: unknown[] },
+    /** seconds from a Retry-After header (HTTP 429) */
+    public retryAfter?: number,
   ) {
     super(detail);
   }
@@ -30,7 +32,8 @@ async function call<T>(path: string, init?: RequestInit): Promise<T> {
     } catch {
       /* keep statusText */
     }
-    throw new ApiError(res.status, plain(detail), revert);
+    const ra = Number(res.headers.get("Retry-After"));
+    throw new ApiError(res.status, plain(detail), revert, Number.isFinite(ra) && ra > 0 ? ra : undefined);
   }
   return (await res.json()) as T;
 }
@@ -46,7 +49,36 @@ export interface Health {
   pqPublicKeyHash?: Hex;
 }
 
+export interface DemoStatus {
+  enabled: boolean;
+  chainId?: number;
+  chainName?: string;
+}
+
+export interface DemoStep {
+  label: string;
+  ok: boolean;
+  /** true when the outcome is what the scenario intends: ok=false with expected=true is a deliberate rejection, not an error */
+  expected: boolean;
+  txHash: Hex | null;
+  detail: string;
+}
+
+export interface DemoRunResult {
+  scenario: string;
+  chainId: number;
+  batchId: number | string | null;
+  /** /verify/<id>#k=<key> */
+  certificatePath: string | null;
+  steps: DemoStep[];
+}
+
+export const DEMO_SCENARIOS = ["green", "red", "double-claim"] as const;
+export type DemoScenario = (typeof DEMO_SCENARIOS)[number];
+
 export const attestorApi = {
+  demoStatus: () => call<DemoStatus>("/demo/status"),
+  demoRun: (scenario: DemoScenario) => call<DemoRunResult>(`/demo/run/${scenario}`, { method: "POST" }),
   health: () => call<Health>("/health"),
   score: (report: Report) => call<ScoreResult>("/score", { method: "POST", body: JSON.stringify(report) }),
   attest: (report: Report, signature: Hex) => call<AttestResult>("/attest", { method: "POST", body: JSON.stringify({ report, signature }) }),

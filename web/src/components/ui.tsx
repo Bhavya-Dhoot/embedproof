@@ -4,7 +4,8 @@ import Link from "next/link";
 import type { Hex } from "viem";
 import { useState, type ComponentProps, type ElementType, type ReactNode } from "react";
 import { explorerTxUrl, CHAIN_LABEL } from "@/lib/env";
-import { useDeployment } from "@/lib/hooks";
+import { useDeployment, useRoles } from "@/lib/hooks";
+import { roleMismatchMessage, type ViewRole } from "@/lib/roles";
 import { useSigner } from "@/lib/signer";
 import { bandFor, bytes32ToPrintable, shortHex, type Band } from "@/lib/report";
 import type { PersonaKey } from "@/lib/demoAccounts";
@@ -42,7 +43,7 @@ export function Chip({ tone = "neutral", children, className }: { tone?: "green"
 }
 
 const bandTone: Record<Band, "green" | "amber" | "red"> = { green: "green", amber: "amber", red: "red" };
-export const bandLabel: Record<Band, string> = { green: "Green · plausible", amber: "Amber · flagged", red: "Red · implausible" };
+export const bandLabel: Record<Band, string> = { green: "Green · within expected range", amber: "Amber · flagged", red: "Red · outside expected range" };
 
 export function BandChip({ band, risk }: { band?: Band; risk?: number }) {
   const b = band ?? (risk !== undefined ? bandFor(risk) : "green");
@@ -179,29 +180,53 @@ export function NeedsDeployment({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-/** In demo mode: quick persona buttons when the current persona is not one of `keys`. In wallet mode: connect prompt. */
-export function ActAs({ keys, need, reason }: { keys: PersonaKey[]; need?: boolean; reason?: string }) {
+const ROLE_PERSONAS: Record<ViewRole, PersonaKey[]> = {
+  operator: ["exporterA", "exporterB"],
+  verifier: ["verifier"],
+  importer: ["importerA", "importerB"],
+  regulator: ["regulator"],
+  admin: ["admin"],
+};
+
+/**
+ * Role banner (PRD FR-F1). No account chosen: ask for one. Account without the role this page needs:
+ * "You're using <role>; this page is for <role>." and the page disables its write actions (useRoleGate).
+ * Demo mode offers one-click persona switches; a wallet user switches account in the wallet.
+ */
+export function ActAs({ role, keys, reason }: { role?: ViewRole; keys?: PersonaKey[]; reason?: string }) {
   const s = useSigner();
+  const roles = useRoles();
   if (!s.ready) return null;
-  if (s.mode === "wallet") {
-    if (s.address) return need ? <Notice tone="amber" title="Role required">{reason ?? "The connected wallet does not hold the role for this view."}</Notice> : null;
+  const personaKeys = keys ?? (role ? ROLE_PERSONAS[role] : []);
+  const switchers = s.mode === "demo" ? s.personas.filter((p) => personaKeys.includes(p.key)) : [];
+
+  if (!s.address) {
     return (
-      <Notice tone="amber" title="Connect a wallet">
-        <div className="mt-2 flex flex-wrap items-center gap-3">
-          <span>{reason ?? "This view needs a connected wallet."}</span>
-          <button className="btn btn-primary btn-sm" onClick={s.connect}>Connect wallet</button>
+      <Notice tone="amber" title={s.mode === "wallet" ? "Connect a wallet" : "Choose who you are acting as"}>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <span>{reason ?? (s.mode === "wallet" ? "This view needs a connected wallet." : "Demo mode: pick a persona to use this page.")}</span>
+          {s.mode === "wallet" && (
+            <button className="btn btn-primary btn-sm" onClick={s.connect}>
+              Connect wallet
+            </button>
+          )}
+          {switchers.map((p) => (
+            <button key={p.key} className="btn btn-ghost btn-sm" onClick={() => s.selectPersona(p.key)}>
+              Act as {p.label}
+            </button>
+          ))}
         </div>
       </Notice>
     );
   }
-  const current = s.personaKey && keys.includes(s.personaKey);
-  if (current && !need) return null;
-  const options = s.personas.filter((p) => keys.includes(p.key));
+
+  const mismatch = role ? roleMismatchMessage(roles, role) : null;
+  if (!mismatch) return null;
   return (
-    <Notice tone="amber" title={current ? "Role required" : "Choose who you are acting as"}>
+    <Notice tone="amber" title={mismatch}>
       <div className="mt-2 flex flex-wrap items-center gap-2">
-        <span>{reason ?? "Demo mode: switch to a persona that can use this view."}</span>
-        {options.map((p) => (
+        <span>Read-only here: the write actions on this page are disabled for this account.</span>
+        {switchers.map((p) => (
           <button key={p.key} className="btn btn-ghost btn-sm" onClick={() => s.selectPersona(p.key)}>
             Act as {p.label}
           </button>

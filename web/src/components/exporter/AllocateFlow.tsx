@@ -11,7 +11,7 @@ import { publicClient } from "@/lib/client";
 import { allocatorAbi, getDeployment } from "@/lib/deployments";
 import { FALLBACK_IMPORTERS, labelAddress } from "@/lib/demoMeta";
 import { decodeError, formatArgs, isDoubleClaim, type DecodedError } from "@/lib/errors";
-import { useAllocationsForBatch, useBatches, useInstallations, useRefreshChain } from "@/lib/hooks";
+import { useAllocationsForBatch, useBatches, useInstallations, useRefreshChain, useRoleGate } from "@/lib/hooks";
 import { formatSee, formatTonnes, shortAddr, stringToBytes32, uint32ToPeriod } from "@/lib/report";
 import { useSigner, type TxOutcome } from "@/lib/signer";
 
@@ -27,10 +27,10 @@ function DoubleClaimBlocked({ err, importer }: { err: DecodedError; importer: st
           <path d="M36 4 62 14v20c0 17-11 29-26 34C21 63 10 51 10 34V14L36 4Z" fill="rgb(255 92 138 / .2)" stroke="#FF5C8A" strokeWidth="3" />
           <path d="m26 26 20 20m0-20L26 46" stroke="#FF8FAE" strokeWidth="5" strokeLinecap="round" />
         </svg>
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-rose-text)]">Transaction reverted by the contract</p>
+        <p className="text-sm font-bold text-[var(--color-rose-text)]">Rejected by the contract in simulation. Nothing was sent and no gas was spent.</p>
         <h3 className="text-4xl font-bold leading-none tracking-tight sm:text-7xl">Double claim blocked</h3>
         <p className="max-w-2xl text-lg text-white/90">
-          Batch <span className="num">#{String(batchId)}</span> only has verified tonnes for one buyer. The same tonne cannot be sold twice.
+          Batch <span className="num">#{String(batchId)}</span> has <span className="num">{formatTonnes(remaining)} t</span> left to allocate, and this request was for <span className="num">{formatTonnes(requested)} t</span>. The contract will not allocate the same attested tonnes twice.
         </p>
         <div className="grid w-full max-w-xl grid-cols-2 gap-3">
           <div className="tile p-4">
@@ -45,7 +45,7 @@ function DoubleClaimBlocked({ err, importer }: { err: DecodedError; importer: st
         <p className="mono text-white/85">
           DoubleClaimBlocked({formatArgs(err.args)}) {importer && <span>· to {importer}</span>}
         </p>
-        <p className="text-sm text-white/80">Contract rule: Σ allocated ≤ verified tonnes, enforced on-chain for every batch.</p>
+        <p className="text-sm text-white/80">Contract rule: allocated tonnes ≤ attested tonnes, enforced on-chain for every batch.</p>
         </div>
       </div>
     </div>
@@ -58,6 +58,7 @@ export function AllocateFlow({ preselect }: { preselect?: string }) {
   const dep = getDeployment();
   const inst = useInstallations();
   const batches = useBatches();
+  const gate = useRoleGate("operator");
 
   const mine = useMemo(() => {
     const myIds = new Set((inst.data ?? []).filter((i) => signer.address && i.operator.toLowerCase() === signer.address.toLowerCase()).map((i) => i.idStr));
@@ -146,7 +147,7 @@ export function AllocateFlow({ preselect }: { preselect?: string }) {
 
   return (
     <div className="flex flex-col gap-5">
-      <ActAs keys={["exporterA", "exporterB"]} need={!!signer.address && !!inst.data && mine.length === 0 && !(batches.data ?? []).length} reason="Allocations are made by an installation's operator." />
+      <ActAs role="operator" />
 
       {/* ---------------- 1. pick a batch ---------------- */}
       <Rack n={1} title="Pick a batch" active={step === 1} done={step > 1} onSelect={() => setStep(1)} summary={selected ? `Batch #${selected.batchId} · ${selected.installation} · ${formatTonnes(rem ?? 0n)} t left` : "choose one of your attested batches"}>
@@ -179,7 +180,7 @@ export function AllocateFlow({ preselect }: { preselect?: string }) {
                     </span>
                     {usable ? (
                       <span>
-                        <span className="num text-3xl">{r === undefined ? "…" : formatTonnes(r)}</span> <span className="text-sm text-white/80">of {formatTonnes(b.verifiedTonnes)} t remaining</span>
+                        <span className="num text-3xl">{r === undefined ? "…" : formatTonnes(r)}</span> <span className="text-sm text-white/80">of {formatTonnes(b.verifiedTonnes)} attested t remaining</span>
                       </span>
                     ) : (
                       <span className="text-sm text-[var(--color-amber-text)]">{b.statusName === "PendingVerifier" ? "Not allocatable until a verifier approves" : "Rejected: cannot be allocated"}</span>
@@ -197,7 +198,7 @@ export function AllocateFlow({ preselect }: { preselect?: string }) {
         {selected && (
           <div className="flex flex-col gap-5">
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Consignment id" htmlFor="a-cons" hint="Free text up to 32 ASCII characters → bytes32. One consignment can only ever be allocated once.">
+              <Field label="Consignment id" htmlFor="a-cons" hint="Any label up to 32 characters, stored on-chain as a fixed-size id. A consignment id can be used only once.">
                 <input id="a-cons" className="inp mono" value={consignment} onChange={(e) => setConsignment(e.target.value)} maxLength={32} />
               </Field>
               <Field label="Tonnes to allocate" htmlFor="a-t" hint={rem !== undefined ? `${formatTonnes(rem)} t unallocated on this batch` : undefined}>
@@ -220,7 +221,7 @@ export function AllocateFlow({ preselect }: { preselect?: string }) {
               <input id="a-cn" className="inp !max-w-xs" inputMode="numeric" value={cn} onChange={(e) => setCn(e.target.value.replace(/[^\d]/g, ""))} />
             </Field>
             <div className="flex flex-wrap items-center gap-3">
-              <button className="btn btn-primary" onClick={submit} disabled={!valid || busy}>
+              <button className="btn btn-primary" onClick={submit} disabled={!valid || busy || !gate.allowed}>
                 {busy ? <Spinner label="Allocating…" /> : "Allocate →"}
               </button>
               <span className="hint">Signs a transaction as {signer.personas.find((p) => p.key === signer.personaKey)?.label ?? shortAddr(signer.address ?? "")}.</span>
@@ -297,7 +298,7 @@ export function AllocateFlow({ preselect }: { preselect?: string }) {
           )}
           <Tile className="mt-3">
             <p className="text-sm">
-              <span className="font-bold">{rem !== undefined ? formatTonnes(rem) : "…"} t</span> of {formatTonnes(selected.verifiedTonnes)} t remain unallocated.
+              <span className="font-bold">{rem !== undefined ? formatTonnes(rem) : "…"} t</span> of {formatTonnes(selected.verifiedTonnes)} attested t remain unallocated.
             </p>
           </Tile>
         </Glass>

@@ -6,17 +6,18 @@ import { useEffect, useState } from "react";
 import { CHAIN_LABEL, DEMO_MODE } from "@/lib/env";
 import { useChainStatus, useDeployment, useRoles } from "@/lib/hooks";
 import { shortAddr } from "@/lib/report";
+import { sampleTarget, useSampleCert } from "@/lib/sampleCert";
 import { useSigner } from "@/lib/signer";
 import type { PersonaKey } from "@/lib/demoAccounts";
 import { cx } from "./ui";
 
-const NAV: { href: string; label: string; role?: "operator" | "verifier" | "importer" | "regulator" | "admin" }[] = [
+const NAV: { href: string; label: string; role?: "operator" | "verifier" | "importer" | "regulator" | "admin"; verify?: boolean }[] = [
   { href: "/exporter", label: "Exporter", role: "operator" },
   { href: "/verifier", label: "Verifier", role: "verifier" },
   { href: "/importer", label: "Importer", role: "importer" },
   { href: "/regulator", label: "Regulator", role: "regulator" },
   { href: "/admin", label: "Admin", role: "admin" },
-  { href: "/verify/1", label: "Public verify" },
+  { href: "/verify", label: "Verify", verify: true },
 ];
 
 export function PersonaSwitcher({ className }: { className?: string }) {
@@ -81,6 +82,7 @@ export function Header() {
   const roles = useRoles();
   const { address, ready } = useSigner();
   const [open, setOpen] = useState(false);
+  const sample = sampleTarget(useSampleCert());
 
   // close the menu on navigation and on Escape
   useEffect(() => setOpen(false), [path]);
@@ -100,14 +102,17 @@ export function Header() {
       (r === "importer" && roles.known && !roles.admin && !roles.verifier && !roles.regulator && roles.operatorOf.length === 0));
 
   const isActive = (href: string) => path === href || (href !== "/" && path.startsWith(href.split("/").slice(0, 2).join("/")));
+  // "Verify" opens the last certificate made in this browser (or NEXT_PUBLIC_SAMPLE_CERT_URL); with none it sends you to create one
+  const items = NAV.map((n) => (n.verify ? { ...n, href: sample.href, title: sample.hint ?? undefined } : n));
 
   const links = (vertical: boolean) =>
-    NAV.map((n) => {
-      const active = isActive(n.href);
+    items.map((n) => {
+      const active = n.verify ? path.startsWith("/verify") : isActive(n.href);
       return (
         <Link
-          key={n.href}
+          key={n.label}
           href={n.href}
+          title={"title" in n ? (n.title as string | undefined) : undefined}
           aria-current={active ? "page" : undefined}
           className={cx(
             "relative whitespace-nowrap rounded-full px-3 py-2 text-sm font-bold transition-colors",

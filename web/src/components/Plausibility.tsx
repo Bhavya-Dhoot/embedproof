@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import type { Band, ScoreResult, ShapItem } from "@/lib/report";
 import { bandFor, plain } from "@/lib/report";
+import { NO_HISTORY_NOTE, defaultComparison, flagText, plainSummary } from "@/lib/summary";
 import { BandChip, cx } from "./ui";
 
 const BAND_COLOR: Record<Band, string> = { green: "#00C2A8", amber: "#FFB547", red: "#FF5C8A" };
 const BAND_TEXT: Record<Band, string> = { green: "var(--color-teal-text)", amber: "var(--color-amber-text)", red: "var(--color-rose-text)" };
-const BAND_WORD: Record<Band, string> = { green: "Plausible", amber: "Flagged", red: "Implausible" };
+const BAND_WORD: Record<Band, string> = { green: "Within expected range", amber: "Flagged", red: "Outside expected range" };
 
 const polar = (cx0: number, cy0: number, r: number, v: number) => {
   const t = Math.PI - (v / 100) * Math.PI;
@@ -132,6 +133,8 @@ export function ShapBars({ items }: { items: ShapItem[] }) {
 
 /** The whole plausibility read-out: gauge + interval + SHAP + one-sentence explanation. */
 export function PlausibilityView({ score, seeDeclared }: { score: ScoreResult; seeDeclared: number }) {
+  const comparison = defaultComparison(seeDeclared, score.cbamDefault);
+  const flags = score.flags ?? [];
   return (
     <div className="flex flex-col gap-5">
       <div className="grid gap-5 md:grid-cols-[minmax(0,300px)_1fr] md:items-center">
@@ -146,14 +149,26 @@ export function PlausibilityView({ score, seeDeclared }: { score: ScoreResult; s
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-white/75">Why: top 3 drivers (SHAP)</p>
           <ShapBars items={score.shap} />
         </div>
-        <div className="tile flex flex-col justify-center gap-2 p-4 sm:p-5">
+        <div className="tile flex flex-col justify-center gap-3 p-4 sm:p-5">
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/75">In plain words</p>
-          <p className="text-base leading-relaxed">{plain(score.explanation)}</p>
-          {score.belowHalfDefault && (
-            <p className="text-sm text-[var(--color-amber-text)]">Declared intensity is below half of the CBAM default for this route, so extra scrutiny applies (+20 risk).</p>
-          )}
+          <p className="text-base leading-relaxed">{plainSummary(score, seeDeclared)}</p>
+          {comparison && <p className="text-sm text-[var(--color-mute)]">{comparison}</p>}
         </div>
       </div>
+      {(flags.length > 0 || score.hasHistory === false) && (
+        <div className="tile flex flex-col gap-2 border-l-4 border-[var(--color-amber)] p-4 sm:p-5" role="note">
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/75">Checks beside the model</p>
+          <ul className="m-0 flex list-none flex-col gap-1 p-0 text-sm">
+            {flags.map((f) => (
+              <li key={f.code}>
+                <span className="mono mr-2 text-[var(--color-amber-text)]">{f.code}</span>
+                {plain(flagText(f))}
+              </li>
+            ))}
+            {score.hasHistory === false && <li>{NO_HISTORY_NOTE}</li>}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

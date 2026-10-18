@@ -7,8 +7,9 @@
 (c) exporter A allocates 5,000 t to importer A (claimed), then the same 5,000 t to importer B
     -> reverts DoubleClaimBlocked(batchId, 5000, 0)
 (d) tamper test: one edited digit flips commitment / ECDSA / ML-DSA checks; the untampered document passes
-Then a few hardening probes. Exit code is non-zero if any check fails. Safe to re-run on the same chain:
-periods that are already used are advanced to the next free month and consignment ids are fresh.
+Scenario (a) ends by running the rescore CLI (`python -m attestor.rescore <certificate URL>`) on the green certificate.
+Then a few hardening probes. Exit code is non-zero if any check fails. Safe to re-run on the same chain: used periods move
+to the nearest earlier free month (shared logic: attestor/scenarios.py) and consignment ids are fresh.
 """
 from __future__ import annotations
 
@@ -16,32 +17,23 @@ import argparse
 import copy
 import json
 import os
+import subprocess
 import sys
 import time
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 
 import httpx
-from eth_account import Account
 from eth_account.messages import encode_defunct
+from eth_account import Account
 from eth_utils import keccak
 
 from . import bundle
-from .canonical import jcs, keccak256
+from .canonical import keccak256
 from .chain import Chain, ChainError, ChainRevert
 from .config import REPO_ROOT, Config
-from .report import period_to_int
-from .signing import attestation_digest, recover_attestation_signer, select_backend, sign_commitment
-
-# Public Anvil test keys #2..#6 (docs/INTERFACES.md section 1). Never use them on a real network.
-KEYS = {
-    "exporterA": "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a",
-    "exporterB": "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6",
-    "verifier": "0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a",
-    "importerA": "0x8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba",
-    "importerB": "0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e",
-}
-ADDR = {k: Account.from_key(v).address for k, v in KEYS.items()}
+from .scenarios import ADDR, KEYS, consignment_id, free_period, load_report, run_id, sign_report
+from .signing import attestation_digest, recover_attestation_signer, select_backend
 LATENCY_BUDGET_S = 15.0
 ATTEST_GAS_BUDGET = 250_000
 ALLOCATE_GAS_BUDGET = 120_000
@@ -70,34 +62,25 @@ class Demo:
         self.chain = Chain(cfg)
         self.cfg = cfg
         self.reports_dir = reports_dir
-        self.run_id = os.urandom(3).hex()
+        self.run_id = run_id()
         self.batch_a: dict | None = None  # AttestResult of scenario (a)
         self.batch_b: dict | None = None  # AttestResult of scenario (b), rejected by the verifier
         self.report_a: dict | None = None
 
     # ------------------------------------------------------------------ helpers
     def load_report(self, name: str) -> dict:
-        return json.loads((self.reports_dir / name).read_text(encoding="utf-8"))
+        return load_report(name, self.reports_dir)
 
     def free_period(self, report: dict, sc: Scenario) -> dict:
-        """The report period, or the nearest EARLIER month whose slot is empty or Rejected (the only re-attestable
-        state). Never later: the attestor refuses periods after the current UTC month."""
-        report = copy.deepcopy(report)
-        year, month = int(report["period"][:4]), int(report["period"][5:7])
-        original = report["period"]
-        for _ in range(120):
-            report["period"] = f"{year:04d}-{month:02d}"
-            existing = self.chain.batch_of(report["installationId"], period_to_int(report["period"]))
-            if existing == 0 or self.chain.batch(existing)["status"] == "Rejected":
-                break
-            year, month = (year - 1, 12) if month == 1 else (year, month - 1)
-        if report["period"] != original:
-            sc.notes.append(f"period {original} already attested on this chain; using fresh period {report['period']}")
+        """Shared logic (attestor/scenarios.py): nearest earlier month whose slot is empty or Rejected."""
+        chosen = free_period(self.chain.batch_of, lambda bid: self.chain.batch(bid)["status"], report)
+        if chosen["period"] != report["period"]:
+            sc.notes.append(f"period {report['period']} already attested on this chain; using fresh period {chosen['period']}")
             print(f"    note: {sc.notes[-1]}")
-        return report
+        return chosen
 
     def sign_report(self, report: dict, who: str) -> str:
-        return sign_commitment(keccak256(jcs(report)), KEYS[who])[0]
+        return sign_report(report, KEYS[who])
 
     def attest(self, report: dict, who: str) -> tuple[httpx.Response, float]:
         t0 = time.perf_counter()
@@ -132,7 +115,7 @@ class Demo:
         return tuple(values[c["name"]] for c in comps)
 
     def consignment_id(self, batch_id: int, tag: str) -> bytes:
-        return f"EP-{batch_id}-{tag}-{self.run_id}".encode().ljust(32, b"\x00")
+        return consignment_id(batch_id, tag, self.run_id)
 
     def preflight(self) -> None:
         h = self.http.get("/health").json()
@@ -218,7 +201,25 @@ class Demo:
             "commitmentMatches", "ecdsaValid", "mldsaValid", "pqSigHashMatches", "cidDigestMatches", "fieldsMatch",
             "pqKeyMatches")}))
         sc.check("GET /verify pqKeyMatches", v["pqKeyMatches"] is True)
+        self.rescore(sc, f"http://localhost:3000{res['verifyPath']}")  # the certificate link the web UI shows
         return sc
+
+    def rescore(self, sc: Scenario, certificate_url: str) -> None:
+        """Run the real CLI (`python -m attestor.rescore <url>`) as a subprocess: it needs nothing but the chain, the
+        pinned bundle, the key in the URL and the model artefact file."""
+        cmd = [sys.executable, "-m", "attestor.rescore", certificate_url, "--attestor", str(self.http.base_url),
+               "--rpc", self.cfg.rpc_url]
+        env = {**os.environ, "PYTHONPATH": str(REPO_ROOT), "DEPLOYMENTS": str(self.cfg.deployments_dir)}
+        t0 = time.perf_counter()
+        proc = subprocess.run(cmd, capture_output=True, text=True, cwd=REPO_ROOT, env=env, timeout=300)
+        lines = [ln.strip() for ln in proc.stdout.splitlines() if ln.strip()]
+        for ln in lines:
+            print(f"        rescore| {ln}")
+        passes = [ln for ln in lines if ln.startswith("PASS")]
+        sc.check("rescore CLI: (a) model artefact hash, (b) risk score, (c) commitment all PASS (exit 0)",
+                 proc.returncode == 0 and len(passes) >= 3 and not any(ln.startswith("FAIL") for ln in lines),
+                 f"exit {proc.returncode}, {len(passes)} PASS lines, {time.perf_counter() - t0:.1f} s"
+                 + (f"; stderr: {proc.stderr.strip()[:200]}" if proc.returncode else ""))
 
     # ------------------------------------------------------------------ scenario (b)
     def scenario_b(self) -> Scenario:
@@ -244,8 +245,7 @@ class Demo:
         sc.check("POST /reasons stores the verifier's reason", rr.status_code == 200, f"HTTP {rr.status_code}")
         reason_hash = rr.json()["reasonHash"]
         sc.check("reasonHash == keccak256(utf8(text))", reason_hash == "0x" + keccak(text.encode()).hex())
-        tx = self.chain.send(self.chain.attestation.functions.verifierSign(batch_id, False, bytes.fromhex(reason_hash[2:])),
-                             KEYS["verifier"])
+        tx = self.chain.verifier_sign(batch_id, False, bytes.fromhex(reason_hash[2:]), KEYS["verifier"])
         b = self.chain.batch(batch_id)
         sc.check("verifierSign(false) -> Rejected, verifier and reasonHash recorded",
                  b["status"] == "Rejected" and b["verifier"] == ADDR["verifier"] and "0x" + bytes(b["reasonHash"]).hex() == reason_hash,
@@ -267,17 +267,17 @@ class Demo:
         cn = int(report["cnCode"])
         c_a, c_b = self.consignment_id(batch_id, "A"), self.consignment_id(batch_id, "B")
 
-        tx = self.chain.send(al.functions.allocate(batch_id, c_a, ADDR["importerA"], cn, 5000), KEYS["exporterA"])
+        tx = self.chain.allocate(batch_id, c_a, ADDR["importerA"], cn, 5000, KEYS["exporterA"])
         sc.check(f"exporter A allocate(5000 t -> importer A) succeeds, receipt gas <= {ALLOCATE_GAS_BUDGET}",
                  tx.gas_used <= ALLOCATE_GAS_BUDGET,
                  f"receipt {tx.gas_used} (execution {self.execution_gas(tx.tx_hash, tx.gas_used)})")
         sc.check("remainingTonnes == 0", al.functions.remainingTonnes(batch_id).call() == 0)
-        self.chain.send(al.functions.claim(c_a), KEYS["importerA"])
+        self.chain.claim(c_a, KEYS["importerA"])
         alloc = al.functions.getAllocation(c_a).call()
         sc.check("importer A claimed the allocation", bool(alloc[4]) and alloc[1] == ADDR["importerA"] and alloc[3] == 5000)
 
         try:
-            self.chain.send(al.functions.allocate(batch_id, c_b, ADDR["importerB"], cn, 5000), KEYS["exporterA"])
+            self.chain.allocate(batch_id, c_b, ADDR["importerB"], cn, 5000, KEYS["exporterA"])
             sc.check("second allocation of the same 5,000 t reverts", False, "transaction unexpectedly succeeded")
         except ChainRevert as exc:
             args = exc.revert_args

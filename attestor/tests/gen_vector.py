@@ -4,8 +4,9 @@
 
 Everything is produced by the production code paths (attestor.canonical/signing/bundle/report). Randomness is
 pinned where the format allows it (salt, IV, AES key, issuedAt); the ML-DSA-44 key pair and signature are
-fresh per run, which is fine because the file carries both. The `assessment` block is a fixed example,
-NOT output of the trained model.
+fresh per run, which is fine because the file carries both. The `assessment` block is REAL output of the frozen model
+(model/artefacts) for the INTERFACES section 4 example report, enriched by attestor/assess.py (hasHistory, flags, inputs),
+so `python -m attestor.rescore` logic can reproduce its riskScore. Regenerate whenever the model artefact changes.
 """
 from __future__ import annotations
 
@@ -14,7 +15,8 @@ import tempfile
 from pathlib import Path
 
 from attestor import bundle
-from attestor.canonical import commitment_of, hex0x, jcs, keccak256
+from attestor.assess import Assessor
+from attestor.canonical import commitment_of, hex0x, jcs, keccak256, to_jsonable
 from attestor.report import installation_id_bytes32, period_to_int, see_to_chain, tonnes_to_chain
 from attestor.signing import (ECDSA_SCHEME, MLDSASigner, attestation_digest, attestation_typed_data,
                               recover_attestation_signer, sign_attestation, sign_commitment)
@@ -30,13 +32,9 @@ REPORT = {
     "cnCode": "72083900", "productionTonnes": 5000, "directEmissionsTco2": 1150.0, "electricityMwh": 2250.0,
     "gridFactorTco2PerMwh": 0.42, "indirectEmissionsTco2": 945.0, "seeTco2PerT": 0.419,
 }
-ASSESSMENT = {
-    "riskScore": 4, "band": "green", "q05": 0.318, "q50": 0.452, "q95": 0.67, "expectedLow": 0.318,
-    "expectedHigh": 0.67, "seeDeclared": 0.419, "cbamDefault": 1.3, "belowHalfDefault": True,
-    "modelVersionHash": "0x" + "ab" * 32,
-    "shap": [{"feature": "route", "label": "Production route", "value": "EAF", "contribution": -0.41}],
-    "explanation": "Fixed example assessment for the test vector; not produced by the trained model.",
-}
+REPO = Path(__file__).resolve().parents[2]
+INSTALLATION = {"id": "TR-EAF-0001", "route": "EAF", "capacityTpy": 300000, "country": "TR"}  # as registered on-chain
+
 # Same decimal-string rounding rule as the contract-facing code: round_half_up(Decimal(repr(x)) * 10^4).
 SEE_VECTORS = ["0.419", "0.4195", "0.41955", "0.00005", "0.1", "1.00005", "2.12345", "0.29995", "123.45675", "1e-05", "5e-05",
                "0.5", "1.5e-4", "429496.7295"]
@@ -53,9 +51,23 @@ def fields_for(document: dict, commitment: bytes, pq_sig_hash: bytes) -> dict:
     }
 
 
+def real_assessment() -> dict:
+    """Frozen-model ScoreResult for REPORT plus the attestor's hasHistory / flags / inputs (no latencyMs)."""
+    from model.scorer import DEFAULT_ARTEFACT, Scorer
+
+    installations = REPO / "data" / "installations_demo.json"
+    scorer = Scorer.load(demo_installations_path=installations)
+    score = to_jsonable(scorer.score_report(REPORT, INSTALLATION))
+    assessor = Assessor(DEFAULT_ARTEFACT, installations)
+    assert assessor.artefact_sha256 == scorer.model_version_hash
+    enriched = assessor.enrich(REPORT, INSTALLATION, score)
+    return {k: v for k, v in enriched.items() if k != "latencyMs"}
+
+
 def main() -> None:
+    assessment = real_assessment()
     document = {
-        "schema": "embedproof.attestation.v1", "report": REPORT, "assessment": ASSESSMENT, "chainId": CHAIN_ID,
+        "schema": "embedproof.attestation.v1", "report": REPORT, "assessment": assessment, "chainId": CHAIN_ID,
         "attestationContract": ATTESTATION_CONTRACT, "salt": "0x" + bytes(range(32)).hex(),
         "issuedAt": "2026-10-18T12:00:00Z",
     }
@@ -95,7 +107,7 @@ def main() -> None:
         vector = {
             "_comment": [
                 "EmbedProof bundle test vector (docs/INTERFACES.md sections 5 and 9).",
-                "Keys are public Anvil test keys. The assessment block is a fixed example, not model output.",
+                "Keys are public Anvil test keys. The assessment block is real frozen-model output plus hasHistory / flags / inputs (round 3).",
                 "To check in a browser: canonicalize(document) == canonical; keccak256(utf8(canonical)) == commitment;",
                 "viem recoverTypedDataAddress({domain, types, primaryType:'Attestation', message, signature}) == ecdsa.signer,",
                 "where `message` is eip712.message with commitment set to the commitment you RECOMPUTED (and the other",

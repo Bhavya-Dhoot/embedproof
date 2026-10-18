@@ -89,7 +89,7 @@ export default function AdminPage() {
       <PageHeader eyebrow="Admin" title="Keys to the registry">
         Register installations from onboarding requests, approve a frozen model version, and pull the emergency brake. Upgrades are not here on purpose: they only go through the 24-hour timelock.
       </PageHeader>
-      <ActAs keys={["admin"]} need={!!roles.address && roles.known && !roles.admin} reason="These actions need DEFAULT_ADMIN_ROLE." />
+      <ActAs role="admin" />
       <NeedsDeployment>
         <div className="grid gap-6 lg:grid-cols-2">
           <Glass>
@@ -149,7 +149,7 @@ export default function AdminPage() {
             </div>
           </dl>
           <div className="flex flex-wrap items-center gap-3">
-            {pqMatches ? <Chip tone="green">anchored: the registry accepts the attestor&apos;s key</Chip> : !pqZero && livePq ? <Chip tone="red">the registry&apos;s current key differs from the attestor&apos;s</Chip> : null}
+            {pqMatches ? <Chip tone="green">key anchored on-chain</Chip> : !pqZero && livePq ? <Chip tone="red">current key differs</Chip> : null}
             <button
               className="btn btn-primary"
               disabled={!roles.admin || !livePq || !attestorAddr || pqMatches || !!busy}

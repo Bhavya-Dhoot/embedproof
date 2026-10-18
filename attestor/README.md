@@ -42,12 +42,71 @@ move to the nearest earlier free month (the attestor refuses periods after the c
 | `ATTESTOR_PRIVATE_KEY` | Anvil key #1 **on chain 31337 only** | signer; must hold `ATTESTOR_ROLE`. Required elsewhere |
 | `DEPLOYMENTS` | `<repo>/deployments` | folder with `<chainId>.json` and `abi/*.json` |
 | `DATA_DIR` | `attestor/var` | sqlite db, `keys/` (ML-DSA), `ipfs/` (local content-addressed store) |
+| `INSTALLATIONS_FILE` | `data/installations_demo.json` | admin-maintained plant -> Climate TRACE prior mapping (see below) |
+| `DEMO_RUNNER` | unset | `1` enables the hosted demo runner (see below); refuses to start unless `CHAIN_ID` is 31337 or 84532 |
+| `DEMO_EXPORTER_KEY`, `DEMO_EXPORTER_B_KEY`, `DEMO_VERIFIER_KEY`, `DEMO_IMPORTER_A`, `DEMO_IMPORTER_B` | Anvil accounts on 31337 only | demo-runner accounts (**demo-only keys**) |
 | `PINATA_JWT` | unset | also pin via Pinata v3; the returned CID must equal the local CIDv1/raw/sha2-256 |
 | `IPFS_GATEWAY` | unset | optional fallback to fetch bundles missing locally (bytes are re-hashed against the CID) |
 | `PQ_BACKEND` | `oqs`, then `pqcrypto`, then `dilithium_py` | force one ML-DSA-44 backend |
 | `CORS_ORIGINS` | `http://localhost:3000,http://127.0.0.1:3000` | allowed web origins |
 | `RATE_BURST`, `RATE_PER_SEC` | `20`, `2` | token bucket per client address and route group (`score`, `attest`, `verify`, `bundle`, `disclosure`, `reasons`); IPv6 clients share one bucket per /64 |
 | `CLIENT_IP_HEADER` | unset | real-client-IP header behind a trusted proxy (Fly: `fly-client-ip`) |
+
+## Report schema and checks
+
+`attestor/schemas/report.schema.json` (JSON Schema draft 2020-12) describes the report structure and ranges; every file in
+`data/demo_reports/` validates against it and the tests compare it with `validate_report` on invalid cases. Rules that need other
+data stay in the attestor and are listed in the schema description: the 1% tolerances (`indirect` vs electricity x grid factor,
+`see` vs (direct + indirect) / production), route equal to the registry route, no period later than the current UTC month, and
+**capacity**: because `verifiedTonnes` is the exporter's own `productionTonnes` and caps every allocation, a report is refused
+with 422 when `productionTonnes` > on-chain nameplate capacity (t/yr) / 12 x 1.2 (exactly nameplate / 10).
+
+## Assessment: `hasHistory`, `flags`, `inputs`
+
+The signed document's `assessment` (and `/score`, `AttestResult.score`) carries, next to the model output:
+
+* `hasHistory` - false when the installation has no Climate TRACE lagged prior and the no-history branch of the model scored it.
+* `flags` - informational `[{code, message}]`, never changing the score:
+  * `GRID_FACTOR_BELOW_EMBER`: declared grid factor < 0.8 x the Ember country-year value the model uses.
+  * `ELECTRICITY_OUTSIDE_ROUTE_NORM`: declared MWh per tonne < 0.5x or > 2x of Climate TRACE's per-route modelling assumption
+    (field `other3` of the v5.10.0 iron-and-steel data: EAF 0.87, DRI-EAF 0.87, BF-BOF 0.83 MWh/t; the constant lives in
+    `attestor/assess.py`). **The 0.5x-2x band is a coarse sanity band chosen by EmbedProof, not a regulatory norm**, and Climate
+    TRACE does not cite a source for its own figures. This is the PRD's "electricity consumed per tonne ... checked against route norms".
+* `inputs` - the exact inputs the scorer used: `installation`, `features` (route, capacityTpy, gridGco2PerKwh, ctLaggedPriorEf),
+  `prior` (value, source text, Climate TRACE source asset id), `grid` (value, source, Ember observation year, country),
+  `dataVersion` and `artefactSha256` (`0x` + sha256 of the model artefact file = `modelVersionHash`).
+
+### Plant-to-prior mapping (`INSTALLATIONS_FILE`)
+
+The mapping from an installation id to its Climate TRACE prior is an **admin-maintained JSON file** (default
+`data/installations_demo.json`, override with `INSTALLATIONS_FILE`). The service reads it at startup (restart after editing).
+Entry shape: `priors.ctLaggedPriorEf`, optional `priors.gridGco2PerKwh`, `priors.capacityTpy`, `priors.ctLaggedPriorSource` and
+`climateTraceReference.climateTraceSourceId`. **A plant without an entry (or an entry without `ctLaggedPriorEf`) is scored on the
+no-history branch (`hasHistory` false)** with route, on-chain capacity and Ember grid only, which uses wider calibrated intervals.
+
+## Rescore a certificate
+
+```bash
+PYTHONPATH=. python -m attestor.rescore "http://localhost:3000/verify/3#k=<base64url key>" [--attestor URL] [--artefact PATH]
+```
+
+It reads the batch from the chain (`RPC_URL`, deployments), fetches the bundle by the CID derived from the on-chain `cidDigest`
+(from `GET <attestor>/bundle/<cid>`), decrypts it with the key in the URL fragment and re-runs the frozen model on the recorded
+`assessment.inputs` and report. Checks, each PASS/FAIL, exit code 1 on any FAIL: (a) sha256(model artefact file) == on-chain
+`modelVersionHash`; (b) recomputed risk score == on-chain `riskScore`; (c) the commitment recomputes; plus (d) sha256(bundle) ==
+on-chain `cidDigest` and (e) the recomputed interval and band equal the signed assessment. `make demo` runs it on the green certificate.
+
+## Hosted demo runner (judges without a wallet)
+
+`DEMO_RUNNER=1` (only on chain 31337 or 84532; the service refuses to start elsewhere) exposes `GET /demo/status` ->
+`{enabled, chainId}` and `POST /demo/run/{green|red|double-claim}` -> `{scenario, chainId, batchId, certificatePath, steps:[{label, ok,
+expected, txHash, detail}]}`. It answers 404 when disabled, 409 while another run is in progress (one global lock) and 429 with
+`Retry-After` for a 30 s per-client cooldown (IPv6 by /64). `double-claim` sends the final over-allocation with a fixed gas limit so it is
+mined with status 0 (`ok=false, expected=true`, `DoubleClaimBlocked(batchId, requested, remaining)` decoded), giving a real
+explorer link. Each run uses an unused (installation, period): periods are searched backwards from the demo report's month (never into the
+future), which does not move the risk band (tests score the real model across the window). **These are demo-only keys**: anyone who can
+reach the endpoints can make the service spend gas from `DEMO_EXPORTER_KEY` / `DEMO_VERIFIER_KEY` (on 31337 they default to the public Anvil
+accounts of docs/INTERFACES.md section 1), so use throwaway accounts holding only testnet dust; the service logs a warning at startup.
 
 ## Packaging
 

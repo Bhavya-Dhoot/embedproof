@@ -14,6 +14,7 @@ const COPY: Record<CheckId, { title: string; plain: string }> = {
   mldsa: { title: "ML-DSA-44 signature is valid over this exact report", plain: "Verified in your browser with the NIST FIPS 204 algorithm; no server involved." },
   decrypt: { title: "Report unsealed with the certificate key", plain: "AES-256-GCM, authenticated against the on-chain commitment. A wrong key or any edit to the ciphertext fails here." },
   commitment: { title: "Report fingerprint equals the on-chain commitment", plain: "keccak-256 of the canonical (RFC 8785) report recomputed in your browser." },
+  reasonHash: { title: "Reason text matches the on-chain hash", plain: "keccak-256 of the verifier's or admin's written reason, computed in your browser, equals the reason hash stored with the batch." },
   fieldsMatch: { title: "Report fields match the chain", plain: "Installation, period, SEE, tonnes, risk score, model version, chain and contract inside the signed report equal what the contract stored. The signature only covers the fingerprint, so this ties the on-chain numbers to the signed document." },
 };
 
@@ -22,6 +23,7 @@ const GROUPS: { title: string; sub: string; ids: CheckId[] }[] = [
   { title: "Signature 1 · ECDSA secp256k1", sub: "classical, checkable on-chain", ids: ["ecdsaOnchain", "ecdsaDoc"] },
   { title: "Signature 2 · ML-DSA-44", sub: "post-quantum, FIPS 204", ids: ["pqKeyAnchored", "pqHash", "mldsa"] },
   { title: "Report integrity", sub: "encrypted off-chain, fingerprint on-chain", ids: ["decrypt", "commitment", "fieldsMatch"] },
+  { title: "Written reason", sub: "off-chain text, hash on-chain", ids: ["reasonHash"] },
 ];
 
 function Icon({ s }: { s: CheckStatus }) {
@@ -95,12 +97,24 @@ export function signatureStatuses(r: VerifyReport | null) {
   };
 }
 
-export function CheckGroups({ report, footer }: { report: VerifyReport | null; footer?: ReactNode }) {
+/** "10 of 10 passed", "2 failed", with sealed and skipped rows counted separately. */
+export function summarizeChecks(checks: Check[]): string {
+  const n = (s: CheckStatus) => checks.filter((c) => c.status === s).length;
+  const parts = [`${n("pass")} of ${checks.length} passed`];
+  if (n("fail")) parts.unshift(`${n("fail")} failed`);
+  if (n("sealed")) parts.push(`${n("sealed")} sealed`);
+  if (n("skipped")) parts.push(`${n("skipped")} not run`);
+  return parts.join(", ");
+}
+
+export function CheckGroups({ report, extra, footer }: { report: VerifyReport | null; extra?: Check[]; footer?: ReactNode }) {
   if (!report) return <p className="text-sm text-[var(--color-mute)]">Running checks…</p>;
+  const all = [...report.checks, ...(extra ?? [])];
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {GROUPS.map((g) => {
-        const rows = g.ids.map((id) => report.checks.find((c) => c.id === id)).filter(Boolean) as Check[];
+        const rows = g.ids.map((id) => all.find((c) => c.id === id)).filter(Boolean) as Check[];
+        if (rows.length === 0) return null;
         return (
           <div key={g.title} className="tile p-3 sm:p-4">
             <div className="mb-2 px-1">

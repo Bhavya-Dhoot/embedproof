@@ -9,11 +9,11 @@ import pytest
 from eth_account import Account
 from eth_utils import keccak, to_checksum_address
 
+from attestor.assess import Assessor
 from attestor.canonical import jcs, keccak256
-from attestor.chain import STATUS, ChainRevert
+from attestor.chain import STATUS, ChainError, ChainRevert
 from attestor.config import ANVIL_ATTESTOR_KEY, Config
 from attestor.ipfs import IpfsStore
-from attestor.report import installation_id_bytes32
 from attestor.service import Attestor
 from attestor.signing import MLDSASigner, recover_attestation_signer, sign_commitment
 from attestor.store import Store
@@ -81,7 +81,7 @@ class FakeChain:
     def __init__(self):
         self.installations = {
             "TR-EAF-0001": {"id": "TR-EAF-0001", "country": "TR", "sector": "STEEL", "route": "EAF",
-                            "capacityTpy": 100000, "operator": ADDR["exporterA"]},
+                            "capacityTpy": 300000, "operator": ADDR["exporterA"]},
             "TR-BOF-0002": {"id": "TR-BOF-0002", "country": "TR", "sector": "STEEL", "route": "BF-BOF",
                             "capacityTpy": 3500000, "operator": ADDR["exporterB"]},
         }
@@ -90,6 +90,8 @@ class FakeChain:
         self.roles = {("VERIFIER_ROLE", ADDR["verifier"]), ("REGULATOR_ROLE", ADDR["regulator"]),
                       ("OPERATOR_ROLE", ADDR["exporterA"]), ("OPERATOR_ROLE", ADDR["exporterB"])}
         self.allocations: dict[int, set[str]] = {}
+        self.consignments: dict[bytes, tuple] = {}
+        self.allocated: dict[int, int] = {}
         self.approved = {bytes.fromhex(MODEL_HASH[2:])}
         self.pq_keys: dict[str, bytes] = {}  # registry.attestorPqKey (current key)
         self.pq_history: dict[str, set[bytes]] = {}  # registry.isAttestorPqKey (every anchored, unrevoked key)
@@ -118,6 +120,51 @@ class FakeChain:
 
     def importers_of(self, batch_id):
         return self.allocations.get(batch_id, set())
+
+    # ---- verifier + allocator (the parts the demo runner drives)
+    def _tx(self):
+        self._n = getattr(self, "_n", 0) + 1
+        return _Tx("0x" + keccak(text=f"fake-tx-{self._n}").hex(), 100_000)
+
+    def verifier_sign(self, batch_id, approve, reason_hash, key):
+        b = self.batches[batch_id]
+        who = Account.from_key(key).address
+        if not self.has_role("VERIFIER_ROLE", who):
+            raise ChainRevert("MissingRole", {"account": who})
+        if who in (b["attestor"], self.installations[b["installationIdStr"]]["operator"]):
+            raise ChainRevert("VerifierConflict", {"batchId": batch_id, "verifier": who})
+        if b["status"] != "PendingVerifier":
+            raise ChainRevert("NotPending", {"batchId": batch_id})
+        b.update(status="Attested" if approve else "Rejected", verifier=who, reasonHash=reason_hash)
+        return self._tx()
+
+    def _allocate_checks(self, batch_id, consignment_id, importer, tonnes, key):
+        b = self.batches[batch_id]
+        who = Account.from_key(key).address
+        if self.installations[b["installationIdStr"]]["operator"] != who:
+            raise ChainRevert("NotBatchOperator", {"batchId": batch_id, "caller": who})
+        if b["status"] != "Attested":
+            raise ChainRevert("BatchNotAttested", {"batchId": batch_id})
+        if consignment_id in self.consignments:
+            raise ChainRevert("ConsignmentReused", {"consignmentId": "0x" + consignment_id.hex()})
+        remaining = b["verifiedTonnes"] - self.allocated.get(batch_id, 0)
+        if tonnes > remaining:
+            raise ChainRevert("DoubleClaimBlocked", {"batchId": batch_id, "requested": tonnes, "remaining": remaining})
+
+    def allocate(self, batch_id, consignment_id, importer, cn_code, tonnes, key):
+        self._allocate_checks(batch_id, consignment_id, importer, tonnes, key)
+        self.consignments[consignment_id] = (batch_id, importer, tonnes)
+        self.allocated[batch_id] = self.allocated.get(batch_id, 0) + tonnes
+        self.allocations.setdefault(batch_id, set()).add(to_checksum_address(importer))
+        return self._tx()
+
+    def allocate_expect_revert(self, batch_id, consignment_id, importer, cn_code, tonnes, key, gas=300_000):
+        try:
+            self._allocate_checks(batch_id, consignment_id, importer, tonnes, key)
+        except ChainRevert as revert:
+            self.failed_txs = getattr(self, "failed_txs", []) + [(revert, gas)]
+            return revert, self._tx().tx_hash
+        raise ChainError("allocate() was expected to revert but the simulation succeeded")
 
     def attestor_pq_key(self, attestor):
         return self.pq_keys.get(to_checksum_address(attestor), bytes(32)) if self.pq_supported else None
@@ -166,6 +213,16 @@ def cfg(tmp_path) -> Config:
                   data_dir=tmp_path / "var", rate_burst=50, rate_per_sec=50, client_ip_header=None)
 
 
+REPO = Path(__file__).resolve().parents[2]
+ARTEFACT = REPO / "model" / "artefacts" / "embedproof_model_v1.json"
+INSTALLATIONS = REPO / "data" / "installations_demo.json"
+
+
+@pytest.fixture(scope="session")
+def assessor_real() -> Assessor:
+    return Assessor(ARTEFACT, INSTALLATIONS)
+
+
 @pytest.fixture(scope="session")
 def mldsa_dir(tmp_path_factory) -> Path:
     d = tmp_path_factory.mktemp("mldsa-keys")
@@ -179,9 +236,26 @@ def chain() -> FakeChain:
 
 
 @pytest.fixture
-def attestor(cfg, chain, mldsa_dir) -> Attestor:
+def attestor(cfg, chain, mldsa_dir, assessor_real) -> Attestor:
     mldsa = MLDSASigner.load_or_create(mldsa_dir)
     chain.anchor_pq_key(ADDR["attestor"], keccak256(mldsa.public_key))  # as deployed with ATTESTOR_PQ_KEY_HASH
     return Attestor(chain=chain, scorer=FakeScorer(), store=Store(cfg.db_path),
                     ipfs=IpfsStore(cfg.ipfs_dir), mldsa=mldsa,
-                    attestor_key=cfg.attestor_private_key, clock=lambda: float(NOW))
+                    attestor_key=cfg.attestor_private_key, clock=lambda: float(NOW), assessor=assessor_real)
+
+
+@pytest.fixture(scope="session")
+def real_scorer():
+    from model.scorer import Scorer
+
+    return Scorer.load()
+
+
+@pytest.fixture
+def real_attestor(cfg, chain, mldsa_dir, assessor_real, real_scorer) -> Attestor:
+    """Attestor with the REAL frozen model (and the real installations file) on the fake chain."""
+    mldsa = MLDSASigner.load_or_create(mldsa_dir)
+    chain.anchor_pq_key(ADDR["attestor"], keccak256(mldsa.public_key))
+    chain.approved = {bytes.fromhex(real_scorer.model_version_hash[2:])}
+    return Attestor(chain=chain, scorer=real_scorer, store=Store(cfg.db_path), ipfs=IpfsStore(cfg.ipfs_dir), mldsa=mldsa,
+                    attestor_key=cfg.attestor_private_key, clock=lambda: float(NOW), assessor=assessor_real)

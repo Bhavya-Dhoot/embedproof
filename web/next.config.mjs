@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  devIndicators: false, // no dev badge in demo recordings and screenshots
   // Always inline the demo flag (even when unset) so that, with demo mode off, the bundler folds the
   // `=== "1"` guard in lib/signer.tsx to false and drops the chunk holding the public Anvil test keys.
   env: { NEXT_PUBLIC_DEMO_MODE: process.env.NEXT_PUBLIC_DEMO_MODE ?? "0" },

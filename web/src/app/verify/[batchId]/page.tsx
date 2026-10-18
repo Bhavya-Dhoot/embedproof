@@ -4,7 +4,8 @@ import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { zeroAddress, type Address, type Hex } from "viem";
-import { CheckGroups, SigBadge, signatureStatuses } from "@/components/Checks";
+import { CbamImpact } from "@/components/CbamImpact";
+import { CheckGroups, SigBadge, signatureStatuses, summarizeChecks } from "@/components/Checks";
 import { PlausibilityView } from "@/components/Plausibility";
 import { BandChip, Chip, ConsignmentId, Glass, Mono, NeedsDeployment, Notice, PageHeader, Spinner, StatusChip, Tile, TxLink, cx } from "@/components/ui";
 import { ApiError, attestorApi, fetchBundleBytes } from "@/lib/attestor";
@@ -14,7 +15,10 @@ import { cidFromDigest } from "@/lib/cid";
 import { INSTALLATION_NAMES, labelAddress } from "@/lib/demoMeta";
 import { diffText } from "@/lib/diff";
 import { CHAIN_ID, bundleUrl } from "@/lib/env";
-import { useAllocationsForBatch, useDeployment } from "@/lib/hooks";
+import { useAllocationsForBatch, useDeployment, useInstallations } from "@/lib/hooks";
+import { directIntensity } from "@/lib/cbam";
+import { useSampleCert } from "@/lib/sampleCert";
+import { verdictFor, type Verdict } from "@/lib/verdict";
 import { bandFor, formatSee, formatTonnes, plain, shortAddr, uint32ToPeriod, type ScoreResult } from "@/lib/report";
 import {
   MLDSA44_PK_BYTES,
@@ -22,7 +26,10 @@ import {
   bytesToB64,
   parseKeyFromHash,
   tamperOneDigit,
+  checkReasonText,
   verifyBundle,
+  type Check,
+  type CheckStatus,
   type OnchainBatch,
   type VerifyReport,
 } from "@/lib/verify";
@@ -109,11 +116,75 @@ function QrCode() {
   );
 }
 
-function ReasonText({ hash }: { hash: Hex }) {
-  const q = useQuery({ queryKey: ["reason", hash], queryFn: () => attestorApi.getReason(hash), retry: false, staleTime: Infinity });
-  if (q.isLoading) return <Spinner label="loading reason" />;
-  if (q.data) return <q className="block text-base italic">{plain(q.data.text)}</q>;
-  return <span className="text-sm text-[var(--color-mute)]">Reason text is held by the attestor ({q.error instanceof ApiError ? q.error.detail : "unavailable"}); its hash is recorded on-chain.</span>;
+/** The written reason with the result of hashing it in the browser and comparing it with the on-chain reasonHash. */
+function ReasonBlock({ loading, text, check, error }: { loading: boolean; text?: string; check?: Check; error?: string }) {
+  if (loading) return <Spinner label="loading reason" />;
+  if (text === undefined) {
+    return <span className="text-sm text-[var(--color-mute)]">The reason text is held by the attestor ({error ?? "unavailable"}); only its hash is on-chain, so it cannot be checked here.</span>;
+  }
+  return (
+    <div className="flex flex-col gap-1">
+      <q className="block text-base italic">{plain(text)}</q>
+      {check?.status === "pass" && <span className="text-xs font-bold text-[var(--color-teal-text)]">✓ text matches the on-chain hash</span>}
+      {check?.status === "fail" && <span className="text-xs font-bold text-[var(--color-rose-text)]">✕ text does NOT match the on-chain hash: do not rely on it</span>}
+    </div>
+  );
+}
+
+function VerdictBanner({ v }: { v: Verdict }) {
+  const border = { green: "border-[var(--color-teal)]", amber: "border-[var(--color-amber)]", red: "border-[var(--color-rose)]", neutral: "border-white/40" }[v.tone];
+  const mark = { green: "✓", amber: "!", red: "✕", neutral: "…" }[v.tone];
+  const badge = { green: "bg-[var(--color-teal)]", amber: "bg-[var(--color-amber)]", red: "bg-[var(--color-rose)]", neutral: "bg-white/70" }[v.tone];
+  return (
+    <div role={v.tone === "red" ? "alert" : "status"} className={cx("tile flex items-start gap-3 border-l-4 p-4 sm:p-5", border)}>
+      <span className={cx("num grid h-8 w-8 shrink-0 place-items-center rounded-full text-base text-[var(--color-ink)]", badge)} aria-hidden>
+        {mark}
+      </span>
+      <p className="text-base leading-relaxed sm:text-lg">
+        <strong>{v.title}:</strong> {v.text}
+      </p>
+    </div>
+  );
+}
+
+function ProvesBox() {
+  const yes = [
+    "The report is unchanged since the attestor signed it.",
+    "Who signed: the attestor's ECDSA key holds the on-chain role, and the ML-DSA key hash is anchored on-chain.",
+    "The AI risk band and the exact model version that produced it.",
+    "The allocations and who holds them.",
+    "Any verifier decision and its written reason.",
+  ];
+  const no = [
+    "That the mill's measurements are true. The AI flags claims outside the expected range, but an accredited CBAM verifier is still required.",
+    "That this is an accredited CBAM verification. It is not one.",
+  ];
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      <div className="tile p-4 sm:p-5">
+        <h3 className="mb-2 text-base font-bold">What this proves</h3>
+        <ul className="m-0 flex list-none flex-col gap-1.5 p-0 text-sm">
+          {yes.map((t) => (
+            <li key={t} className="flex gap-2">
+              <span className="font-bold text-[var(--color-teal-text)]" aria-hidden>✓</span>
+              <span>{t}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="tile p-4 sm:p-5">
+        <h3 className="mb-2 text-base font-bold">What it does not prove</h3>
+        <ul className="m-0 flex list-none flex-col gap-1.5 p-0 text-sm">
+          {no.map((t) => (
+            <li key={t} className="flex gap-2">
+              <span className="font-bold text-[var(--color-rose-text)]" aria-hidden>✕</span>
+              <span>{t}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
 }
 
 function AllocationTable({ rows, verified, accounts }: { rows: AllocationView[]; verified: bigint; accounts?: Record<string, string | undefined> }) {
@@ -125,18 +196,18 @@ function AllocationTable({ rows, verified, accounts }: { rows: AllocationView[];
       <div>
         <div className="mb-1 flex flex-wrap items-baseline justify-between gap-2">
           <p className="text-sm font-bold">
-            <span className="num text-2xl">{formatTonnes(allocated)}</span> of <span className="num">{formatTonnes(verified)}</span> verified tonnes allocated
+            <span className="num text-2xl">{formatTonnes(allocated)}</span> of <span className="num">{formatTonnes(verified)}</span> attested tonnes allocated
           </p>
           <p className="text-sm text-[var(--color-mute)]">
             <span className="num">{formatTonnes(remaining)}</span> t remaining
           </p>
         </div>
-        <div className="h-3 overflow-hidden rounded-full bg-white/15" role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100} aria-label="Allocated share of verified tonnes">
+        <div className="h-3 overflow-hidden rounded-full bg-white/15" role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100} aria-label="Allocated share of attested tonnes">
           <div className="h-full rounded-full" style={{ width: `${pct}%`, background: "linear-gradient(90deg,#00C2A8,#3B2BFF)", transition: "width .9s cubic-bezier(.2,.8,.2,1)" }} />
         </div>
       </div>
       {rows.length === 0 ? (
-        <p className="text-sm text-[var(--color-mute)]">No tonnes allocated yet. The exporter assigns them to consignments; the contract refuses to allocate more than {formatTonnes(verified)} t.</p>
+        <p className="text-sm text-[var(--color-mute)]">No tonnes allocated yet. The exporter assigns them to consignments; the contract refuses to allocate more than {formatTonnes(verified)} attested tonnes.</p>
       ) : (
         <div className="scroll-x">
           <table className="tbl">
@@ -253,15 +324,26 @@ function TamperPanel({
   );
 }
 
-function Details({ b, cid, accounts, doc }: { b: BatchView; cid: string; accounts?: Record<string, string | undefined>; doc: unknown }) {
+function Details({ b, cid, accounts, doc, pqKeyHash, pqAnchored }: { b: BatchView; cid: string; accounts?: Record<string, string | undefined>; doc: unknown; pqKeyHash?: Hex; pqAnchored?: CheckStatus }) {
   const items: [string, React.ReactNode][] = [
-    ["Algorithm id", <span key="a" className="num">{b.algId} <span className="font-normal text-white/80">= ECDSA secp256k1 (EIP-191) + ML-DSA-44</span></span>],
+    ["Algorithm id", <span key="a" className="num">{b.algId} <span className="font-normal text-white/80">= ECDSA secp256k1 (EIP-712 typed data) + ML-DSA-44</span></span>],
     ["Model version (SHA-256)", <Mono key="m" value={b.modelVersionHash} />],
     ["Attestor", <span key="at" className="inline-flex flex-wrap items-center gap-2"><Mono value={b.attestor} />{labelAddress(b.attestor, accounts) && <Chip>{labelAddress(b.attestor, accounts)}</Chip>}</span>],
     ["Commitment (keccak-256)", <Mono key="c" value={b.commitment} />],
     ["Bundle CID", <Mono key="cid" value={cid} />],
     ["Bundle digest (sha-256)", <Mono key="cd" value={b.cidDigest} />],
     ["ML-DSA signature hash", <Mono key="pq" value={b.pqSigHash} />],
+    [
+      "ML-DSA public key hash",
+      pqKeyHash ? (
+        <span key="pk" className="inline-flex flex-wrap items-center gap-2">
+          <Mono value={pqKeyHash} />
+          {pqAnchored === "pass" ? <Chip tone="green">anchored on-chain</Chip> : pqAnchored === "fail" ? <Chip tone="red">not anchored on-chain</Chip> : <Chip>anchor not checked</Chip>}
+        </span>
+      ) : (
+        <span key="pk" className="hint">not available</span>
+      ),
+    ],
     ["Attested at", <span key="t" className="num">{b.attestedAt ? new Date(b.attestedAt * 1000).toISOString().replace(".000Z", "Z") : "n/a"}</span>],
   ];
   const issued = (doc as { issuedAt?: string } | null)?.issuedAt;
@@ -392,11 +474,42 @@ export default function VerifyPage() {
   const band = b ? bandFor(b.riskScore) : undefined;
   const revoked = revocation.data ?? null;
   const shownReason: Hex = revoked && revoked.reasonHash !== ZERO32 ? revoked.reasonHash : (b?.reasonHash ?? ZERO32);
+  const installations = useInstallations();
+  const installation = installations.data?.find((x) => x.idStr === b?.installation);
+  const sample = useSampleCert();
+  const [checksOpen, setChecksOpen] = useState(false);
+
+  // the written reason: fetched from the attestor, then hashed HERE and compared with the on-chain hash
+  const reasonQ = useQuery({
+    queryKey: ["reason", shownReason],
+    enabled: shownReason !== ZERO32,
+    queryFn: () => attestorApi.getReason(shownReason),
+    retry: false,
+    staleTime: Infinity,
+  });
+  const reasonCheck: Check | undefined = shownReason !== ZERO32 && reasonQ.data ? checkReasonText(reasonQ.data.text, shownReason) : undefined;
+  const extraChecks = useMemo(() => (reasonCheck ? [reasonCheck] : []), [reasonCheck]);
+  const allChecks = live ? [...live.checks, ...extraChecks] : [];
+  const anyFailed = allChecks.some((c) => c.status === "fail");
+  const allocatedTonnes = (alloc.data ?? []).reduce((sum, r) => sum + r.tonnes, 0n);
+  const verdict: Verdict | null = b
+    ? verdictFor({
+        report: live,
+        extraChecks,
+        bundleError: cert.data?.bundleError,
+        status: b.statusName,
+        revoked: !!revoked,
+        edited,
+        allocatedTonnes: alloc.data ? allocatedTonnes : undefined,
+        attestedTonnes: b.verifiedTonnes,
+      })
+    : null;
+  const reportDirect = directIntensity((baseline?.document as { report?: { directEmissionsTco2?: unknown; productionTonnes?: unknown } } | undefined)?.report);
 
   return (
     <div className="flex flex-col gap-6 sm:gap-8">
       <PageHeader eyebrow="Public certificate · no wallet needed" title={batchId === null ? "Certificate" : `Batch #${batchId.toString()}`}>
-        Every check on this page runs in your browser against the chain: nothing here asks you to trust EmbedProof&apos;s server.
+        Everything here is checked in your browser against hashes recorded on-chain. The bundle comes from the attestor or IPFS; any alteration fails the checks.
       </PageHeader>
 
       <NeedsDeployment>
@@ -410,6 +523,8 @@ export default function VerifyPage() {
 
         {b && cert.data && (
           <>
+            {verdict && <VerdictBanner v={verdict} />}
+
             {/* ---------------- headline ---------------- */}
             <Glass>
               <div className="grid gap-6 md:grid-cols-[1.2fr_1fr] md:items-center">
@@ -418,9 +533,6 @@ export default function VerifyPage() {
                     <StatusChip status={b.statusName} />
                     {revoked && <Chip tone="red">Revoked by admin</Chip>}
                     <BandChip band={band} />
-                    {live?.allValid && <Chip tone="green">✓ all checks passed</Chip>}
-                    {live?.anyFailed && <Chip tone="red">✕ verification failed</Chip>}
-                    {live?.sealed && !live.anyFailed && <Chip>🔒 report sealed</Chip>}
                   </div>
                   <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/75">Declared specific embedded emissions</p>
                   <p className="flex flex-wrap items-baseline gap-x-3">
@@ -434,7 +546,7 @@ export default function VerifyPage() {
                     {instName && <span className="font-normal text-[var(--color-mute)]"> · {instName}</span>}
                   </p>
                   <p className="text-[var(--color-mute)]">
-                    Period {uint32ToPeriod(b.period)} · <span className="num">{formatTonnes(b.verifiedTonnes)}</span> verified tonnes
+                    Period {uint32ToPeriod(b.period)} · <span className="num">{formatTonnes(b.verifiedTonnes)}</span> attested tonnes
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -464,7 +576,12 @@ export default function VerifyPage() {
                   {shownReason !== ZERO32 && (
                     <Tile className="col-span-2">
                       <p className="mb-1 text-[0.7rem] font-bold uppercase tracking-[0.14em] text-white/75">{revoked ? "Admin's reason for revoking" : "Verifier's reason"}</p>
-                      <ReasonText hash={shownReason} />
+                      <ReasonBlock
+                        loading={reasonQ.isLoading}
+                        text={reasonQ.data?.text}
+                        check={reasonCheck}
+                        error={reasonQ.error instanceof ApiError ? reasonQ.error.detail : undefined}
+                      />
                     </Tile>
                   )}
                 </div>
@@ -473,30 +590,36 @@ export default function VerifyPage() {
 
             {revoked && (
               <Notice tone="red" title="This batch has been revoked">
-                The signatures below still prove what was attested, but the contract no longer treats these tonnes as verified: they cannot be allocated.{" "}
+                The signatures below still prove what was attested, but the contract no longer treats these tonnes as attested: they cannot be allocated.{" "}
                 <TxLink hash={revoked.txHash} />
               </Notice>
             )}
 
-            {/* ---------------- checks ---------------- */}
+            {/* ---------------- CBAM impact ---------------- */}
             <Glass>
-              <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-teal-text)]">Verify</p>
-                  <h2 className="text-2xl font-bold sm:text-3xl">Both signatures, checked here and now</h2>
-                </div>
-                {edited && <Chip tone="red">checking an edited copy</Chip>}
-              </div>
+              <CbamImpact
+                key={`${params.batchId}-${keyId}`}
+                installation={installation ? { country: installation.country, route: installation.route } : undefined}
+                defaultTonnes={Number(b.verifiedTonnes)}
+                seeUint={b.seeDeclared}
+                reportDirect={reportDirect}
+              />
+            </Glass>
+
+            {/* ---------------- proves / checks ---------------- */}
+            <Glass>
+              <h2 className="mb-4 text-2xl font-bold sm:text-3xl">What you can rely on</h2>
+              <ProvesBox />
 
               {cert.data.bundleError && (
-                <div className="mb-4">
+                <div className="mt-4">
                   <Notice tone="red" title="Could not fetch the signed bundle">
                     {cert.data.bundleError}. Expected at <span className="mono">{bundleUrl(cert.data.cid)}</span>. On-chain data is still shown, but no signature can be checked.
                   </Notice>
                 </div>
               )}
 
-              <div className="mb-4 grid gap-3 sm:grid-cols-2">
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <SigBadge
                   label="ECDSA secp256k1 · attestor"
                   status={sig.ecdsa}
@@ -515,29 +638,45 @@ export default function VerifyPage() {
                 />
               </div>
 
-              <CheckGroups report={bytes ? live : null} />
-
-              {!key && bytes && (
-                <div className="tile mt-4 flex flex-col gap-3 p-4">
-                  <p className="font-bold">The report itself is sealed.</p>
-                  <p className="text-sm text-[var(--color-mute)]">
-                    Open this page from the certificate link or QR code (it ends in <span className="mono">#k=…</span>) to unseal it, re-check the post-quantum signature and run the tamper test.
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <label className="sr-only" htmlFor="pasted-key">Certificate key</label>
-                    <input id="pasted-key" className="inp mono !w-auto min-w-0 flex-1 !text-sm" placeholder="paste the key after #k= here" value={pasted} onChange={(e) => setPasted(e.target.value)} />
-                    <button className="btn btn-primary" onClick={unseal} disabled={!parseKeyFromHash(`k=${pasted.trim()}`)}>
-                      Unseal
-                    </button>
-                  </div>
+              <details
+                className="tile mt-4"
+                open={checksOpen || anyFailed}
+                onToggle={(e) => setChecksOpen((e.currentTarget as HTMLDetailsElement).open)}
+              >
+                <summary className="flex cursor-pointer flex-wrap items-center justify-between gap-2 p-4 font-bold">
+                  <span>All checks</span>
+                  <span className={cx("num text-sm font-normal", anyFailed ? "text-[var(--color-rose-text)]" : "text-[var(--color-mute)]")}>{live ? summarizeChecks(allChecks) : "running"}</span>
+                </summary>
+                <div className="flex flex-col gap-4 p-4 pt-0">
+                  {edited && <Chip tone="red">checking an edited copy</Chip>}
+                  <CheckGroups report={bytes ? live : null} extra={extraChecks} />
+                  {!key && bytes && (
+                    <div className="tile flex flex-col gap-3 p-4">
+                      <p className="font-bold">The report itself is sealed.</p>
+                      <p className="text-sm text-[var(--color-mute)]">
+                        Open this page from the certificate link or QR code (it ends in <span className="mono">#k=…</span>) to unseal it, re-check the post-quantum signature and run the tamper test.
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <label className="sr-only" htmlFor="pasted-key">Certificate key</label>
+                        <input id="pasted-key" className="inp mono !w-auto min-w-0 flex-1 !text-sm" placeholder="paste the key after #k= here" value={pasted} onChange={(e) => setPasted(e.target.value)} />
+                        <button className="btn btn-primary" onClick={unseal} disabled={!parseKeyFromHash(`k=${pasted.trim()}`)}>
+                          Unseal
+                        </button>
+                      </div>
+                      {sample && (
+                        <a className="text-sm font-bold underline decoration-[var(--color-teal)] underline-offset-4" href={sample}>
+                          No link at hand? Open the sample certificate
+                        </a>
+                      )}
+                    </div>
+                  )}
                 </div>
-              )}
+              </details>
             </Glass>
 
             {/* ---------------- why this score (needs the key) ---------------- */}
             {score && (
               <Glass>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-teal-text)]">AI plausibility</p>
                 <h2 className="mb-4 text-2xl font-bold sm:text-3xl">Why the model scored it this way</h2>
                 <PlausibilityView score={score} seeDeclared={score.seeDeclared} />
               </Glass>
@@ -549,7 +688,7 @@ export default function VerifyPage() {
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-rose-text)]">Tamper test</p>
                 <h2 className="mb-1 text-2xl font-bold sm:text-3xl">Edit one digit. Watch the proof break.</h2>
                 <p className="mb-4 max-w-3xl text-[var(--color-mute)]">
-                  This is the real decrypted report. Change anything in it and every check above re-runs live: the fingerprint no longer matches the chain, and neither signature validates.
+                  This is the real decrypted report. Change anything in it and every check re-runs live: the fingerprint no longer matches the chain, and neither signature validates.
                 </p>
                 <TamperPanel original={original} editText={editText} setEditText={setEditText} live={live} />
               </Glass>
@@ -557,7 +696,6 @@ export default function VerifyPage() {
 
             {/* ---------------- allocations ---------------- */}
             <Glass>
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-teal-text)]">Allocation ledger</p>
               <h2 className="mb-4 text-2xl font-bold sm:text-3xl">Who holds these tonnes</h2>
               {alloc.isLoading ? <Spinner /> : <AllocationTable rows={alloc.data ?? []} verified={b.verifiedTonnes} accounts={accounts} />}
             </Glass>
@@ -566,9 +704,15 @@ export default function VerifyPage() {
             <Glass>
               <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-teal-text)]">On-chain record</p>
                   <h2 className="mb-4 text-2xl font-bold">Technical details</h2>
-                  <Details b={b} cid={cert.data.cid} accounts={accounts} doc={baseline?.document} />
+                  <Details
+                    b={b}
+                    cid={cert.data.cid}
+                    accounts={accounts}
+                    doc={baseline?.document}
+                    pqKeyHash={baseline?.pqPublicKeyHash}
+                    pqAnchored={baseline?.checks.find((c) => c.id === "pqKeyAnchored")?.status}
+                  />
                 </div>
                 <QrCode />
               </div>

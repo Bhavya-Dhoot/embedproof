@@ -4,22 +4,34 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Rack } from "@/components/Rack";
 import { ActAs, BandChip, Chip, ConsignmentId, Glass, NeedsDeployment, Notice, PageHeader, Spinner, StatusChip, Tile, TxLink } from "@/components/ui";
-import { ApiError, attestorApi, disclosureMessage } from "@/lib/attestor";
+import { CbamImpact } from "@/components/CbamImpact";
+import { ApiError, attestorApi, disclosureMessage, fetchBundleBytes } from "@/lib/attestor";
+import { directIntensity } from "@/lib/cbam";
+import { readIsAttestorPqKey } from "@/lib/chainReads";
+import { publicClient } from "@/lib/client";
+import { plainSummary } from "@/lib/summary";
+import { b64ToBytes, parseBundle } from "@/lib/verify";
+import { keccak256, type Hex } from "viem";
 import type { AllocationView, BatchView } from "@/lib/chainReads";
 import { cidFromDigest } from "@/lib/cid";
 import { allocatorAbi, getDeployment } from "@/lib/deployments";
 import { INSTALLATION_NAMES, labelAddress } from "@/lib/demoMeta";
 import { decodeError, formatArgs } from "@/lib/errors";
 import { CHAIN_LABEL } from "@/lib/env";
-import { useAllocationsForImporter, useBatches, useRefreshChain } from "@/lib/hooks";
+import { useAllocationsForImporter, useBatches, useInstallations, useRefreshChain, useRoleGate } from "@/lib/hooks";
 import { bandFor, bytes32ToPrintable, formatSee, formatTonnes, shortAddr, uint32ToPeriod } from "@/lib/report";
 import { useSigner, type TxOutcome } from "@/lib/signer";
+import type { ScoreResult } from "@/lib/report";
 
 function AllocationPanel({ a, b, active, onSelect, accounts }: { a: AllocationView; b?: BatchView; active: boolean; onSelect: () => void; accounts?: Record<string, string | undefined> }) {
   const signer = useSigner();
   const refresh = useRefreshChain();
   const dep = getDeployment();
-  const [busy, setBusy] = useState<null | "claim" | "pdf">(null);
+  const gate = useRoleGate("importer");
+  const installations = useInstallations();
+  const installation = installations.data?.find((x) => x.idStr === b?.installation);
+  const [unsealed, setUnsealed] = useState<{ keyB64url: string; document: { report?: { directEmissionsTco2?: unknown; productionTonnes?: unknown }; assessment?: ScoreResult } } | null>(null);
+  const [busy, setBusy] = useState<null | "claim" | "pdf" | "unseal">(null);
   const [err, setErr] = useState<unknown>(null);
   const [claimTx, setClaimTx] = useState<TxOutcome | null>(null);
   const claimed = a.claimed || !!claimTx;
@@ -39,15 +51,44 @@ function AllocationPanel({ a, b, active, onSelect, accounts }: { a: AllocationVi
     }
   };
 
+  /** The importer holds an allocation on this batch, so the attestor releases the certificate key to a signed challenge. */
+  const unseal = async () => {
+    if (!b || !signer.address) throw new Error("No account selected");
+    const message = disclosureMessage(b.batchId);
+    const signature = await signer.signText(message);
+    const got = await attestorApi.disclosure(b.batchId, signer.address, message, signature);
+    setUnsealed(got as typeof unsealed & object);
+    return got as NonNullable<typeof unsealed>;
+  };
+
+  const unsealForReport = async () => {
+    setBusy("unseal");
+    setErr(null);
+    try {
+      await unseal();
+    } catch (e) {
+      setErr(e);
+    } finally {
+      setBusy(null);
+    }
+  };
+
   const pdf = async () => {
     if (!b || !signer.address) return;
     setBusy("pdf");
     setErr(null);
     try {
-      // the importer holds an allocation on this batch, so the attestor releases the certificate key to a signed challenge
-      const message = disclosureMessage(b.batchId);
-      const signature = await signer.signText(message);
-      const { keyB64url, document } = await attestorApi.disclosure(b.batchId, signer.address, message, signature);
+      const { keyB64url, document } = unsealed ?? (await unseal());
+      const cid = cidFromDigest(b.cidDigest);
+      // the ML-DSA public key hash printed on the certificate comes from the bundle itself and is checked against the registry
+      let pqKeyHash: Hex | undefined;
+      let pqAnchored: boolean | undefined;
+      try {
+        pqKeyHash = keccak256(b64ToBytes(parseBundle(await fetchBundleBytes(cid)).mldsa.publicKey));
+        if (dep) pqAnchored = await readIsAttestorPqKey(publicClient, dep, b.attestor, pqKeyHash);
+      } catch {
+        /* the PDF then says "not available" / "anchor not checked" */
+      }
       const { downloadCertificatePdf } = await import("@/lib/pdf");
       await downloadCertificatePdf({
         batch: b,
@@ -56,9 +97,11 @@ function AllocationPanel({ a, b, active, onSelect, accounts }: { a: AllocationVi
         importerLabel: labelAddress(a.importer, accounts),
         verifyUrl: `${window.location.origin}/verify/${b.batchId}#k=${keyB64url}`,
         chainLabel: CHAIN_LABEL,
-        cid: cidFromDigest(b.cidDigest),
+        cid,
         txHash: a.txHash,
-        explanation: (document as { assessment?: { explanation?: string } }).assessment?.explanation,
+        explanation: document.assessment ? plainSummary(document.assessment, b.seeDeclared / 1e4) : undefined,
+        pqKeyHash,
+        pqAnchored,
       });
     } catch (e) {
       setErr(e);
@@ -91,7 +134,7 @@ function AllocationPanel({ a, b, active, onSelect, accounts }: { a: AllocationVi
             <p className="hint">CN {a.cnCode}</p>
           </Tile>
           <Tile>
-            <p className="text-[0.7rem] font-bold uppercase tracking-[0.14em] text-white/75">Verified intensity</p>
+            <p className="text-[0.7rem] font-bold uppercase tracking-[0.14em] text-white/75">Attested intensity</p>
             <p className="num text-3xl">{b ? formatSee(b.seeDeclared) : "n/a"}</p>
             <p className="hint">tCO₂ per tonne · risk {b?.riskScore ?? "n/a"}/100</p>
           </Tile>
@@ -101,15 +144,32 @@ function AllocationPanel({ a, b, active, onSelect, accounts }: { a: AllocationVi
             <p className="hint">{b ? `${INSTALLATION_NAMES[b.installation] ?? ""} · ${uint32ToPeriod(b.period)}` : ""}</p>
           </Tile>
         </div>
+        <div className="tile p-4 sm:p-5">
+          <CbamImpact
+            key={`${a.consignmentId}-${unsealed ? "r" : "s"}`}
+            installation={installation ? { country: installation.country, route: installation.route } : undefined}
+            defaultTonnes={Number(a.tonnes)}
+            seeUint={b?.seeDeclared ?? 0}
+            reportDirect={directIntensity(unsealed?.document.report)}
+          />
+          {!unsealed && b && (
+            <div className="mt-3">
+              <button className="btn btn-ghost btn-sm" onClick={unsealForReport} disabled={busy !== null}>
+                {busy === "unseal" ? <Spinner label="Waiting for signature…" /> : "Use direct emissions from the report"}
+              </button>
+              <span className="hint ml-3">Asks you to sign a short challenge; the attestor releases the key to allocation holders.</span>
+            </div>
+          )}
+        </div>
         <div className="flex flex-wrap items-center gap-3">
-          <button className="btn btn-primary" onClick={claim} disabled={claimed || busy !== null || a.importer.toLowerCase() !== signer.address?.toLowerCase()}>
+          <button className="btn btn-primary" onClick={claim} disabled={claimed || busy !== null || !gate.allowed || a.importer.toLowerCase() !== signer.address?.toLowerCase()}>
             {busy === "claim" ? <Spinner label="Claiming…" /> : claimed ? "Claimed ✓" : "Claim allocation"}
           </button>
           <button className="btn btn-ghost" onClick={pdf} disabled={busy !== null || !b}>
             {busy === "pdf" ? <Spinner label="Building PDF…" /> : "Download certificate PDF"}
           </button>
           <Link className="btn btn-ghost" href={`/verify/${a.batchId}`}>
-            Public verify page
+            Open public certificate
           </Link>
         </div>
         {claimTx && (
@@ -150,10 +210,10 @@ export default function ImporterPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader eyebrow="Importer" title="Your tonnes, with proof you can show an auditor">
-        Claim what an exporter allocated to you and download a certificate whose QR code lets anyone re-verify both signatures.
+      <PageHeader eyebrow="Importer" title="Your tonnes, with a record you can re-check">
+        Claim what an exporter allocated to you and download a certificate whose QR code lets anyone re-check the attestor&apos;s signatures.
       </PageHeader>
-      <ActAs keys={["importerA", "importerB"]} reason="Importers are ordinary accounts: pick the address the exporter allocated to." />
+      <ActAs role="importer" />
       <NeedsDeployment>
         {!signer.address ? (
           <Notice tone="neutral" title="Choose an account">Allocations are looked up by your address.</Notice>

@@ -6,7 +6,7 @@
   "registry": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
   "attestation": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
   "allocator": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-  "modelVersionHash": "0x20b809be2fbaaa91ca00a36a48825647b0259ef6dfd049d04817d1b023f89b3d",
+  "modelVersionHash": "0x40d9ee13d1c9ee9c52d0eb3749353665238712a72e7d8444bdc51be41b1008c8",
   "accounts": {
     "admin": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
     "attestor": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",

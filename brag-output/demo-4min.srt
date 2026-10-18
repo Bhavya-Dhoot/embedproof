@@ -1,0 +1,152 @@
+1
+00:00:00,900 --> 00:00:06,404
+Every tonne of Turkish steel entering the EU now carries a carbon bill.
+
+2
+00:00:06,624 --> 00:00:13,081
+Since 1 January 2026, importers pay for the emissions embedded in what they bring in.
+
+3
+00:00:13,301 --> 00:00:16,585
+But nobody can see the CO₂ in a steel coil.
+
+4
+00:00:16,805 --> 00:00:22,088
+So an importer can trust a number it cannot check, or pay a default value plus a mark-up.
+
+5
+00:00:22,308 --> 00:00:27,181
+10% in 2026. 20% in 2027. 30% from 2028.
+
+6
+00:00:27,401 --> 00:00:30,054
+That punishes exactly the mills that cleaned up.
+
+7
+00:00:30,884 --> 00:00:35,421
+EmbedProof makes the claim checkable, and the tonne impossible to sell twice.
+
+8
+00:00:35,641 --> 00:00:39,727
+First, an AI model asks whether the number is plausible for this plant.
+
+9
+00:00:39,947 --> 00:00:48,090
+Then it is signed twice: one classical signature, one post-quantum signature, because these records are kept for years.
+
+10
+00:00:48,310 --> 00:00:53,435
+A smart contract anchors the result, and refuses to hand the same tonne to two buyers.
+
+11
+00:00:53,655 --> 00:00:57,164
+Anything the model flags goes to a human verifier first.
+
+12
+00:00:57,994 --> 00:01:07,594
+Marmara Demir, a fictional scrap-fed mill, reports 0.535 tCO₂ per tonne of steel for September.
+
+13
+00:01:07,814 --> 00:01:13,724
+The model checks it against what this route, size and grid can emit, and the plant's own history.
+
+14
+00:01:13,944 --> 00:01:17,595
+Inside the expected range: risk 20, green.
+
+15
+00:01:18,065 --> 00:01:25,924
+The mill signs. The attestor adds two signatures and anchors the batch on chain: about 228,000 gas.
+
+16
+00:01:26,754 --> 00:01:35,467
+Anadolu Entegre, a fictional blast-furnace mill, reports 0.56: a figure only an electric-arc mill could reach.
+
+17
+00:01:35,687 --> 00:01:42,506
+The model expected about 2.3. Its reasons are listed: the production route, and the plant's own history.
+
+18
+00:01:42,726 --> 00:01:48,615
+Risk 100. Red. The batch is held for a verifier, and its tonnes cannot be allocated.
+
+19
+00:01:49,035 --> 00:01:55,951
+The verifier unseals the report, reads those reasons, and overrides it, with a written reason pinned to the batch.
+
+20
+00:01:56,781 --> 00:02:03,307
+Back to the honest batch: 5,000 verified tonnes, all allocated to Importer A.
+
+21
+00:02:03,527 --> 00:02:06,597
+Now the same 5,000 tonnes, to Importer B.
+
+22
+00:02:07,667 --> 00:02:13,101
+The contract reverts. Double claim blocked: 5,000 requested, 0 remaining.
+
+23
+00:02:13,321 --> 00:02:18,919
+Double claiming is treated like double spending: the cap is enforced on chain.
+
+24
+00:02:19,749 --> 00:02:26,436
+Importer A scans the certificate's QR code. No wallet, no login: every check runs in the browser.
+
+25
+00:02:26,656 --> 00:02:30,002
+Both signatures verify, including the post-quantum one.
+
+26
+00:02:30,222 --> 00:02:35,177
+Now change one digit: 0.535 becomes 0.534.
+
+27
+00:02:35,897 --> 00:02:40,230
+The fingerprint no longer matches the chain, and neither signature validates.
+
+28
+00:02:41,060 --> 00:02:51,383
+Why now: CBAM's definitive phase has begun, Türkiye's emissions trading pilot covers the same sectors, and the EU is its largest trading partner.
+
+29
+00:02:51,603 --> 00:02:57,405
+Without verified data, a cleaner mill pays the same default plus mark-up as everyone else.
+
+30
+00:02:57,625 --> 00:03:07,122
+For one shipment: tonnes × (default + mark-up − verified actual) × EU carbon price. Illustrative, demo data.
+
+31
+00:03:07,342 --> 00:03:12,228
+EmbedProof makes the real figure cheap to trust, and impossible to count twice.
+
+32
+00:03:12,448 --> 00:03:19,646
+And with COP31 opening in Antalya on 9 November, this is implementation, not another pledge.
+
+33
+00:03:20,476 --> 00:03:28,020
+Not accredited CBAM verification. No offsets. No Article 6.
+
+34
+00:03:28,240 --> 00:03:32,774
+The chain guarantees integrity after data entry, not the truth of the data.
+
+35
+00:03:32,994 --> 00:03:37,332
+The model measures consistency with Climate TRACE, not real emissions.
+
+36
+00:03:37,552 --> 00:03:46,950
+With plant history it catches 97% of half-size under-reports. With no history, 84%: that misses our 90% target.
+
+37
+00:03:47,170 --> 00:03:56,701
+178 contract tests, 100% coverage. Next: a 2-of-3 attestor quorum, zero-knowledge range proofs, a permissioned Besu network.
+
+38
+00:03:56,921 --> 00:04:00,053
+EmbedProof. Check the claim. Block the double sale.
+

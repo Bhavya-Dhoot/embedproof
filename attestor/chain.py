@@ -329,3 +329,48 @@ class Chain:
         args = dict(mine[0]["args"])
         args["status"] = STATUS[int(args["status"])]
         return tx, args
+
+    # ------------------------------------------------------------------ verifier / allocator helpers (demo + runner)
+    def verifier_sign(self, batch_id: int, approve: bool, reason_hash: bytes, key: str) -> TxResult:
+        return self.send(self.attestation.functions.verifierSign(batch_id, approve, reason_hash), key)
+
+    def allocate(self, batch_id: int, consignment_id: bytes, importer: str, cn_code: int, tonnes: int, key: str) -> TxResult:
+        return self.send(self.allocator.functions.allocate(
+            batch_id, consignment_id, to_checksum_address(importer), cn_code, tonnes), key)
+
+    def claim(self, consignment_id: bytes, key: str) -> TxResult:
+        return self.send(self.allocator.functions.claim(consignment_id), key)
+
+    def allocate_expect_revert(self, batch_id: int, consignment_id: bytes, importer: str, cn_code: int, tonnes: int,
+                               key: str, gas: int = 300_000) -> tuple[ChainRevert, str]:
+        """Broadcast an allocate() that must revert, with a FIXED gas limit so it is mined with status 0 (a real,
+        explorer-visible failed transaction) instead of being rejected by gas estimation.
+
+        The revert reason is decoded from an eth_call simulation first. Returns (decoded revert, tx hash)."""
+        acct = Account.from_key(key)
+        fn = self.allocator.functions.allocate(batch_id, consignment_id, to_checksum_address(importer), cn_code, tonnes)
+        try:
+            fn.call({"from": acct.address})
+        except Exception as exc:
+            revert = self.translate(exc)
+        else:
+            raise ChainError("allocate() was expected to revert but the simulation succeeded")
+        if not isinstance(revert, ChainRevert):
+            raise revert
+        with self._tx_lock:
+            try:
+                tx = fn.build_transaction({
+                    "from": acct.address, "gas": gas, "chainId": self.chain_id,
+                    "nonce": self.w3.eth.get_transaction_count(acct.address, "pending"),
+                })
+                tx_hash = self.w3.eth.send_raw_transaction(acct.sign_transaction(tx).raw_transaction)
+            except Exception as exc:
+                raise self.translate(exc) from exc
+        try:
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=120, poll_latency=0.05)
+        except Exception as exc:
+            log.warning("no receipt for %s: %s", tx_hash.hex(), exc)
+            raise TxPending(f"no receipt yet for 0x{tx_hash.hex().removeprefix('0x')}") from exc
+        if receipt["status"] == 1:
+            raise ChainError("allocate() was expected to revert but the transaction succeeded")
+        return revert, "0x" + tx_hash.hex().removeprefix("0x")

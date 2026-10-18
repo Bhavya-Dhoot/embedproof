@@ -13,6 +13,9 @@ export interface CertificateInput {
   cid: string;
   txHash?: Hex;
   explanation?: string;
+  /** keccak256 of the bundle's ML-DSA public key, and whether the registry anchors it for the attestor */
+  pqKeyHash?: Hex;
+  pqAnchored?: boolean;
 }
 
 /** A4 certificate with a QR code of the full verify link (jsPDF + qrcode are loaded lazily). Returns the document without saving it. */
@@ -64,7 +67,7 @@ export async function buildCertificatePdf(c: CertificateInput) {
   const rows: [string, string][] = [
     ["Installation", `${c.batch.installation}${c.installationName ? `  (${c.installationName})` : ""}`],
     ["Period", uint32ToPeriod(c.batch.period)],
-    ["Batch", `#${c.batch.batchId}  -  ${c.batch.statusName}  -  ${formatTonnes(c.batch.verifiedTonnes)} verified tonnes`],
+    ["Batch", `#${c.batch.batchId}  -  ${c.batch.statusName}  -  ${formatTonnes(c.batch.verifiedTonnes)} attested tonnes`],
     ["Allocated to", `${c.importerLabel ?? c.allocation.importer}  -  ${formatTonnes(c.allocation.tonnes)} t`],
     ["Importer address", c.allocation.importer],
     ["Consignment", `${bytes32ToPrintable(c.allocation.consignmentId) ?? c.allocation.consignmentId}  -  CN ${c.allocation.cnCode}`],
@@ -72,6 +75,8 @@ export async function buildCertificatePdf(c: CertificateInput) {
     ["Commitment (keccak-256)", c.batch.commitment],
     ["Bundle CID", c.cid],
     ["ML-DSA signature hash", c.batch.pqSigHash],
+    ["ML-DSA public key hash", c.pqKeyHash ?? "not available"],
+    ["ML-DSA key anchored on-chain", c.pqAnchored === undefined ? "not checked" : c.pqAnchored ? "yes, the registry lists this key for the attestor" : "NO, the registry does not list this key"],
     ["Model version (SHA-256)", c.batch.modelVersionHash],
   ];
   if (c.txHash) rows.push(["Allocation tx", c.txHash]);

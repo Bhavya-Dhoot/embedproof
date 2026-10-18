@@ -282,6 +282,23 @@ contract EmissionsAttestation is Initializable, UUPSUpgradeable, IEmissionsAttes
         return (b.status, b.verifiedTonnes, b.installationId, b.attestor);
     }
 
+    /// @notice `allocInfo` plus the batch's period. The allocator keys its running total by
+    ///         (installationId, period) so a revoked-and-resubmitted period cannot be double-counted.
+    /// @param batchId Batch id.
+    /// @return status Batch status (None if the batch does not exist).
+    /// @return verifiedTonnes Verified tonnes of product.
+    /// @return installationId Installation the batch belongs to.
+    /// @return attestor The recovered ECDSA signer that attested the batch.
+    /// @return period The reporting period (YYYYMM).
+    function allocData(uint256 batchId)
+        external
+        view
+        returns (Status status, uint64 verifiedTonnes, bytes32 installationId, address attestor, uint32 period)
+    {
+        BatchStore storage b = _batches[batchId];
+        return (b.status, b.verifiedTonnes, b.installationId, b.attestor, b.period);
+    }
+
     /// @notice The EIP-712 digest the attestor signs for these fields (`cidDigest` and `ecdsaSig` are ignored).
     /// @dev Domain {name "EmbedProof", version "1", chainId block.chainid, verifyingContract address(this)};
     ///      struct `Attestation(bytes32 installationId,uint32 period,bytes32 commitment,uint32 seeDeclared,

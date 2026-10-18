@@ -104,7 +104,7 @@ function QueueItem({ b, active, onSelect, onDecided, accounts }: { b: BatchView;
             <p className="num text-3xl">{b.riskScore}<span className="text-base text-white/75">/100</span></p>
           </Tile>
           <Tile>
-            <p className="text-[0.7rem] font-bold uppercase tracking-[0.14em] text-white/75">Tonnes at stake</p>
+            <p className="text-[0.7rem] font-bold uppercase tracking-[0.14em] text-white/75">Attested tonnes</p>
             <p className="num text-3xl">{formatTonnes(b.verifiedTonnes)}</p>
             <p className="hint">attested by {labelAddress(b.attestor, accounts) ?? shortAddr(b.attestor)}</p>
           </Tile>
@@ -205,9 +205,9 @@ export default function VerifierPage() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader eyebrow="Verifier" title="The human in the loop">
-        The AI never approves what it flags. Red claims land here: unseal the report, read the model&apos;s reasons, then co-sign or override with a written reason.
+        Amber claims are attested with a visible flag; red claims cannot be attested without a human. They land here: unseal the report, read the model&apos;s reasons, then co-sign or override with a written reason.
       </PageHeader>
-      <ActAs keys={["verifier"]} reason="Only accounts holding the VERIFIER role can unseal and sign." />
+      <ActAs role="verifier" />
       <NeedsDeployment>
         <div className="flex flex-col gap-5">
           <div className="flex items-center gap-3">
@@ -224,7 +224,7 @@ export default function VerifierPage() {
           ) : queue.length === 0 ? (
             <Glass>
               <p className="text-lg font-bold">Nothing waiting.</p>
-              <p className="text-[var(--color-mute)]">Submit the implausible BF-BOF report as Exporter B and it will appear here as PendingVerifier.</p>
+              <p className="text-[var(--color-mute)]">Submit the out-of-range BF-BOF report as Exporter B and it will appear here as PendingVerifier.</p>
             </Glass>
           ) : (
             queue.map((b) => <QueueItem key={b.batchId.toString()} b={b} active={active === b.batchId} onSelect={() => setSel(b.batchId)} onDecided={setLast} accounts={accounts} />)

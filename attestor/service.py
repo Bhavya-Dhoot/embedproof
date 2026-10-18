@@ -62,11 +62,12 @@ class Timings:
 
 class Attestor:
     def __init__(self, *, chain: Chain, scorer: Any, store: Store, ipfs: IpfsStore, mldsa: MLDSASigner,
-                 attestor_key: str, clock=time.time, monotonic=time.monotonic):
+                 attestor_key: str, clock=time.time, monotonic=time.monotonic, assessor=None):
         self.chain, self.scorer, self.store, self.ipfs, self.mldsa = chain, scorer, store, ipfs, mldsa
         self._key = attestor_key
         self._clock = clock
         self._monotonic = monotonic
+        self.assessor = assessor  # attestor.assess.Assessor: hasHistory / flags / inputs (None = plain ScoreResult)
         self._anchored_until = 0.0  # monotonic deadline of the cached *positive* anchor check
 
     # ------------------------------------------------------------------ PQ key anchor (fail closed)
@@ -126,7 +127,10 @@ class Attestor:
             log.exception("scorer failed")
             raise ServiceError(500, "scorer failed (see service log)") from exc
         try:
-            return to_jsonable(result)  # numpy scalars -> plain JSON types, NaN/inf rejected
+            result = to_jsonable(result)  # numpy scalars -> plain JSON types, NaN/inf rejected
+            if self.assessor is not None:
+                result = to_jsonable(self.assessor.enrich(report, self._scorer_installation(installation), result))
+            return result
         except CanonicalizationError as exc:
             raise ServiceError(500, f"scorer returned an invalid result: {exc}") from exc
 

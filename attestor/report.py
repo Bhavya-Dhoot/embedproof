@@ -126,8 +126,22 @@ def validate_report(report: Any, installation: dict | None, now: datetime | None
         errors.append(
             f"route {route!r} does not match the registry route {installation['route']!r} for {iid}"
         )
+    else:
+        # verifiedTonnes is the exporter's own productionTonnes and caps every allocation, so it must be physically
+        # plausible for the plant: at most nameplate / 12 x 1.2 for one month (= nameplate / 10).
+        capacity = installation.get("capacityTpy")
+        if isinstance(capacity, int) and not isinstance(capacity, bool) and not _within_capacity(
+                nums["productionTonnes"], capacity):
+            errors.append(
+                f"productionTonnes {nums['productionTonnes']:g} exceeds the plausible monthly output of {iid}: "
+                f"on-chain nameplate capacity {capacity:,} t/yr / 12 x 1.2 = {capacity / 10:,.1f} t")
     if errors:
         raise ReportError(errors)
+
+
+def _within_capacity(production: float, capacity_tpy: int) -> bool:
+    """production <= capacity / 12 * 1.2, evaluated exactly (the limit is capacity / 10)."""
+    return Decimal(repr(float(production))) * 10 <= capacity_tpy
 
 
 # ---------------------------------------------------------------- on-chain field mappings

@@ -13,6 +13,7 @@ import pytest
 
 from model import features as F
 from model import scorer as S
+from model import slices as SL
 from model import train as T
 
 REPO = Path(__file__).resolve().parents[2]
@@ -309,3 +310,53 @@ def test_artefact_has_per_route_offsets_for_both_regimes():
         for o in regime.values():
             assert o["n_calibration_plants"] >= 5 and math.isfinite(o["lower"]) and math.isfinite(o["upper"])
     assert [f["name"] for f in a["features"]] == F.FEATURES
+
+
+# ------------------------------------------------------------------ held-out slices (frozen artefact, no refit)
+def _assert_same(a, b, path=""):
+    if isinstance(a, dict):
+        assert isinstance(b, dict) and list(a) == list(b), path
+        for k in a:
+            _assert_same(a[k], b[k], f"{path}/{k}")
+    elif isinstance(a, list):
+        assert isinstance(b, list) and len(a) == len(b), path
+        for i, (x, y) in enumerate(zip(a, b)):
+            _assert_same(x, y, f"{path}[{i}]")
+    elif isinstance(a, float):
+        assert a == pytest.approx(b, rel=1e-9, abs=1e-12), path
+    else:
+        assert a == b, path
+
+
+def test_turkiye_slice_recomputes_deterministically_without_touching_the_artefact(scorer):
+    path = REPO / "model" / "artefacts" / "embedproof_model_v1.json"
+    before = hashlib.sha256(path.read_bytes()).hexdigest()
+    rep = SL.compute()
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == before
+    assert rep["modelVersionHash"] == scorer.model_version_hash and rep["feeds_model_version_hash"] is False
+    stored = json.loads((REPO / "model" / "artefacts" / "eval_slices.json").read_text("utf-8"))
+    _assert_same(rep, stored)
+
+
+def test_slice_machinery_reproduces_eval_json_on_the_full_test_set():
+    rep = SL.compute()
+    ev = json.loads((REPO / "model" / "artefacts" / "eval.json").read_text("utf-8"))["test"]
+    for key in ("with_prior", "without_prior_same_rows"):
+        ref, want = rep["all_test_plants_reference"][key], ev[key]
+        p, d = want["point_accuracy_and_coverage"], want["detection_synthetic"]
+        assert ref["n_plant_months"] == p["n_rows"] and ref["n_plants"] == p["n_plants"]
+        assert ref["mae_q50"] == pytest.approx(p["mae_q50"], rel=1e-9)
+        assert ref["coverage_90"] == pytest.approx(p["coverage_90"], rel=1e-9)
+        for f in ("0.5x", "0.7x", "0.85x", "1x"):
+            assert ref["detection_synthetic"][f]["red_rate_full_rule"] == pytest.approx(d[f]["red_rate_full_rule"], rel=1e-9)
+
+
+def test_turkiye_slice_is_only_held_out_turkish_plants_and_flagged_underpowered():
+    rep = SL.compute()["turkiye"]
+    df = T.make_split(F.load_training_frame())
+    tur_test = df[(df["iso3"] == "TUR") & (df["split"] == "test")]
+    assert rep["with_prior"]["n_plants"] + 0 <= tur_test["source_id"].nunique() == rep["without_prior_all_rows"]["n_plants"]
+    assert rep["without_prior_all_rows"]["n_plant_months"] == len(tur_test)
+    assert not set(tur_test["source_id"]) & set(df[df["split"] != "test"]["source_id"])
+    for key in ("with_prior", "without_prior_same_rows", "without_prior_all_rows"):
+        assert rep[key]["statistically_powered"] is False and "not statistically powered" in rep[key]["caveat"]

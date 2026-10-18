@@ -1,0 +1,888 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>EmbedProof submission video</title>
+<link rel="stylesheet" href="work/fonts/fonts.css">
+<style>
+:root { --ink:#0B1020; --indigo:#3B2BFF; --teal:#00C2A8; --rose:#FF5C8A; --amber:#FFB547; --teal-t:#35E8CC; --rose-t:#FF8FAE; --amber-t:#FFC66D; }
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1920px; height:1080px; overflow:hidden; background:#0B1020; }
+body { font-family:'Inter',sans-serif; color:#fff; -webkit-font-smoothing:antialiased; }
+#stage { position:absolute; inset:0; overflow:hidden; background:#0B1020; }
+.field, .orb { position:absolute; left:0; top:0; border-radius:50%; z-index:0; }
+.glass { position:absolute; left:0; top:0; overflow:hidden; z-index:5; border-radius:28px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.30); }
+.scrim { position:absolute; inset:0; background:#0B1020; opacity:.46; }
+.edge { position:absolute; left:0; right:0; top:0; height:3px; background:linear-gradient(90deg, rgba(255,255,255,.1), rgba(255,255,255,.8), rgba(255,255,255,.1)); }
+.sheen { position:absolute; top:-30%; left:0; width:240px; height:160%; background:linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent); }
+.body { position:absolute; inset:0; }
+.a { position:absolute; }
+.blk { position:absolute; left:0; top:0; z-index:12; opacity:0; visibility:hidden; }
+.sub2 { font-size:.6em; position:relative; top:.22em; margin-left:.02em; letter-spacing:0; }
+.num { font-family:'Space Grotesk',sans-serif; font-weight:700; font-variant-numeric:tabular-nums; }
+.mono { font-family:'JetBrains Mono',monospace; }
+.mute { color:rgba(255,255,255,.8); }
+.tile { border-radius:18px; background:rgba(11,16,32,.42); border:1px solid rgba(255,255,255,.16); }
+.chip { display:inline-flex; align-items:center; gap:10px; border-radius:999px; padding:4px 18px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; border:2px solid currentColor; white-space:nowrap; font-size:24px; }
+.chip.g { color:var(--teal-t); background:rgba(0,194,168,.16); }
+.chip.r { color:var(--rose-t); background:rgba(255,92,138,.17); }
+.chip.y { color:var(--amber-t); background:rgba(255,181,71,.15); }
+.chip.n { color:rgba(255,255,255,.92); background:rgba(255,255,255,.1); }
+img { display:block; }
+/* chapter kicker + pips (top) */
+#kick { position:absolute; left:120px; top:70px; z-index:30; font-weight:700; font-size:28px; letter-spacing:.16em; text-transform:uppercase; color:var(--teal-t); opacity:0; }
+#kick b { color:#fff; font-weight:700; margin-right:14px; }
+#pips { position:absolute; right:120px; top:80px; z-index:30; display:flex; gap:12px; }
+#pips i { display:block; width:34px; height:8px; border-radius:4px; background:rgba(255,255,255,.22); }
+/* burned-in caption */
+#cap { position:absolute; left:50%; bottom:64px; transform:translateX(-50%); z-index:60; width:max-content; max-width:1560px; text-align:center; font-size:40px; line-height:1.25; font-weight:700; letter-spacing:-.01em;
+  padding:14px 34px 16px; border-radius:22px; background:rgba(11,16,32,.78); border:1px solid rgba(255,255,255,.18); opacity:0; }
+#cap span.hl { color:var(--teal-t); }
+#wipe { width:1920px; height:1080px; border-radius:0; border:0; z-index:40; }
+#ring { position:absolute; left:0; top:0; border-radius:50%; border:4px solid #fff; z-index:49; opacity:0; }
+#cur { position:absolute; left:0; top:0; width:56px; height:56px; z-index:50; transform-origin:0 0; opacity:0; filter:drop-shadow(0 4px 8px rgba(0,0,0,.45)); }
+.hd { font-weight:700; letter-spacing:-.035em; line-height:1.05; }
+.kk { font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--teal-t); }
+</style></head><body>
+<div id="stage">
+  <div id="world" style="position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0">
+    <div id="ring"></div>
+    <svg id="cur" viewBox="0 0 46 46"><path d="M4 3 L4 33 L12 25.5 L17.5 38 L23 35.5 L17.5 23.5 L28 23.5 Z" fill="#fff" stroke="#0B1020" stroke-width="2.5" stroke-linejoin="round"/></svg>
+  </div>
+  <div id="kick"></div><div id="pips"></div>
+  <div id="cap"></div>
+</div>
+<script>
+
+window.TOTAL = 243.333;
+window.LN = {"1.1": {"t": 0.9, "end": 6.284, "dur": 5.384}, "1.2": {"t": 6.624, "end": 12.961, "dur": 6.337}, "1.3": {"t": 13.301, "end": 16.465, "dur": 3.164}, "1.4": {"t": 16.805, "end": 21.968, "dur": 5.163}, "1.5": {"t": 22.308, "end": 27.061, "dur": 4.753}, "1.6": {"t": 27.401, "end": 29.934, "dur": 2.533}, "2.1": {"t": 30.884, "end": 35.301, "dur": 4.417}, "2.2": {"t": 35.641, "end": 39.607, "dur": 3.966}, "2.3": {"t": 39.947, "end": 47.97, "dur": 8.023}, "2.4": {"t": 48.31, "end": 53.315, "dur": 5.005}, "2.5": {"t": 53.655, "end": 57.044, "dur": 3.389}, "3.1": {"t": 57.994, "end": 67.474, "dur": 9.48}, "3.2": {"t": 67.814, "end": 73.604, "dur": 5.79}, "3.3": {"t": 73.944, "end": 77.475, "dur": 3.531}, "3.4": {"t": 78.065, "end": 85.804, "dur": 7.739}, "4.1": {"t": 86.754, "end": 95.347, "dur": 8.593}, "4.2": {"t": 95.687, "end": 102.386, "dur": 6.699}, "4.3": {"t": 102.726, "end": 108.495, "dur": 5.769}, "4.4": {"t": 109.035, "end": 115.831, "dur": 6.796}, "5.1": {"t": 116.781, "end": 123.187, "dur": 6.406}, "5.2": {"t": 123.527, "end": 126.477, "dur": 2.95}, "5.3": {"t": 127.667, "end": 132.981, "dur": 5.314}, "5.4": {"t": 133.321, "end": 138.799, "dur": 5.478}, "6.1": {"t": 139.749, "end": 146.316, "dur": 6.567}, "6.2": {"t": 146.656, "end": 149.882, "dur": 3.226}, "6.3": {"t": 150.222, "end": 155.057, "dur": 4.835}, "6.4": {"t": 155.897, "end": 160.11, "dur": 4.213}, "7.1": {"t": 161.06, "end": 171.263, "dur": 10.203}, "7.2": {"t": 171.603, "end": 177.285, "dur": 5.682}, "7.3": {"t": 177.625, "end": 187.002, "dur": 9.377}, "7.4": {"t": 187.342, "end": 192.108, "dur": 4.766}, "7.5": {"t": 192.448, "end": 199.526, "dur": 7.078}, "8.1": {"t": 200.476, "end": 207.9, "dur": 7.424}, "8.2": {"t": 208.24, "end": 212.654, "dur": 4.414}, "8.3": {"t": 212.994, "end": 217.212, "dur": 4.218}, "8.4": {"t": 217.552, "end": 226.83, "dur": 9.278}, "8.5": {"t": 227.17, "end": 236.581, "dur": 9.411}, "8.6": {"t": 236.921, "end": 239.933, "dur": 3.012}};
+window.CHAPTERS = [{"n": 1, "name": "The problem", "t0": 0.9, "lines": ["1.1", "1.2", "1.3", "1.4", "1.5", "1.6"], "t1": 30.884, "start": 0}, {"n": 2, "name": "One sentence", "t0": 30.884, "lines": ["2.1", "2.2", "2.3", "2.4", "2.5"], "t1": 57.994, "start": 30.434}, {"n": 3, "name": "Demo (a): honest EAF mill", "t0": 57.994, "lines": ["3.1", "3.2", "3.3", "3.4"], "t1": 86.754, "start": 57.544}, {"n": 4, "name": "Demo (b): implausible claim", "t0": 86.754, "lines": ["4.1", "4.2", "4.3", "4.4"], "t1": 116.781, "start": 86.304}, {"n": 5, "name": "Demo (c): double claim", "t0": 116.781, "lines": ["5.1", "5.2", "5.3", "5.4"], "t1": 139.749, "start": 116.331}, {"n": 6, "name": "Demo (d): tamper test", "t0": 139.749, "lines": ["6.1", "6.2", "6.3", "6.4"], "t1": 161.06, "start": 139.299}, {"n": 7, "name": "Impact", "t0": 161.06, "lines": ["7.1", "7.2", "7.3", "7.4", "7.5"], "t1": 200.476, "start": 160.61}, {"n": 8, "name": "Trust and roadmap", "t0": 200.476, "lines": ["8.1", "8.2", "8.3", "8.4", "8.5", "8.6"], "t1": 243.333, "start": 200.026}];
+window.SCRIPT = [{"id": "1.1", "ch": 1, "t": 0.9, "end": 6.284, "cap": "Every tonne of Turkish steel entering the EU now carries a carbon bill."}, {"id": "1.2", "ch": 1, "t": 6.624, "end": 12.961, "cap": "Since 1 January 2026, importers pay for the emissions embedded in what they bring in."}, {"id": "1.3", "ch": 1, "t": 13.301, "end": 16.465, "cap": "But nobody can see the CO₂ in a steel coil."}, {"id": "1.4", "ch": 1, "t": 16.805, "end": 21.968, "cap": "So an importer can trust a number it cannot check, or pay a default value plus a mark-up."}, {"id": "1.5", "ch": 1, "t": 22.308, "end": 27.061, "cap": "10% in 2026. 20% in 2027. 30% from 2028."}, {"id": "1.6", "ch": 1, "t": 27.401, "end": 29.934, "cap": "That punishes exactly the mills that cleaned up."}, {"id": "2.1", "ch": 2, "t": 30.884, "end": 35.301, "cap": "EmbedProof makes the claim checkable, and the tonne impossible to sell twice."}, {"id": "2.2", "ch": 2, "t": 35.641, "end": 39.607, "cap": "First, an AI model asks whether the number is plausible for this plant."}, {"id": "2.3", "ch": 2, "t": 39.947, "end": 47.97, "cap": "Then it is signed twice: one classical signature, one post-quantum signature, because these records are kept for years."}, {"id": "2.4", "ch": 2, "t": 48.31, "end": 53.315, "cap": "A smart contract anchors the result, and refuses to hand the same tonne to two buyers."}, {"id": "2.5", "ch": 2, "t": 53.655, "end": 57.044, "cap": "Anything the model flags goes to a human verifier first."}, {"id": "3.1", "ch": 3, "t": 57.994, "end": 67.474, "cap": "Marmara Demir, a fictional scrap-fed mill, reports 0.535 tCO₂ per tonne of steel for September."}, {"id": "3.2", "ch": 3, "t": 67.814, "end": 73.604, "cap": "The model checks it against what this route, size and grid can emit, and the plant's own history."}, {"id": "3.3", "ch": 3, "t": 73.944, "end": 77.475, "cap": "Inside the expected range: risk 20, green."}, {"id": "3.4", "ch": 3, "t": 78.065, "end": 85.804, "cap": "The mill signs. The attestor adds two signatures and anchors the batch on chain: about 228,000 gas."}, {"id": "4.1", "ch": 4, "t": 86.754, "end": 95.347, "cap": "Anadolu Entegre, a fictional blast-furnace mill, reports 0.56: a figure only an electric-arc mill could reach."}, {"id": "4.2", "ch": 4, "t": 95.687, "end": 102.386, "cap": "The model expected about 2.3. Its reasons are listed: the production route, and the plant's own history."}, {"id": "4.3", "ch": 4, "t": 102.726, "end": 108.495, "cap": "Risk 100. Red. The batch is held for a verifier, and its tonnes cannot be allocated."}, {"id": "4.4", "ch": 4, "t": 109.035, "end": 115.831, "cap": "The verifier unseals the report, reads those reasons, and overrides it, with a written reason pinned to the batch."}, {"id": "5.1", "ch": 5, "t": 116.781, "end": 123.187, "cap": "Back to the honest batch: 5,000 verified tonnes, all allocated to Importer A."}, {"id": "5.2", "ch": 5, "t": 123.527, "end": 126.477, "cap": "Now the same 5,000 tonnes, to Importer B."}, {"id": "5.3", "ch": 5, "t": 127.667, "end": 132.981, "cap": "The contract reverts. Double claim blocked: 5,000 requested, 0 remaining."}, {"id": "5.4", "ch": 5, "t": 133.321, "end": 138.799, "cap": "Double claiming is treated like double spending: the cap is enforced on chain."}, {"id": "6.1", "ch": 6, "t": 139.749, "end": 146.316, "cap": "Importer A scans the certificate's QR code. No wallet, no login: every check runs in the browser."}, {"id": "6.2", "ch": 6, "t": 146.656, "end": 149.882, "cap": "Both signatures verify, including the post-quantum one."}, {"id": "6.3", "ch": 6, "t": 150.222, "end": 155.057, "cap": "Now change one digit: 0.535 becomes 0.534."}, {"id": "6.4", "ch": 6, "t": 155.897, "end": 160.11, "cap": "The fingerprint no longer matches the chain, and neither signature validates."}, {"id": "7.1", "ch": 7, "t": 161.06, "end": 171.263, "cap": "Why now: CBAM's definitive phase has begun, Türkiye's emissions trading pilot covers the same sectors, and the EU is its largest trading partner."}, {"id": "7.2", "ch": 7, "t": 171.603, "end": 177.285, "cap": "Without verified data, a cleaner mill pays the same default plus mark-up as everyone else."}, {"id": "7.3", "ch": 7, "t": 177.625, "end": 187.002, "cap": "For one shipment: tonnes × (default + mark-up − verified actual) × EU carbon price. Illustrative, demo data."}, {"id": "7.4", "ch": 7, "t": 187.342, "end": 192.108, "cap": "EmbedProof makes the real figure cheap to trust, and impossible to count twice."}, {"id": "7.5", "ch": 7, "t": 192.448, "end": 199.526, "cap": "And with COP31 opening in Antalya on 9 November, this is implementation, not another pledge."}, {"id": "8.1", "ch": 8, "t": 200.476, "end": 207.9, "cap": "Not accredited CBAM verification. No offsets. No Article 6."}, {"id": "8.2", "ch": 8, "t": 208.24, "end": 212.654, "cap": "The chain guarantees integrity after data entry, not the truth of the data."}, {"id": "8.3", "ch": 8, "t": 212.994, "end": 217.212, "cap": "The model measures consistency with Climate TRACE, not real emissions."}, {"id": "8.4", "ch": 8, "t": 217.552, "end": 226.83, "cap": "With plant history it catches 97% of half-size under-reports. With no history, 84%: that misses our 90% target."}, {"id": "8.5", "ch": 8, "t": 227.17, "end": 236.581, "cap": "178 contract tests, 100% coverage. Next: a 2-of-3 attestor quorum, zero-knowledge range proofs, a permissioned Besu network."}, {"id": "8.6", "ch": 8, "t": 236.921, "end": 239.933, "cap": "EmbedProof. Check the claim. Block the double sale."}];
+
+window.RECTS = {"a_prefill": {"x": 139.3125, "y": 77.0, "w": 133.171875, "h": 36, "pw": 1104, "ph": 714.296875}, "a_check_btn": {"x": 25, "y": 645.296875, "w": 188.234375, "h": 44, "pw": 1104, "ph": 714.296875}, "a_tile0": {"x": 345, "y": 114.5, "w": 734, "h": 186, "pw": 1104, "ph": 849.65625}, "a_tile1": {"x": 25, "y": 358.015625, "w": 517, "h": 276, "pw": 1104, "ph": 849.65625}, "a_tile2": {"x": 562, "y": 358.015625, "w": 517, "h": 276, "pw": 1104, "ph": 849.65625}, "a_gauge": {"x": 25, "y": 77.0, "w": 300, "h": 261.015625, "pw": 1104, "ph": 849.65625}, "a_sign_btn": {"x": 25, "y": 779.65625, "w": 157.171875, "h": 44, "pw": 1104, "ph": 849.65625}, "a_open_cert": {"x": 25, "y": 496.546875, "w": 175.765625, "h": 44, "pw": 1104, "ph": 650.78125}, "b_prefill": {"x": 280.484375, "y": 76.0, "w": 198.625, "h": 36, "pw": 1104, "ph": 714.296875}, "b_check_btn": {"x": 25, "y": 645.296875, "w": 188.234375, "h": 44, "pw": 1104, "ph": 714.296875}, "b_tile0": {"x": 345, "y": 114.5, "w": 734, "h": 186, "pw": 1104, "ph": 941.65625}, "b_tile1": {"x": 25, "y": 358.015625, "w": 517, "h": 270, "pw": 1104, "ph": 941.65625}, "b_tile2": {"x": 562, "y": 358.015625, "w": 517, "h": 270, "pw": 1104, "ph": 941.65625}, "b_gauge": {"x": 25, "y": 77.0, "w": 300, "h": 261.015625, "pw": 1104, "ph": 941.65625}, "b_notice": {"x": 25, "y": 648.015625, "w": 1054, "h": 78, "pw": 1104, "ph": 941.65625}, "b_sign_btn": {"x": 25, "y": 872.65625, "w": 157.171875, "h": 44, "pw": 1104, "ph": 941.65625}, "b_open_cert": {"x": 25, "y": 496.546875, "w": 175.765625, "h": 44, "pw": 1104, "ph": 650.78125}, "v_unseal": {"x": 42, "y": 333.5, "w": 156.1875, "h": 44, "pw": 1104, "ph": 716.671875}, "v_report": {"x": 25, "y": 248.5, "w": 1054, "h": 242, "pw": 1104, "ph": 1383.6875}, "v_override": {"x": 213.546875, "y": 1243.5, "w": 161.59375, "h": 44, "pw": 1104, "ph": 1352.5}, "v_textarea": {"x": 25, "y": 1105.5, "w": 1054, "h": 120, "pw": 1104, "ph": 1352.5}, "c_allocate_btn": {"x": 25, "y": 450.515625, "w": 116.796875, "h": 44, "pw": 1104, "ph": 519.515625}, "c_allocate_btn_B": {"x": 25, "y": 450.515625, "w": 116.796875, "h": 44, "pw": 1104, "ph": 519.515625}, "change_digit_btn": {"x": 29, "y": 149.0, "w": 164.46875, "h": 44, "pw": 1104, "ph": 617.984375}};
+
+// ================================================================== engine: helpers, glass panels, keyframes, cursor
+const $ = s => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const eo = x => 1 - Math.pow(1 - x, 3);
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;
+const spring = x => x <= 0 ? 0 : 1 - Math.exp(-x * 8) * Math.cos(x * 20);
+const bump = x => x <= 0 || x >= 1 ? 0 : Math.sin(x * Math.PI);
+const lerp = (a, b, p) => a + (b - a) * p;
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const CO2 = 'CO<span class="sub2">2</span>';
+const root = $('#stage'), stage = $('#world');   // `stage` is the camera world: panels, blocks and the cursor live in it
+const BUILD = [];
+window.DURATION = window.TOTAL;
+const T = (id, o = 0) => LN[id].t + o;      // start of a spoken line
+const E = (id, o = 0) => LN[id].end + o;    // end of a spoken line
+const SFXL = [];
+const sfx = (t, type, x) => SFXL.push(x === undefined ? { t, type } : { t, type, x });
+
+// ------------------------------------------------------------------ real captures of the running app (2x PNGs)
+const AS = 'work/demo4/assets/';
+const FILES = [];
+const IM = {};
+const need = (...n) => n.forEach(x => FILES.includes(x) || FILES.push(x));
+const img = (n, k = 1, st = '') => `<img src="${AS}${n}.png" style="width:${IM[n].w * k}px;height:${IM[n].h * k}px;${st}">`;
+const RECT = {};   // rects.json, filled at load
+
+// ------------------------------------------------------------------ the drifting colour
+const COL = ['#3B2BFF', '#00C2A8', '#FF5C8A'];
+const FIELDS = COL.map(c => { const d = document.createElement('div'); d.className = 'field';
+  d.style.cssText = `width:1300px;height:1300px;background:radial-gradient(circle,${c} 0%,${c}bb 32%,transparent 68%)`; root.prepend(d); return d; });
+const ORBS = Array.from({ length: 7 }, (_, i) => { const d = document.createElement('div'); d.className = 'orb'; const s = 70 + rnd(i) * 110, c = COL[i % 3];
+  d.style.cssText = `width:${s}px;height:${s}px;background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.95),${c} 55%,${c}00 100%)`; root.prepend(d); return d; });
+
+// ------------------------------------------------------------------ glass panels with keyframed state
+const frost = (el, op, blur) => { el.style.opacity = op; el.style.visibility = op < .01 ? 'hidden' : 'visible';
+  el.style.backdropFilter = op < .01 ? 'none' : `blur(${blur}px) saturate(1.3)`; };
+const DEF = { x:960, y:480, s:1, r:0, op:1, dim:.46, blur:0, z:10, fl:0 };
+function KF(keys) {
+  const ks = []; let cur = { ...DEF };
+  for (const [t, p, e] of keys) { cur = { ...cur, ...p }; ks.push({ t, v: cur, e }); }
+  return t => {
+    const L = ks.length;
+    if (t <= ks[0].t) return { ...ks[0].v };
+    if (t >= ks[L - 1].t) return { ...ks[L - 1].v };
+    let i = 0; while (t > ks[i + 1].t) i++;
+    const a = ks[i], b = ks[i + 1], p = seg(t, a.t, b.t);
+    const k = b.e === 'lin' ? p : b.e === 'eo' ? eo(p) : b.e === 'spring' ? spring(p) : eio(p);
+    const o = {}; for (const q in a.v) o[q] = lerp(a.v[q], b.v[q], k); return o;
+  };
+}
+const PAN = [];
+function panel(id, w, h, inner, keys, opts = {}) {
+  const el = document.createElement('div'); el.className = 'glass'; el.id = id; el.style.width = w + 'px'; el.style.height = h + 'px';
+  if (opts.radius !== undefined) el.style.borderRadius = opts.radius + 'px';
+  el.innerHTML = `<div class="scrim"></div><div class="sheen"></div><div class="body">${inner}</div><div class="edge"></div>`;
+  stage.appendChild(el);
+  const p = { id, el, w, h, st: KF(keys), a: keys[0][0] - .05, b: keys[keys.length - 1][0] + .05, ph: opts.ph || rnd(PAN.length + 3),
+              scrim: el.querySelector('.scrim'), body: el.querySelector('.body'), sheen: el.querySelector('.sheen') };
+  frost(el, 0, 24); p.on = false; PAN.push(p); return p;
+}
+function placePanel(p, t) {
+  if (t < p.a || t > p.b) { if (p.on) { frost(p.el, 0, 24); p.on = false; } return; }
+  p.on = true;
+  const st = p.st(t);
+  const y = st.y + Math.sin(t * 1.2 + p.ph * 6) * st.fl;
+  p.el.style.transform = `translate(${st.x - p.w / 2}px,${y - p.h / 2}px) rotate(${st.r}deg) scale(${st.s})`;
+  frost(p.el, st.op, 24);
+  p.el.style.zIndex = st.z;
+  p.scrim.style.opacity = st.dim;
+  p.body.style.filter = st.blur > .2 ? `blur(${st.blur}px)` : 'none';
+  p.sheen.style.transform = `translateX(${lerp(-400, p.w + 200, (t * .3 + p.ph) % 1)}px) rotate(16deg)`;
+}
+// a local point of a panel, in screen px, at time t
+const at = (p, lx, ly) => t => { const st = p.st(t), c = Math.cos(st.r * Math.PI / 180), s = Math.sin(st.r * Math.PI / 180), dx = (lx - p.w / 2) * st.s, dy = (ly - p.h / 2) * st.s;
+  return [st.x + dx * c - dy * s, st.y + Math.sin(t * 1.2 + p.ph * 6) * st.fl + dx * s + dy * c]; };
+
+// ------------------------------------------------------------------ free blocks (not frosted): fade windows with a blur-in
+const VIS = [];
+function blk(html, css, a, b, o = {}) {
+  const d = document.createElement('div'); d.className = 'blk'; d.style.cssText = css; d.innerHTML = html; stage.appendChild(d);
+  const v = { el: d, a, b, fi: o.fi ?? .45, fo: o.fo ?? .3, dy: o.dy ?? 26, bl: o.bl ?? 14, sc: o.sc ?? 0, fn: o.fn || null };
+  VIS.push(v); return d;
+}
+function updateVis(v, t) {
+  const el = v.el;
+  if (t < v.a - .02 || t > v.b + .02) { if (v.on !== false) { el.style.visibility = 'hidden'; el.style.opacity = 0; v.on = false; } return false; }
+  v.on = true;
+  const p = eo(seg(t, v.a, v.a + v.fi)), q = 1 - eo(seg(t, v.b - v.fo, v.b));
+  el.style.visibility = 'visible'; el.style.opacity = p * q;
+  el.style.transform = `translateY(${(1 - p) * v.dy}px)` + (v.sc ? ` scale(${1 - v.sc * (1 - p)})` : '');
+  el.style.filter = p < 1 && v.bl ? `blur(${(1 - p) * v.bl}px)` : 'none';
+  return true;
+}
+// per-frame animations of the content inside panels and blocks
+const ANIM = [];
+const anim = (a, b, fn) => ANIM.push({ a, b, fn });
+
+// ------------------------------------------------------------------ cursor: segments of travel, targets that live on panels
+const CURS = [], CVIS = [], CLICKS = [];
+const ENTER = [1900, 1000];
+function curGo(t0, t1, to, from) { CURS.push({ t0, t1, to, from }); }
+function curShow(a, b) { CVIS.push([a, b]); }
+function click(t) { CLICKS.push(t); }
+function curPos(t) {
+  let k = -1; for (let i = 0; i < CURS.length; i++) if (CURS[i].t0 <= t) k = i;
+  if (k < 0) return null;
+  const s = CURS[k], prev = CURS[k - 1];
+  const from = s.from ? (typeof s.from === 'function' ? s.from(s.t0) : s.from) : (prev ? prev.to(prev.t1) : ENTER);
+  const to = s.to(t), p = eio(seg(t, s.t0, s.t1));
+  return [lerp(from[0], to[0], p), lerp(from[1], to[1], p)];
+}
+function renderCursor(t) {
+  const cu = $('#cur'), ring = $('#ring'); let a = 0;
+  for (const [x, y] of CVIS) a = Math.max(a, eo(seg(t, x, x + .35)) * (1 - eo(seg(t, y - .4, y))));
+  const pos = a > .01 ? curPos(t) : null;
+  let press = 0; CLICKS.forEach(tc => { press = Math.max(press, bump((t - tc) / .2)); });
+  if (pos) { cu.style.opacity = a; cu.style.transform = `translate(${pos[0] - 5}px,${pos[1] - 4}px) scale(${1 - .14 * press})`; } else cu.style.opacity = 0;
+  let rv = 0, rx = 0, ry = 0, rs = 0;
+  CLICKS.forEach(tc => { const rp = seg(t, tc, tc + .55); if (rp > 0 && rp < 1) { rv = (1 - rp) * .9; rs = 24 + 190 * eo(rp); const pp = curPos(tc + .01); if (pp) { rx = pp[0]; ry = pp[1]; } } });
+  ring.style.opacity = rv; ring.style.width = ring.style.height = rs + 'px'; ring.style.transform = `translate(${rx - rs / 2}px,${ry - rs / 2}px)`;
+}
+
+// ------------------------------------------------------------------ shared drawings
+const BC = { green:'#00C2A8', amber:'#FFB547', red:'#FF5C8A' }, BT = { green:'#35E8CC', amber:'#FFC66D', red:'#FF8FAE' };
+const bandOf = n => n <= 30 ? 'green' : n <= 60 ? 'amber' : 'red';
+function gaugeSVG(w, band) {
+  const op = b => b === band ? 1 : .55;
+  return `<svg viewBox="0 0 240 150" width="${w}" height="${w * .625}" style="display:block">
+   <path d="M 30.00 120.00 A 90 90 0 0 1 210.00 120.00" fill="none" stroke="rgb(255 255 255 / .14)" stroke-width="20"/>
+   <path d="M 30.00 120.00 A 90 90 0 0 1 67.10 47.19" fill="none" stroke="#00C2A8" stroke-width="16" opacity="${op('green')}"/>
+   <path d="M 68.48 46.20 A 90 90 0 0 1 147.81 34.40" fill="none" stroke="#FFB547" stroke-width="16" opacity="${op('amber')}"/>
+   <path d="M 149.42 34.94 A 90 90 0 0 1 210.00 120.00" fill="none" stroke="#FF5C8A" stroke-width="16" opacity="${op('red')}"/>
+   <g class="needle" style="transform-origin:120px 120px"><line x1="120" y1="120" x2="40" y2="120" stroke="#fff" stroke-width="4" stroke-linecap="round"/></g>
+   <circle cx="120" cy="120" r="9" fill="#fff"/><circle cx="120" cy="120" r="4" fill="#0B1020"/>
+   <text x="26" y="142" font-size="11" fill="rgb(255 255 255 / .85)" text-anchor="middle" font-family="Inter">0</text>
+   <text x="214" y="142" font-size="11" fill="rgb(255 255 255 / .85)" text-anchor="middle" font-family="Inter">100</text></svg>`;
+}
+// declared vs expected, rebuilt large for legibility (same geometry and numbers as the app's IntervalBar)
+function intervalHTML(d, w) {
+  const mx = Math.max(d.cbam * 1.08, d.q95 * 1.25, d.decl * 1.15), P = v => v / mx * w, col = BC[d.band], cx = Math.min(P(d.cbam), w - 6);
+  return `<div class="a" style="left:0;top:0;font-size:22px;font-weight:700;letter-spacing:.14em;color:rgba(255,255,255,.78)">DECLARED VS EXPECTED</div>
+   <div class="a" style="left:0;top:122px;width:${w}px;height:30px;border-radius:15px;background:rgba(255,255,255,.16)"></div>
+   <div class="a rng" style="left:${P(d.q05)}px;top:122px;width:${Math.max(8, P(d.q95) - P(d.q05))}px;height:30px;border-radius:15px;background:linear-gradient(90deg,rgba(0,194,168,.65),rgba(59,43,255,.7));border:2px solid rgba(255,255,255,.65)"></div>
+   <div class="a" style="left:${P(d.q50) - 2}px;top:114px;width:4px;height:46px;border-radius:2px;background:#fff"></div>
+   <div class="a cbl" style="left:${cx - 1.5}px;top:92px;height:96px;border-left:3px dashed var(--amber)"></div>
+   <div class="a cbf" style="left:${cx}px;top:36px;transform:translateX(-100%);font-size:22px;font-weight:700;color:var(--amber-t);border:2px dashed var(--amber);background:rgba(11,16,32,.85);border-radius:8px;padding:2px 10px;white-space:nowrap">CBAM default ${d.cbam.toFixed(2)}</div>
+   <div class="a dcl" style="left:${P(d.decl) - 2.5}px;top:100px;width:5px;height:74px;border-radius:3px;background:${col}"></div>
+   <div class="a dcf" style="left:${P(d.decl)}px;top:36px;transform:translateX(-50%);text-align:center">
+     <span style="display:block;white-space:nowrap;border-radius:8px;padding:2px 12px;font-size:24px;font-weight:700;color:#0B1020;background:${col}">Declared ${d.dtxt}</span>
+     <span style="display:block;width:0;height:0;margin:0 auto;border-left:9px solid transparent;border-right:9px solid transparent;border-top:12px solid ${col}"></span></div>
+   <div class="a" style="left:0;top:206px;font-size:24px;line-height:1.35;color:rgba(255,255,255,.88);white-space:nowrap">model 5 to 95% range <b style="color:#fff">${d.range}</b> · median <b style="color:#fff">${d.med}</b></div>
+   <div class="a" style="left:0;top:262px;font-size:22px;color:rgba(255,255,255,.72);white-space:nowrap">t${CO2} per tonne of product</div>`;
+}
+// a steel coil: rings, a hole and a loose end
+function coilSVG(sz, id) {
+  return `<svg viewBox="0 0 200 200" width="${sz}" height="${sz}" style="display:block;overflow:visible">
+   <defs><radialGradient id="cg${id}" cx="38%" cy="34%" r="75%"><stop offset="0" stop-color="#e8eef8"/><stop offset=".55" stop-color="#8f9bb4"/><stop offset="1" stop-color="#4c556e"/></radialGradient></defs>
+   <circle cx="100" cy="100" r="92" fill="url(#cg${id})"/>
+   ${[84, 74, 64, 54, 44].map((r, i) => `<circle cx="100" cy="100" r="${r}" fill="none" stroke="rgba(11,16,32,${.16 + i * .03})" stroke-width="2.2"/>`).join('')}
+   <circle cx="100" cy="100" r="30" fill="#0B1020" opacity=".92"/><circle cx="100" cy="100" r="30" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2"/>
+   <path d="M100 8 C150 12 190 52 192 100" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="3" stroke-linecap="round"/></svg>`;
+}
+const arrowSVG = (w, col = 'rgba(255,255,255,.7)') => `<svg viewBox="0 0 ${w} 24" width="${w}" height="24"><path d="M2 12 H${w - 14}" stroke="${col}" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 9"/><path d="M${w - 18} 3 L${w - 3} 12 L${w - 18} 21" fill="none" stroke="${col}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+// count text
+const fmt = n => Math.round(n).toLocaleString('en-US');
+
+// ------------------------------------------------------------------ the camera: always moving between shots, so no scene is ever a still page
+const CAMK = [];
+const shot = (t, fx, fy, s) => CAMK.push({ t, v: { fx, fy, s } });
+function camAt(t) {
+  if (!CAMK.length) return { fx: 960, fy: 480, s: 1 };
+  if (t <= CAMK[0].t) return CAMK[0].v;
+  const L = CAMK.length; if (t >= CAMK[L - 1].t) return CAMK[L - 1].v;
+  let i = 0; while (t > CAMK[i + 1].t) i++;
+  const a = CAMK[i], b = CAMK[i + 1], p = seg(t, a.t, b.t), k = .25 * p + .75 * eio(p);
+  return { fx: lerp(a.v.fx, b.v.fx, k), fy: lerp(a.v.fy, b.v.fy, k), s: lerp(a.v.s, b.v.s, k) };
+}
+
+// ================================================================== 01 The problem (0 to ~31 s): six beats on one glass lane
+BUILD.push(function ch1() {
+  const c1 = CHAPTERS[0], A = 0.2, B = c1.t1 - .7;
+  const lane = panel('lane', 1560, 640, '', [[A, { x:960, y:476, op:0, s:.96 }], [A + .7, { op:1, s:1 }], [B - .3, { op:1 }], [B + .15, { op:0 }]], { ph:.1 });
+
+  // ---- beat 1: Turkish steel crosses into the EU and picks up a carbon bill
+  const b1a = T('1.1', -.1), b1b = E('1.1', .55);
+  blk(`<div class="hd" style="font-size:68px;text-align:center">Every tonne now carries<br>a <span style="color:var(--rose-t)">carbon bill</span>.</div>`, 'left:260px;top:196px;width:1400px', b1a, b1b);
+  const nodeCss = 'width:270px;height:150px;border-radius:22px;text-align:center;padding-top:30px';
+  blk(`<div class="tile" style="${nodeCss}"><div style="font-size:40px;font-weight:700;letter-spacing:-.02em">Türkiye</div><div style="font-size:26px;margin-top:6px" class="mute">steel mills</div></div>`, 'left:215px;top:468px', b1a + .2, b1b);
+  blk(`<div class="tile" style="${nodeCss}"><div style="font-size:40px;font-weight:700;letter-spacing:-.02em">EU</div><div style="font-size:26px;margin-top:6px" class="mute">importers</div></div>`, 'left:1435px;top:468px', b1a + .35, b1b);
+  blk(`<div style="width:0;height:300px;border-left:4px dashed rgba(255,92,138,.9)"></div><div style="position:absolute;left:-90px;top:-44px;width:184px;text-align:center;font-size:28px;font-weight:700;letter-spacing:.12em;color:var(--rose-t)">CBAM</div>`, 'left:958px;top:430px', b1a + .5, b1b);
+  const coils = Array.from({ length: 5 }, (_, i) => blk(`${coilSVG(112, 'a' + i)}<div class="cbt" style="position:absolute;left:-40px;top:116px;width:192px;text-align:center;padding:3px 0;border-radius:12px;background:rgba(255,92,138,.92);color:#0B1020;font-weight:700;font-size:23px;opacity:0">+ carbon bill</div>`, 'left:0;top:0', b1a + .4, b1b, { dy: 0, bl: 0, fi: .4 }));
+  anim(b1a, b1b, t => coils.forEach((el, i) => {
+    const x = 470 + ((t * 150 + i * 192) % 960), y = 502 + Math.sin(t * 2.2 + i) * 4, past = x > 1000;
+    el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.transform = `rotate(${(t * 80 + i * 40) % 360}deg)`;
+    const tag = el.querySelector('.cbt'); tag.style.opacity = eo(seg(x, 1000, 1070)); tag.style.transform = `rotate(${-((t * 80 + i * 40) % 360)}deg)`;
+  }));
+  sfx(T('1.1', 2.3), 'tick', 2); sfx(T('1.1', 3.2), 'tick', 3);
+
+  // ---- beat 2: since 1 January 2026
+  const b2a = T('1.2', -.05), b2b = E('1.2', .5);
+  blk(`<div class="kk" style="font-size:30px;text-align:center">CBAM · definitive regime</div>
+       <div style="position:relative;height:160px;overflow:hidden;margin-top:16px"><div class="num dOld" style="position:absolute;left:0;right:0;top:0;font-size:150px;line-height:1.02;text-align:center;letter-spacing:-.03em;color:rgba(255,255,255,.6)">31 December 2025</div><div class="num dNew" style="position:absolute;left:0;right:0;top:0;font-size:150px;line-height:1.02;text-align:center;letter-spacing:-.03em;opacity:0">1 January 2026</div></div>
+       <div style="font-size:42px;text-align:center;margin-top:20px;font-weight:700;letter-spacing:-.02em">EU importers of steel and cement<br>pay for the emissions they import</div>`, 'left:260px;top:262px;width:1400px', b2a, b2b);
+  anim(b2a, b2b, t => { const el = document.querySelector('.dOld'), nw = document.querySelector('.dNew'); const p = eio(seg(t, b2a + 1.1, b2a + 1.9)); if (el) { el.style.transform = `translateY(${-p * 100}%)`; el.style.opacity = (1 - p) * .6; nw.style.transform = `translateY(${(1 - p) * 100}%)`; nw.style.opacity = p; } });
+  sfx(b2a + 1.1, 'switch');
+  blk(`<div class="tile" style="width:500px;height:62px;border-radius:31px;text-align:center;line-height:60px;font-size:28px;font-weight:700;color:var(--amber-t);border-color:rgba(255,181,71,.6)">Source: European Commission</div>`, 'left:710px;top:690px', b2a + 2.4, b2b);
+
+  // ---- beat 3: nobody can see the CO2 in a steel coil
+  const b3a = T('1.3', -.05), b3b = E('1.3', .4);
+  blk(`${coilSVG(300, 'big')}<div class="num" style="position:absolute;left:62px;top:90px;width:180px;text-align:center;font-size:120px;color:#0B1020;opacity:.9" id="qm">?</div>`, 'left:810px;top:260px', b3a, b3b, { sc: .15 });
+  blk(`<div class="hd" style="font-size:72px;text-align:center">Nobody can see the ${CO2}<br>in a steel coil.</div>`, 'left:260px;top:566px;width:1400px', b3a + .1, b3b);
+  blk(`<div style="padding:12px 30px;border-radius:50px;border:3px solid var(--rose);background:rgba(11,16,32,.85);white-space:nowrap;display:flex;gap:14px;align-items:baseline"><span style="font-size:26px;font-weight:700;letter-spacing:.1em;color:var(--rose-t)">DECLARED</span><span class="num" style="font-size:54px">0.56</span><span style="font-size:30px;color:rgba(255,255,255,.85)">t${CO2} / t</span></div>`, 'left:1080px;top:300px', b3a + .8, b3b, { sc: .25 });
+  sfx(T('1.3', .85), 'pop', 1);
+
+  // ---- beat 4: trust a number you cannot check, or pay the default plus a mark-up
+  const b4a = T('1.4', -.05), b4b = E('1.4', .45);
+  let cardN = 0; const card = (h, sub, chip, col) => `<div class="tile" style="position:relative;width:600px;height:330px;border-radius:26px;padding:34px 150px 34px 40px;border-color:${col}"><div class="rc" style="position:absolute;right:30px;top:34px">${coilSVG(96, 'k' + (cardN++))}</div><div style="font-size:44px;font-weight:700;letter-spacing:-.02em;line-height:1.1">${h}</div><div style="font-size:28px;margin-top:14px" class="mute">${sub}</div><div style="margin-top:26px">${chip}</div></div>`;
+  blk(card('Trust a number<br>you cannot check', 'one figure on a report', `<span class="chip r" style="font-size:30px">0.56 ? t${CO2} / t</span>`, 'rgba(255,92,138,.6)'), 'left:350px;top:330px', b4a, b4b);
+  blk(card('Pay the default value<br>plus a mark-up', 'whatever the mill really emits', `<span class="chip y" style="font-size:30px">default + mark-up</span>`, 'rgba(255,181,71,.6)'), 'left:970px;top:330px', b4a + 1.9, b4b);
+  blk(`<div style="width:90px;height:90px;border-radius:45px;background:rgba(11,16,32,.9);border:2px solid rgba(255,255,255,.4);text-align:center;line-height:84px;font-size:34px;font-weight:700">or</div>`, 'left:915px;top:450px', b4a + 1.7, b4b, { dy: 0 });
+
+  anim(b4a, b4b, t => document.querySelectorAll('.rc').forEach((el, i) => { el.style.transform = `rotate(${t * (50 + i * 25)}deg)`; }));
+
+  // ---- beat 5: the mark-up schedule 10% / 20% / 30% (European Commission)
+  const b5a = T('1.5', -.05), b5b = E('1.6', .3);
+  const bars = [{ y:'2026', p:10, at:T('1.5', .0) }, { y:'2027', p:20, at:T('1.5', 1.45) }, { y:'2028+', p:30, at:T('1.5', 2.95) }];
+  blk(`<div class="kk" style="font-size:30px;text-align:center">Default value plus mark-up</div>`, 'left:660px;top:206px;width:920px', b5a, b5b);
+  const barEls = bars.map((b, i) => blk(`<div class="num pct" style="position:absolute;left:0;width:260px;text-align:center;font-size:92px;line-height:1;top:0">0%</div>
+     <div class="bar" style="position:absolute;left:45px;bottom:56px;width:170px;border-radius:16px 16px 6px 6px;background:linear-gradient(180deg,#FF8FAE,#FF5C8A);height:0px"></div>
+     <div style="position:absolute;left:0;bottom:0;font-size:34px;font-weight:700;text-align:center;width:260px">${b.y}</div>`, `left:${660 + i * 330}px;top:250px;width:260px;height:440px`, b5a, b5b, { dy: 0, bl: 0 }));
+  anim(b5a, b5b, t => bars.forEach((b, i) => { const el = barEls[i], p = eo(seg(t, b.at, b.at + .9)), h = b.p * 9.6 * p; const pc = el.querySelector('.pct');
+    pc.textContent = Math.round(b.p * p) + '%'; el.querySelector('.bar').style.height = h + 'px'; pc.style.top = (440 - 56 - h - 104) + 'px'; pc.style.opacity = clamp(p * 3); }));
+  bars.forEach((b, i) => sfx(b.at + .1, 'tick', 2 + i * 2));
+  // the mill that cleaned up still pays
+  const b6a = T('1.6', -.1);
+  blk(`<div class="tile" style="width:470px;height:210px;border-radius:24px;padding:26px 30px;border-color:rgba(0,194,168,.7)"><div style="font-size:34px;font-weight:700">A cleaner mill</div><div style="font-size:26px;margin-top:8px" class="mute">scrap-fed EAF, cleaner grid</div><div style="margin-top:20px"><span class="chip r" style="font-size:26px">still pays the default</span></div></div>`, 'left:150px;top:520px', b6a, b5b, { sc: .1 });
+  sfx(b6a + .2, 'alert');
+});
+need();
+
+// ================================================================== 02 One sentence (~31 to ~58 s): the pipeline, one stage per spoken line
+BUILD.push(function ch2() {
+  const c = CHAPTERS[1], A = c.start + .35, B = c.t1 - .7;
+  panel('arch', 1560, 640, '', [[A, { x:960, y:476, op:0, s:.96 }], [A + .7, { op:1, s:1 }], [B - .3, { op:1 }], [B + .15, { op:0 }]], { ph:.4 });
+
+  // ---- 2.1 the sentence
+  const t1a = T('2.1', -.1), t1b = E('2.1', .75);
+  blk(`<div class="hd" style="font-size:196px;text-align:center;letter-spacing:-.045em;line-height:1">EmbedProof</div>
+       <div style="font-size:56px;line-height:1.16;text-align:center;margin-top:36px;letter-spacing:-.02em">makes the claim <b style="color:var(--teal-t)">checkable</b>,<br>and the tonne impossible to sell <b style="color:var(--rose-t)">twice</b>.</div>`, 'left:260px;top:232px;width:1400px', t1a, t1b);
+  sfx(T('2.1', .2), 'chime', 3);
+
+  // ---- 2.2 to 2.5 the pipeline
+  const pa = T('2.2', -.15), pb = E('2.5', .6);
+  const ico = {
+    mill:  `<svg viewBox="0 0 64 64" width="64" height="64"><path d="M6 56V28l14 8V28l14 8V28l14 8V12h10v44z" fill="none" stroke="#fff" stroke-width="4" stroke-linejoin="round"/></svg>`,
+    ai:    `<svg viewBox="0 0 64 64" width="64" height="64"><path d="M8 46a24 24 0 0 1 48 0" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M32 46l12-14" stroke="#35E8CC" stroke-width="5" stroke-linecap="round"/><circle cx="32" cy="46" r="5" fill="#fff"/></svg>`,
+    seal:  `<svg viewBox="0 0 64 64" width="64" height="64"><circle cx="24" cy="30" r="15" fill="none" stroke="#fff" stroke-width="4"/><circle cx="40" cy="34" r="15" fill="none" stroke="#35E8CC" stroke-width="4"/><path d="M31 33l5 5 9-10" fill="none" stroke="#35E8CC" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    chain: `<svg viewBox="0 0 64 64" width="64" height="64"><rect x="6" y="22" width="26" height="20" rx="10" fill="none" stroke="#fff" stroke-width="4"/><rect x="32" y="22" width="26" height="20" rx="10" fill="none" stroke="#fff" stroke-width="4"/><path d="M26 32h12" stroke="#35E8CC" stroke-width="4"/></svg>`,
+    buyer: `<svg viewBox="0 0 64 64" width="64" height="64"><circle cx="32" cy="22" r="11" fill="none" stroke="#fff" stroke-width="4"/><path d="M10 56c2-14 10-20 22-20s20 6 22 20" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>`,
+    human: `<svg viewBox="0 0 64 64" width="64" height="64"><circle cx="32" cy="20" r="10" fill="none" stroke="#FFC66D" stroke-width="4"/><path d="M12 56c2-13 9-18 20-18s18 5 20 18" fill="none" stroke="#FFC66D" stroke-width="4" stroke-linecap="round"/><path d="M42 40l6 6 10-12" fill="none" stroke="#FFC66D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+  };
+  const N = [
+    { x:330,  k:'mill',  h:'Exporter',       s:'monthly report', on:T('2.2', -.2), when:null },
+    { x:645,  k:'ai',    h:'AI check',       s:'plausibility',   on:T('2.2', -.2), when:['2.2', '2.2'], note:'Is it plausible for this plant?' },
+    { x:960,  k:'seal',  h:'Signed twice',   s:'ECDSA + ML-DSA-44', on:T('2.2', .1), when:['2.3', '2.3'], note:'classical + post-quantum' },
+    { x:1275, k:'chain', h:'Smart contract', s:'on-chain ledger', on:T('2.2', .25), when:['2.4', '2.4'], note:'refuses a second buyer' },
+    { x:1590, k:'buyer', h:'Importer',       s:'verifies by QR',  on:T('2.2', .4), when:null }
+  ];
+  const tiles = N.map((n, i) => blk(`<div class="tile ntile" style="width:262px;height:232px;border-radius:24px;text-align:center;padding-top:22px;border-width:2px">${ico[n.k]}<div style="font-size:34px;font-weight:700;letter-spacing:-.02em;margin-top:10px">${n.h}</div><div style="font-size:24px;margin-top:6px" class="mute">${n.s}</div></div>`,
+    `left:${n.x - 131}px;top:300px;width:262px`, n.on, pb, { dy: 20, fi: .5 }));
+  const notes = N.map(n => n.note && blk(`<div style="font-size:28px;font-weight:700;color:var(--teal-t);text-align:center;width:420px">${n.note}</div>`, `left:${n.x - 210}px;top:548px;width:420px`, T(n.when[0], -.05), E(n.when[1], .25), { dy: 12 }));
+  // arrows between the stages
+  [0, 1, 2, 3].forEach(i => blk(arrowSVG(54), `left:${N[i].x + 140}px;top:402px`, N[i].on + .3, pb, { dy: 0, bl: 0 }));
+  // the human verifier hangs under the AI check
+  const ver = blk(`<div class="tile" style="width:350px;height:118px;border-radius:22px;text-align:center;padding-top:12px;border-color:rgba(255,198,109,.7);border-width:2px;display:flex;align-items:center;gap:14px;padding:0 24px">${ico.human.replace('width="64" height="64"', 'width="54" height="54"')}<div style="text-align:left"><div style="font-size:32px;font-weight:700;color:var(--amber-t)">Verifier</div><div style="font-size:24px" class="mute">human in the loop</div></div></div>`, 'left:470px;top:640px', T('2.5', -.2), pb, { dy: 16 });
+  const vline = blk(`<svg viewBox="0 0 24 70" width="24" height="70"><path d="M12 68V8" stroke="#FFC66D" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 9"/><path d="M4 20L12 6l8 14" fill="none" stroke="#FFC66D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`, 'left:633px;top:574px', T('2.5', -.1), pb, { dy: 0, bl: 0 });
+  const vflag = blk(`<div style="font-size:26px;font-weight:700;color:var(--amber-t);width:250px">red flag</div>`, 'left:660px;top:590px', T('2.5', .1), pb, { dy: 0 });
+  // two seals pop on the signing stage while line 2.3 plays
+  const seals = blk(`<span class="chip n" style="font-size:22px;margin-right:10px">ECDSA</span><span class="chip g" style="font-size:22px">ML-DSA-44 · FIPS 204</span>`, 'left:790px;top:222px;width:420px;white-space:nowrap', T('2.3', 2.2), E('2.3', .25), { dy: 10 });
+  // a report packet travels the pipeline
+  blk(`<div style="width:1330px;height:0;border-top:3px dashed rgba(255,255,255,.28)"></div>`, 'left:295px;top:280px', pa + .2, pb, { dy: 0, bl: 0 });
+  const pk = blk(`<div style="width:56px;height:38px;border-radius:10px;background:linear-gradient(135deg,#35E8CC,#3B2BFF);border:2px solid rgba(255,255,255,.7);box-shadow:0 0 22px rgba(53,232,204,.6)"></div>`, 'left:0;top:0', pa + .3, pb, { dy: 0, bl: 0 });
+  anim(pa, pb, t => {
+    const u = ((t - pa) * .21) % 1, x = lerp(330, 1590, u);
+    pk.style.left = (x - 28) + 'px'; pk.style.top = (258 + Math.sin(u * 40) * 2) + 'px';
+    // tiles glow while their line plays
+    N.forEach((n, i) => { const w = n.when ? bump(seg(t, T(n.when[0], -.1), E(n.when[1], .3))) : 0; const el = tiles[i].querySelector('.ntile'); el.style.borderColor = w > 0 ? `rgba(53,232,204,${.3 + .7 * Math.min(1, w * 2)})` : 'rgba(255,255,255,.16)';
+      el.style.transform = `scale(${1 + .055 * Math.min(1, w * 2)})`; el.style.boxShadow = w > 0 ? `0 0 ${26 * Math.min(1, w * 2)}px rgba(53,232,204,.45)` : 'none'; });
+    const vv = bump(seg(t, T('2.5', -.1), E('2.5', .3))); ver.querySelector('.tile').style.transform = `scale(${1 + .06 * Math.min(1, vv * 2)})`;
+  });
+  sfx(T('2.2', .3), 'switch'); sfx(T('2.3', 2.2), 'tick', 4); sfx(T('2.3', 2.45), 'tick', 6); sfx(T('2.4', .5), 'lock'); sfx(T('2.5', .2), 'ping', 2);
+});
+
+// ================================================================== 03 honest EAF mill and 04 implausible claim: the real exporter flow, then the verifier
+const SCD = {
+  a: { risk:20,  band:'green', q05:.4034, q50:.488, q95:.6374, cbam:2.31,  decl:.535, dtxt:'0.535', range:'0.403 to 0.637', med:'0.488' },
+  b: { risk:100, band:'red',   q05:2.1962, q50:2.2696, q95:2.3263, cbam:2.428, decl:.56,  dtxt:'0.560', range:'2.196 to 2.326', med:'2.270' }
+};
+need('a_form', 'b_form', 'a_tile1', 'a_tile2', 'b_tile1', 'b_tile2', 'a_btn_sign', 'b_btn_sign', 'a_cert_chips', 'a_cert_notice', 'a_cert_dl', 'a_cert_steps',
+     'b_cert_chips', 'b_cert_notice', 'b_cert_dl', 'b_cert_steps', 'btn_check', 'v_header', 'v_item', 'v_item_unsealed', 'v_textarea', 'v_done_notice', 'v_history', 'btn_unseal', 'btn_override');
+
+const APP_W = 1180, APP_H = 770, APP_Y = 494;
+
+function appFlow(o) {
+  const k = o.tag, d = SCD[k], R = RECTS, col = BC[d.band];
+  const P0 = o.tIn, P1 = o.tOut;
+  const app = panel(o.id, APP_W, APP_H, '', [[P0, { x:960, y:APP_Y + 30, op:0, s:.97 }], [P0 + .75, { op:1, s:1, y:APP_Y, fl:3 }], [P1 - .35, { op:1 }], [P1 + .2, { op:0, s:.98 }]], { ph:o.ph });
+  const body = app.body;
+  const FS = .9, FX = (APP_W - IM[o.form].w * FS) / 2, FY = 84;
+  // step chips along the top, the sign button on the right (as in the app)
+  const steps = ['1  Monthly report', '2  AI plausibility check', '3  Certificate'].map((s, i) => `<span class="chip n st${i}" style="font-size:22px;padding:3px 16px;letter-spacing:.04em;text-transform:none">${s}</span>`).join('');
+  const bar = document.createElement('div'); bar.className = 'a'; bar.style.cssText = 'left:30px;top:16px;display:flex;gap:12px'; bar.innerHTML = steps; body.appendChild(bar);
+  const mk2 = (html, css) => { const e = document.createElement('div'); e.className = 'a'; e.style.cssText = css; e.innerHTML = html; body.appendChild(e); return e; };
+
+  // ---- layer 1: the report form, as the app shows it
+  const form = mk2(img(o.form, FS), `left:${FX}px;top:${FY}px`);
+  const fr = (rk, extra = 0) => ({ x: FX + R[rk].x * FS - extra, y: FY + R[rk].y * FS - extra, w: R[rk].w * FS + 2 * extra, h: R[rk].h * FS + 2 * extra });
+  const ringEl = (r, colr) => mk2('', `left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;border:4px solid ${colr};border-radius:16px;opacity:0;box-shadow:0 0 28px ${colr}`);
+  const prefillR = fr(o.tag + '_prefill', 6), checkR = fr(o.tag + '_check_btn', 6);
+  const declR = { x: FX + 556 * FS, y: FY + 517 * FS, w: 526 * FS, h: 112 * FS };
+  const rPre = ringEl(prefillR, '#35E8CC'), rDecl = ringEl(declR, o.tag === 'a' ? '#35E8CC' : '#FF8FAE'), rChk = ringEl(checkR, '#35E8CC');
+
+  // ---- layer 2: the verdict: the app's gauge (needle driven by the clock), the declared-vs-expected bar, the real SHAP and plain-words tiles
+  const res = mk2('', 'left:0;top:0;width:1180px;height:770px;opacity:0');
+  res.innerHTML = `<div class="a gwrap" style="left:46px;top:84px;width:350px">${gaugeSVG(350, d.band)}
+      <div class="a" style="left:0;top:206px;width:350px;text-align:center;line-height:1"><span class="num gn" style="font-size:74px"></span><span class="num" style="font-size:30px;color:rgba(255,255,255,.78);margin-left:4px">/100</span></div>
+      <div class="a gchip" style="left:0;top:290px;width:350px;text-align:center"><span class="chip ${d.band === 'green' ? 'g' : 'r'}">● ${d.band === 'green' ? 'Green · plausible' : 'Red · implausible'}</span></div></div>
+    <div class="a ivl" style="left:${46 + 350 + 44}px;top:92px;width:640px;height:340px">${intervalHTML(d, 640)}</div>
+    <div class="a shap" style="left:63px;top:448px">${img(o.tag + '_tile1')}</div>
+    <div class="a plain" style="left:${63 + 517 + 20}px;top:448px">${img(o.tag + '_tile2')}</div>
+    <div class="a srow1" style="left:${63 + 8}px;top:${448 + 36}px;width:${501}px;height:66px;border:3px solid #FFC66D;border-radius:12px;opacity:0;box-shadow:0 0 20px rgba(255,198,109,.6)"></div>
+    <div class="a srow2" style="left:${63 + 8}px;top:${448 + 106}px;width:${501}px;height:66px;border:3px solid #FFC66D;border-radius:12px;opacity:0;box-shadow:0 0 20px rgba(255,198,109,.6)"></div>`;
+  const signBtn = mk2(img(o.tag + '_btn_sign', 1.15), `left:${APP_W - 30 - 157 * 1.15}px;top:8px;opacity:0`);
+  const signR = { x: APP_W - 30 - 157 * 1.15, y: 8, w: 157 * 1.15, h: 44 * 1.15 };
+  const rSign = ringEl({ x: signR.x - 6, y: signR.y - 6, w: signR.w + 12, h: signR.h + 12 }, '#35E8CC');
+
+  // ---- layer 3: the certificate, the real pieces of the app's step 3
+  const CS = 1.08, cw = 1054 * CS, cx = (APP_W - cw) / 2;
+  let cy = 86; const cert = mk2('', 'left:0;top:0;width:1180px;height:770px');
+  const place = (n, gap) => { const h = IM[n].h * CS, e = document.createElement('div'); e.className = 'a'; e.style.cssText = `left:${cx}px;top:${cy}px;opacity:0`; e.innerHTML = img(n, CS); cert.appendChild(e); cy += h + gap; return { e, top: cy - h - gap, h }; };
+  const cChips = place(o.tag + '_cert_chips', 22), cNote = place(o.tag + '_cert_notice', 24), cDl = place(o.tag + '_cert_dl', 24), cSteps = place(o.tag + '_cert_steps', 28);
+  const gasHtml = o.gas ? `<span class="chip g" style="font-size:30px">attest() · 228,019 gas</span><span style="font-size:28px;margin-left:18px" class="mute">receipt, budget 250,000 (README)</span>` : `<span class="chip y" style="font-size:30px">tonnes locked until a verifier decides</span>`;
+  const cGas = document.createElement('div'); cGas.className = 'a'; cGas.style.cssText = `left:${cx}px;top:${cy}px;opacity:0;white-space:nowrap`; cGas.innerHTML = gasHtml; cert.appendChild(cGas);
+  cert.style.opacity = 0;
+  // ring on the 2,420-byte ML-DSA signature row (right column, last row of the detail block)
+  const mlR = ringEl({ x: cx + 524 * CS, y: cDl.top + 140 * CS, w: 530 * CS, h: 34 * CS }, '#35E8CC');
+  const stepsRev = document.createElement('div'); stepsRev.className = 'a';
+
+  // ---- cursor targets
+  const tPre = at(app, prefillR.x + prefillR.w / 2, prefillR.y + prefillR.h / 2), tChk = at(app, checkR.x + checkR.w / 2, checkR.y + checkR.h / 2), tSign = at(app, signR.x + signR.w / 2, signR.y + signR.h / 2);
+  const tDecl = at(app, declR.x + declR.w * .62, declR.y + declR.h * .5);
+  curShow(P0 + .6, o.curOut); curGo(P0 + .6, o.tPrefill - .15, tPre, ENTER); click(o.tPrefill);
+  curGo(o.tDecl - .5, o.tDecl, tDecl);
+  curGo(o.tCheck - 1.7, o.tCheck - .1, tChk); click(o.tCheck);
+  curGo(o.tSign - 1.3, o.tSign - .1, tSign); click(o.tSign);
+  curGo(o.tSign + .6, o.curOut - .2, t => { const p = at(app, 1040, 700)(t); return p; });
+
+  anim(P0 - .1, P1 + .1, t => {
+    const chk = t - o.tCheck, sgn = t - o.tSign;
+    // step chips
+    const ph = t < o.tCheck ? 0 : t < o.tSign ? 1 : 2;
+    bar.querySelectorAll('.chip').forEach((c, i) => { const on = i === ph; c.style.opacity = on ? 1 : i < ph ? .75 : .5; c.style.borderColor = on ? 'var(--teal-t)' : 'rgba(255,255,255,.35)'; c.style.color = on ? '#35E8CC' : 'rgba(255,255,255,.9)'; });
+    // form in, highlights, out on the check click
+    const fi = eo(seg(t, P0 + .3, P0 + 1.0)), fo = eo(seg(t, o.tCheck + .05, o.tCheck + .5));
+    form.style.opacity = fi * (1 - fo); form.style.filter = fo > 0 ? `blur(${fo * 12}px)` : 'none'; form.style.transform = `scale(${1 + .04 * fo})`;
+    const pulse = (el, c0, c1) => { const u = seg(t, c0, c1); el.style.opacity = u > 0 && u < 1 ? bump(u) * 1 : 0; };
+    pulse(rPre, o.tPrefill - .05, o.tPrefill + .8); pulse(rDecl, o.tDecl - .1, o.tDecl + 1.6); pulse(rChk, o.tCheck - .35, o.tCheck + .25);
+    // verdict: needle, count, bar, tiles
+    const r0 = o.tCheck + .25, pr = eio(seg(t, r0 + .1, r0 + 1.55)), n = Math.round(d.risk * pr), band = bandOf(n);
+    res.style.opacity = eo(seg(t, o.tCheck + .15, o.tCheck + .55)) * (1 - eo(seg(t, o.tSign + .05, o.tSign + .5)));
+    res.querySelector('.needle').style.transform = `rotate(${d.risk * 1.8 * pr}deg)`;
+    const gn = res.querySelector('.gn'); gn.textContent = n; gn.style.color = BT[band];
+    const gc = res.querySelector('.gchip'); gc.style.opacity = eo(seg(t, r0 + 1.5, r0 + 1.8)); gc.style.transform = `scale(${.8 + .2 * spring((t - r0 - 1.5) / .5)})`;
+    res.querySelector('.rng').style.transform = `scaleX(${eo(seg(t, r0 + .2, r0 + .9))})`;
+    const dp = spring((t - (r0 + .7)) / .6), dcf = res.querySelector('.dcf'); dcf.style.opacity = clamp(dp * 2); dcf.style.transform = `translateX(-50%) translateY(${(1 - Math.min(1, dp)) * -26}px)`; res.querySelector('.dcl').style.opacity = clamp(dp * 2);
+    res.querySelector('.cbf').style.opacity = res.querySelector('.cbl').style.opacity = eo(seg(t, r0 + .9, r0 + 1.3));
+    const pp = (el, a) => { const q = eo(seg(t, a, a + .5)); el.style.opacity = q; el.style.transform = `translateY(${(1 - q) * 20}px)`; };
+    pp(res.querySelector('.shap'), r0 + 1.0); pp(res.querySelector('.plain'), r0 + 1.3);
+    if (o.shapAt) { res.querySelector('.srow1').style.opacity = bump(seg(t, o.shapAt, o.shapAt + 1.6)); res.querySelector('.srow2').style.opacity = bump(seg(t, o.shapAt + 1.4, o.shapAt + 3.0)); }
+    // the sign button belongs to the verdict screen
+    signBtn.style.opacity = eo(seg(t, r0 + 1.6, r0 + 2.0)) * (1 - eo(seg(t, o.tSign + .05, o.tSign + .4))); signBtn.style.transform = `scale(${1 - .06 * bump((t - o.tSign) / .22)})`;
+    pulse(rSign, o.tSign - .35, o.tSign + .25);
+    // certificate
+    cert.style.opacity = 1;
+    const cs = o.tSign + .35;
+    [[cChips, cs + .1, .45], [cNote, cs + .6, .45]].forEach(([c, a]) => { const q = spring((t - a) / .6); c.e.style.opacity = clamp(q * 2); c.e.style.transform = `translateY(${(1 - Math.min(1, q)) * 22}px)`; });
+    const dw = eio(seg(t, cs + 1.0, cs + 2.4)); cDl.e.style.opacity = clamp(dw * 4); cDl.e.style.clipPath = `inset(0 0 ${(1 - dw) * 100}% 0)`;
+    const sw = eio(seg(t, o.tStepsA, o.tStepsB)); cSteps.e.style.opacity = clamp(sw * 5); cSteps.e.style.clipPath = `inset(0 ${(1 - sw) * 100}% 0 0)`;
+    cGas.style.opacity = eo(seg(t, o.tGas, o.tGas + .5)); cGas.style.transform = `translateY(${(1 - eo(seg(t, o.tGas, o.tGas + .5))) * 16}px)`;
+    if (o.gas) mlR.style.opacity = bump(seg(t, o.tMl, o.tMl + 2.0));
+  });
+  sfx(o.tPrefill, 'click', 1); sfx(o.tCheck, 'click', 2); sfx(o.tCheck + .4, 'count', 0); sfx(o.tCheck + .25 + 1.7, d.band === 'green' ? 'chime' : 'alert', 2);
+  sfx(o.tSign, 'click', 3);
+  for (let i = 0; i < 6; i++) sfx(lerp(o.tStepsA, o.tStepsB, (i + .6) / 6), 'tick', 1 + i);
+  sfx(o.tGas, o.gas ? 'success' : 'alert', 1);
+  return { app, tPre, tChk, tSign };
+}
+
+BUILD.push(function ch3() {
+  const c = CHAPTERS[2];
+  appFlow({ id:'app3', tag:'a', ph:.2, form:'a_form', tIn:c.start + .35, tOut:c.t1 - .75, curOut:c.t1 - .95,
+    tPrefill:T('3.1', 1.9), tDecl:T('3.1', 5.1), tCheck:T('3.2', .05), tSign:T('3.4', .45), tStepsA:T('3.4', 2.3), tStepsB:T('3.4', 5.0), tGas:T('3.4', 5.2), tMl:T('3.4', 3.6), gas:true });
+});
+BUILD.push(function ch4() {
+  const c = CHAPTERS[3];
+  const o = { id:'app4', tag:'b', ph:.6, form:'b_form', tIn:c.start + .35, tOut:E('4.3', .5), curOut:E('4.3', .4),
+    tPrefill:T('4.1', 1.5), tDecl:T('4.1', 4.4), tCheck:T('4.2', .05), tSign:T('4.3', 2.1), tStepsA:T('4.3', 3.0), tStepsB:T('4.3', 4.6), tGas:T('4.3', 4.7), shapAt:T('4.2', 3.9), gas:false };
+  appFlow(o);
+
+  // ---- the verifier's queue: unseal, read the reasons, write the reason, override
+  const V0 = T('4.4', -.5), V1 = c.t1 - .75;
+  const ver = panel('ver4', APP_W, APP_H, '', [[V0, { x:960, y:APP_Y + 34, op:0, s:.97 }], [V0 + .7, { op:1, s:1, y:APP_Y, fl:3 }], [V1 - .35, { op:1 }], [V1 + .2, { op:0 }]], { ph:.8 });
+  const body = ver.body, VX = 38, VY = 112, VW = 1104, VH = 640;
+  const m = (html, css) => { const e = document.createElement('div'); e.className = 'a'; e.style.cssText = css; e.innerHTML = html; body.appendChild(e); return e; };
+  m(img('v_header', .62), 'left:38px;top:12px');
+  const qChip = m(`<span class="chip y" style="font-size:24px">1 pending</span>`, `left:${APP_W - 38 - 160}px;top:36px`);
+  const view = m('', `left:${VX}px;top:${VY}px;width:${VW}px;height:${VH}px;overflow:hidden;border-radius:20px`);
+  const scroller = document.createElement('div'); scroller.className = 'a'; scroller.style.cssText = 'left:0;top:0;width:1104px'; view.appendChild(scroller);
+  const lPre = document.createElement('div'); lPre.className = 'a'; lPre.style.cssText = 'left:0;top:0'; lPre.innerHTML = img('v_item'); scroller.appendChild(lPre);
+  const lUns = document.createElement('div'); lUns.className = 'a'; lUns.style.cssText = 'left:0;top:0;opacity:0'; lUns.innerHTML = img('v_item_unsealed'); scroller.appendChild(lUns);
+  const ta = document.createElement('div'); ta.className = 'a'; ta.style.cssText = `left:${RECTS.v_textarea.x}px;top:${RECTS.v_textarea.y}px;clip-path:inset(0 100% 0 0);opacity:0`; ta.innerHTML = img('v_textarea'); lUns.appendChild(ta);
+  const ovGlow = document.createElement('div'); ovGlow.className = 'a'; ovGlow.style.cssText = `left:${RECTS.v_override.x - 6}px;top:${RECTS.v_override.y - 6}px;width:${RECTS.v_override.w + 12}px;height:${RECTS.v_override.h + 12}px;border:4px solid #FF8FAE;border-radius:30px;opacity:0;box-shadow:0 0 24px #FF5C8A`; lUns.appendChild(ovGlow);
+  const unGlow = document.createElement('div'); unGlow.className = 'a'; unGlow.style.cssText = `left:${RECTS.v_unseal.x - 6}px;top:${RECTS.v_unseal.y - 6}px;width:${RECTS.v_unseal.w + 12}px;height:${RECTS.v_unseal.h + 12}px;border:4px solid #35E8CC;border-radius:30px;opacity:0;box-shadow:0 0 24px #35E8CC`; lPre.appendChild(unGlow);
+  const done = m(`<div style="position:absolute;left:0;top:0">${img('v_done_notice')}</div><div style="position:absolute;left:0;top:110px">${img('v_history')}</div>`, `left:${VX}px;top:${VY + 6}px;width:${VW}px;height:300px;opacity:0`);
+  const tU = T('4.4', 1.7), tScroll0 = T('4.4', 2.3), tScroll1 = T('4.4', 4.3), tType0 = T('4.4', 4.8), tType1 = T('4.4', 5.95), tO = T('4.4', 6.3);
+  const maxScroll = 700, sc = t => eio(seg(t, tScroll0, tScroll1)) * maxScroll;
+  const uR = RECTS.v_unseal, oR = RECTS.v_override;
+  curShow(V0 + .8, E('4.4', .2));
+  curGo(V0 + .8, tU - .1, at(ver, VX + uR.x + uR.w / 2, VY + uR.y + uR.h / 2), ENTER); click(tU);
+  curGo(tType1 - .3, tO - .08, t => at(ver, VX + oR.x + oR.w / 2, VY + oR.y + oR.h / 2 - sc(t))(t)); click(tO);
+  anim(V0 - .1, V1 + .1, t => {
+    const u = eo(seg(t, tU + .05, tU + .5));
+    lPre.style.opacity = 1 - u; lPre.style.filter = u > 0 ? `blur(${u * 10}px)` : 'none'; lUns.style.opacity = u;
+    unGlow.style.opacity = bump(seg(t, tU - .5, tU + .35));
+    scroller.style.transform = `translateY(${-sc(t)}px)`;
+    const ty = seg(t, tType0, tType1); ta.style.opacity = ty > 0 ? 1 : 0; ta.style.clipPath = `inset(0 ${(1 - eo(ty)) * 100}% 0 0)`;
+    ovGlow.style.opacity = bump(seg(t, tO - .5, tO + .35));
+    const dn = eo(seg(t, tO + .15, tO + .6));
+    view.style.opacity = 1; scroller.style.opacity = 1 - dn; scroller.style.filter = dn > 0 ? `blur(${dn * 12}px)` : 'none';
+    done.style.opacity = dn; done.style.transform = `translateY(${(1 - dn) * 24}px)`;
+    qChip.querySelector('.chip').textContent = dn > .5 ? '0 pending' : '1 pending'; qChip.querySelector('.chip').className = 'chip ' + (dn > .5 ? 'g' : 'y');
+  });
+  sfx(tU, 'click', 2); sfx(tU + .3, 'switch'); sfx(tType0, 'type', 1.2); sfx(tO, 'click', 3); sfx(tO + .25, 'stamp'); sfx(tO + .3, 'thud');
+});
+
+// ================================================================== 05 double claim: allocate 5,000 t to Importer A, then the same tonnes to Importer B
+need('c_pick', 'c_form_A', 'c_form_B', 'c_ok_panel', 'c_ledger', 'c_blocked', 'btn_allocate');
+BUILD.push(function ch5() {
+  const c = CHAPTERS[4], R = RECTS, P0 = c.start + .3, P1 = c.t1 - .75;
+  const tA = T('5.1', 4.1), tB = T('5.3', -.12), tSlam = T('5.3', .1);
+  const app = panel('app5', APP_W, APP_H, '', [[P0, { x:960, y:APP_Y + 30, op:0, s:.97 }], [P0 + .75, { op:1, s:1, y:APP_Y, fl:3 }], [T('5.3', .05), { op:1, dim:.46, blur:0 }], [T('5.3', .7), { op:.6, dim:.86, blur:7, s:.94 }],
+    [T('5.3', 1.4), { op:.18, dim:.86, blur:8, s:.92 }], [T('5.4', .3), { op:0, s:.9, blur:10 }]], { ph:.35 });
+  const body = app.body, m = (html, css) => { const e = document.createElement('div'); e.className = 'a'; e.style.cssText = css; e.innerHTML = html; body.appendChild(e); return e; };
+  const FX = 38, PY = 20, FY = 134;
+  const pick = m(img('c_pick', .98), `left:${FX + 8}px;top:${PY}px`);
+  const fA = m(img('c_form_A'), `left:${FX}px;top:${FY}px`), fB = m(img('c_form_B'), `left:${FX}px;top:${FY}px;opacity:0`);
+  const okp = m(img('c_ok_panel', .98), `left:${FX + 22}px;top:${FY + 6}px;opacity:0`), led = m(img('c_ledger'), `left:${FX}px;top:${FY + 150}px;opacity:0`);
+  const ring = (x, y, w, h, colr) => m('', `left:${x}px;top:${y}px;width:${w}px;height:${h}px;border:4px solid ${colr};border-radius:16px;opacity:0;box-shadow:0 0 26px ${colr}`);
+  const rImpA = ring(FX + 21, FY + 226, 220, 50, '#35E8CC'), rImpB = ring(FX + 241, FY + 226, 218, 50, '#FF8FAE');
+  const rAmt = ring(FX + 554, FY + 96, 530, 58, '#35E8CC');
+  const aR = R.c_allocate_btn, rAl = ring(FX + aR.x - 6, FY + aR.y - 6, aR.w + 12, aR.h + 12, '#35E8CC');
+  const tAl = at(app, FX + aR.x + aR.w / 2, FY + aR.y + aR.h / 2);
+
+  curShow(P0 + .7, T('5.3', .75));
+  curGo(P0 + .7, tA - .12, tAl, ENTER); click(tA);
+  curGo(T('5.2', .5), T('5.2', 1.9), t => at(app, FX + 350, FY + 251)(t)); click(T('5.2', 2.15));
+  curGo(T('5.2', 2.4), tB - .1, tAl); click(tB);
+
+  // blocked panel: the real revert, slammed in
+  const blk5 = document.createElement('div'); blk5.style.cssText = 'position:absolute;left:0;top:0;z-index:13;opacity:0'; blk5.innerHTML = img('c_blocked'); stage.appendChild(blk5);
+  const backing = document.createElement('div'); backing.style.cssText = 'position:absolute;left:0;top:0;width:1054px;height:548px;border-radius:28px;z-index:12;opacity:0;background:rgb(38,8,26)'; stage.appendChild(backing);
+  const halo = document.createElement('div'); halo.style.cssText = 'position:absolute;left:0;top:0;width:1054px;height:548px;border-radius:28px;z-index:11;opacity:0;box-shadow:0 0 0 5px rgba(255,92,138,.9),0 0 150px 34px rgba(255,92,138,.62)'; stage.appendChild(halo);
+
+  // 5.4: the cap, drawn: verified 5,000 t, all held by Importer A, Importer B bounces off
+  const R0 = T('5.4', -.2), R1 = c.t1 - .75;
+  const rule = panel('rule5', 760, 560, `
+      <div class="a" style="left:40px;top:30px;font-size:36px;font-weight:700;letter-spacing:-.02em">One cap per batch</div>
+      <div class="a" style="left:40px;top:84px;font-size:26px" ><span class="mute">verified tonnes, batch #1</span></div>
+      <div class="a" style="left:40px;top:128px;width:680px;height:78px;border-radius:18px;border:3px solid var(--teal-t);background:rgba(0,194,168,.14)"></div>
+      <div class="a rowA" style="left:46px;top:134px;width:0px;height:66px;border-radius:14px;background:linear-gradient(90deg,#00C2A8,#3B2BFF);overflow:hidden;white-space:nowrap"><div style="position:absolute;left:18px;top:16px;font-size:28px;font-weight:700">Importer A · 5,000 t</div></div>
+      <div class="a rowB" style="left:40px;top:250px;width:680px;height:70px;border-radius:16px;background:rgba(255,92,138,.9);color:#0B1020;font-size:28px;font-weight:700;padding:19px 20px;white-space:nowrap">Importer B asks for 5,000 t</div>
+      <div class="a err" style="left:40px;top:350px;width:680px;font-size:30px;line-height:1.3;opacity:0"><div class="mono" style="font-size:31px;color:var(--rose-t)">DoubleClaimBlocked(1, 5000, 0)</div><div style="font-size:28px;margin-top:6px" class="mute">requested 5,000 · remaining 0</div></div>
+      <div class="a gas" style="left:40px;top:470px;opacity:0;white-space:nowrap"><span class="chip g" style="font-size:26px">allocate() · 115,243 gas</span><span style="font-size:24px;margin-left:14px" class="mute">first allocation, README</span></div>`,
+    [[R0, { x:1400, y:482, op:0, s:.95 }], [R0 + .6, { op:1, s:1 }], [R1 - .3, { op:1 }], [R1 + .15, { op:0 }]], { ph:.7 });
+  anim(R0 - .1, R1 + .1, t => {
+    const q = t => rule.body.querySelector(t);
+    q('.rowA').style.width = (668 * eo(seg(t, R0 + .5, R0 + 1.5))) + 'px';
+    const fly = eio(seg(t, R0 + 1.5, R0 + 2.4)), bounce = seg(t, R0 + 2.4, R0 + 3.0);
+    q('.rowB').style.transform = `translateX(${lerp(0, 0, fly)}px) translateY(${lerp(0, -(250 - 218) , fly) - bump(bounce) * 22}px) scale(${1 - .04 * fly})`;
+    const ex = seg(t, R0 + 2.4, R0 + 2.55) ; q('.rowB').style.background = ex > 0 ? '#FF5C8A' : 'rgba(255,92,138,.9)';
+    q('.rowB').style.opacity = 1 - .5 * seg(t, R0 + 2.7, R0 + 3.2);
+    q('.err').style.opacity = eo(seg(t, R0 + 2.7, R0 + 3.2)); q('.gas').style.opacity = eo(seg(t, R0 + 4.0, R0 + 4.5));
+  });
+  sfx(R0 + 2.4, 'thud'); sfx(R0 + 2.5, 'alert'); sfx(R0 + 4.0, 'success', 1);
+
+  anim(P0 - .1, P1 + .1, t => {
+    const e = (x, y) => eo(seg(t, x, y));
+    // phase 1: Importer A
+    const toOk = e(tA + .15, tA + .6), toB = e(T('5.2', -.45), T('5.2', .1));
+    pick.style.opacity = e(P0 + .3, P0 + .9);
+    fA.style.opacity = e(P0 + .35, P0 + 1.0) * (1 - toOk); fA.style.filter = toOk > 0 ? `blur(${toOk * 10}px)` : 'none';
+    okp.style.opacity = toOk * (1 - toB); led.style.opacity = e(tA + .55, tA + 1.0) * (1 - toB);
+    okp.style.transform = `translateY(${(1 - toOk) * 18}px)`; led.style.transform = `translateY(${(1 - e(tA + .55, tA + 1.0)) * 18}px)`;
+    const p = (r, a, b) => { const u = seg(t, a, b); r.style.opacity = u > 0 && u < 1 ? bump(u) : 0; };
+    p(rAmt, T('5.1', 1.0), T('5.1', 2.8)); p(rImpA, T('5.1', 2.9), T('5.1', 4.1)); p(rAl, tA - .35, tA + .25);
+    // phase 2: Importer B, the same tonnes
+    fB.style.opacity = toB * (t < tSlam + .7 ? 1 : 1); fB.style.filter = toB < 1 ? `blur(${(1 - toB) * 10}px)` : 'none';
+    p(rImpB, T('5.2', 1.7), T('5.2', 3.0));
+    const ex = tB; p(rAl, tB - .35, tB + .25);
+    // phase 3: the slam
+    const u = t - tSlam, b = blk5;
+    const sc = u < 0 ? 2.5 : 2.4 - 1.4 * eo(clamp(u / .16)), shk = (u > 0 && u < .6) ? Math.sin(u * 80) * 14 * (1 - u / .6) : 0, shy = (u > 0 && u < .6) ? Math.cos(u * 70) * 7 * (1 - u / .6) : 0;
+    const mv = eio(seg(t, R0, R0 + .8));                       // glides left to make room for the rule card
+    const bx = lerp(960 + shk, 640, mv), by = lerp(494 + shy, 486, mv), bs = (u < 0 ? 1 : sc) * lerp(1, .74, mv);
+    const out = eo(seg(t, R1 - .35, R1 + .1));
+    const vis = clamp(u / .05) * (1 - out);
+    b.style.opacity = vis; backing.style.opacity = vis * .97; halo.style.opacity = clamp((u - .1) / .2) * (.55 + .45 * Math.sin((t - tSlam) * 4.5) ** 2) * (1 - out);
+    [b, backing, halo].forEach(el => el.style.transform = `translate(${bx - 527}px,${by - 274}px) scale(${bs})`);
+    if (u > 0 && u < .6) app.el.style.transform += ` translateX(${shk * .5}px)`;
+  });
+  sfx(tA, 'click', 2); sfx(tA + .3, 'success', 2); sfx(T('5.2', 2.15), 'click', 3); sfx(tB, 'click', 4); sfx(tSlam, 'stamp'); sfx(tSlam + .03, 'thud'); sfx(tSlam + .15, 'alert');
+});
+
+// ================================================================== 06 tamper test: scan the QR, both signatures verify, change one digit, every check fails
+need('d_details_qr', 'd_headline_ok', 'd_headline_failed', 'badge_ecdsa_ok', 'badge_mldsa_ok', 'tbadge_ecdsa_ok', 'tbadge_mldsa_ok', 'tbadge_fp_ok', 'tbadge_ecdsa_fail', 'tbadge_mldsa_fail', 'tbadge_fp_fail', 'btn_change_digit');
+BUILD.push(function ch6() {
+  const c = CHAPTERS[5], P0 = c.start + .3, P1 = c.t1 - .75;
+  const main = panel('main6', APP_W, APP_H, '', [[P0, { x:960, y:APP_Y + 30, op:0, s:.97 }], [P0 + .75, { op:1, s:1, y:APP_Y, fl:3 }], [P1 - .35, { op:1 }], [P1 + .2, { op:0, s:.98 }]], { ph:.55 });
+  const body = main.body, m = (html, css) => { const e = document.createElement('div'); e.className = 'a'; e.style.cssText = css; e.innerHTML = html; body.appendChild(e); return e; };
+
+  // ---- L1: the certificate QR (the app's real QR block), a scanner sweep, the three promises
+  const QX = 140, QY = 80, QS = 2.0;
+  const qrBox = m(`<div style="position:absolute;left:${-640 * QS}px;top:${-112 * QS}px">${img('d_details_qr', QS)}</div>`, `left:${QX}px;top:${QY + 40}px;width:${450 * QS}px;height:${190 * QS}px;overflow:hidden;border-radius:24px;opacity:0`);
+  const scan = m('', `left:${QX - 10}px;top:${QY}px;width:${450 * QS + 20}px;height:6px;border-radius:3px;background:linear-gradient(90deg,transparent,#35E8CC,transparent);box-shadow:0 0 22px 6px rgba(53,232,204,.8);opacity:0`);
+  const brk = m(`<svg viewBox="0 0 100 100" width="${450 * QS + 60}" height="${190 * QS + 60}" preserveAspectRatio="none" style="position:absolute"><path d="M2 22V2h22M78 2h20v20M98 78v20H78M22 98H2V78" fill="none" stroke="#fff" stroke-width="2.4" vector-effect="non-scaling-stroke" stroke-linecap="round"/></svg>`,
+    `left:${QX - 30}px;top:${QY + 40 - 30}px;width:${450 * QS + 60}px;height:${190 * QS + 60}px;opacity:0`);
+  const prom = ['No wallet', 'No login', 'Every check runs in the browser'].map((s, i) => m(`<span class="chip g" style="font-size:28px;padding:6px 24px;text-transform:none;letter-spacing:.01em">✓ ${s}</span>`, `left:${i < 2 ? 140 + i * 250 : 140}px;top:${i < 2 ? 560 : 640}px;opacity:0`));
+  const tScan0 = T('6.1', .9), tScan1 = T('6.1', 2.5);
+
+  // ---- certificate header: attested, all checks passed (then verification failed)
+  const hs = .9, hx = (APP_W - IM.d_headline_ok.w * hs) / 2;
+  const head = m(`<div style="position:absolute;left:0;top:0">${img('d_headline_ok', hs)}</div><div class="hf" style="position:absolute;left:0;top:0;opacity:0">${img('d_headline_failed', hs)}</div>`, `left:${hx}px;top:18px;opacity:0`);
+
+  // ---- L2: both signatures valid, then the ten checks tick on
+  const bOk = m(img('badge_ecdsa_ok', 1, 'position:absolute;left:0;top:0') + img('badge_mldsa_ok', 1, 'position:absolute;left:537px;top:0'), 'left:63px;top:262px;opacity:1');
+  const CK = ['Stored file is the one the chain points to', 'Bundle fingerprint equals the on-chain fingerprint', 'ECDSA signature matches the attestor on-chain', 'ECDSA signature is valid over this exact report', 'ML-DSA key is anchored on-chain',
+              'Post-quantum signature fingerprint matches the chain', 'ML-DSA-44 signature is valid over this exact report', 'Report unsealed with the certificate key', 'Report fingerprint equals the on-chain commitment', 'Report fields match the chain'];
+  const order = [0, 5, 1, 6, 2, 7, 3, 8, 4, 9];       // column-major fill reads as two groups
+  const list = m(CK.map((s, i) => `<div class="ck" style="position:absolute;left:${i < 5 ? 0 : 537}px;top:${(i % 5) * 56}px;width:517px;height:50px;display:flex;align-items:center;gap:12px;opacity:0"><span style="flex:0 0 32px;width:32px;height:32px;border-radius:16px;background:#00C2A8;color:#0B1020;font-weight:700;font-size:20px;text-align:center;line-height:32px">✓</span><span style="font-size:21px;font-weight:700;line-height:1.15">${s}</span></div>`).join(''), 'left:63px;top:376px;width:1054px;height:280px');
+  const tCk0 = T('6.2', .5), tCk1 = T('6.2', 3.3);
+
+  // ---- L3: the tamper test
+  const fbOk = m(img('tbadge_ecdsa_ok', 1, 'position:absolute;left:0;top:0') + img('tbadge_mldsa_ok', 1, 'position:absolute;left:356px;top:0') + img('tbadge_fp_ok', 1, 'position:absolute;left:712px;top:0'), 'left:63px;top:262px;opacity:0');
+  const fbBad = m(img('tbadge_ecdsa_fail', 1, 'position:absolute;left:0;top:0') + img('tbadge_mldsa_fail', 1, 'position:absolute;left:356px;top:0') + img('tbadge_fp_fail', 1, 'position:absolute;left:712px;top:0'), 'left:63px;top:262px;opacity:0');
+  const notes = ['ECDSA: no match', 'ML-DSA: invalid', 'fingerprint: no match'].map((s, i) => m(`<span style="font-size:26px;font-weight:700;color:var(--rose-t)">${s}</span>`, `left:${63 + i * 356 + 24}px;top:342px;opacity:0`));
+  const btn = m(img('btn_change_digit', 1.3), 'left:63px;top:398px;opacity:0');
+  const chipOk = m(`<span class="chip g" style="font-size:24px">Original document</span>`, 'left:310px;top:406px;opacity:0'), chipBad = m(`<span class="chip r" style="font-size:24px">Edited copy · on-chain record untouched</span>`, 'left:310px;top:406px;opacity:0');
+  const mono = "font-family:'JetBrains Mono',monospace;font-size:32px;line-height:48px;white-space:pre";
+  const doc = m(`<div class="a dA" style="left:26px;top:16px"><div style="font-size:22px;font-weight:700;letter-spacing:.14em;color:rgba(255,255,255,.78)">THE SIGNED DOCUMENT</div><div style="${mono};margin-top:8px">  "productionTonnes": 5000,\n  "seeTco2PerT": 0.535</div></div>
+       <div class="a dB" style="left:26px;top:16px;opacity:0"><div style="font-size:22px;font-weight:700;letter-spacing:.14em;color:rgba(255,255,255,.78)">WHAT CHANGED</div><div style="${mono};margin-top:8px"><span style="color:var(--rose-t)">- </span><span style="color:rgba(255,255,255,.8)">"seeTco2PerT": 0.53</span><span style="background:rgba(255,92,138,.55);border-radius:5px;padding:0 4px">5</span>\n<span style="color:var(--teal-t)">+ </span>"seeTco2PerT": 0.53<span class="dg" style="background:rgba(255,92,138,.55);border-radius:5px;padding:0 4px">4</span></div></div>`,
+    'left:63px;top:482px;width:1054px;height:182px;border-radius:18px;background:rgba(11,16,32,.42);border:1px solid rgba(255,255,255,.16);opacity:0');
+  const tClick = T('6.3', 3.05), tFlash = tClick + .12;
+  const tBtn = at(main, 63 + 107, 398 + 28);
+  curShow(T('6.3', .0), T('6.4', .6));
+  curGo(T('6.3', .0), tClick - .12, tBtn, ENTER); click(tClick);
+  curGo(tClick + .6, T('6.4', .5), t => at(main, 700, 560)(t));
+
+  anim(P0 - .1, P1 + .1, t => {
+    const e = (a, b) => eo(seg(t, a, b)), q = (el, v) => { el.style.opacity = v; };
+    // L1
+    const l1 = e(T('6.1', -.1), T('6.1', .5)) * (1 - e(T('6.2', -.3), T('6.2', .2)));
+    qrBox.style.opacity = l1; q(brk, l1);
+    const sw = seg(t, tScan0, tScan1); scan.style.opacity = (sw > 0 && sw < 1 ? 1 : 0) * l1; scan.style.top = (QY + 40 + (190 * QS - 6) * eio(sw)) + 'px';
+    qrBox.style.boxShadow = bump(seg(t, tScan1 - .05, tScan1 + .6)) > 0 ? `0 0 ${40 * bump(seg(t, tScan1 - .05, tScan1 + .6))}px rgba(53,232,204,.9)` : 'none';
+    prom.forEach((p, i) => { const u = spring((t - T('6.1', [2.9, 3.9, 4.9][i])) / .6); p.style.opacity = clamp(u * 2) * l1; p.style.transform = `scale(${.85 + .15 * Math.min(1.1, u)})`; });
+    // header and L2
+    const h = spring((t - T('6.2', -.25)) / .7); head.style.opacity = clamp(h * 2); head.style.transform = `translateY(${(1 - Math.min(1, h)) * -40}px)`;
+    const l2 = e(T('6.2', -.2), T('6.2', .25)) * (1 - e(T('6.3', .0), T('6.3', .45)));
+    const b1 = spring((t - T('6.2', .15)) / .6), b2 = spring((t - T('6.2', 1.3)) / .6), ims = bOk.querySelectorAll('img');
+    ims[0].style.opacity = clamp(b1 * 2) * l2; ims[0].style.transform = `scale(${.85 + .15 * Math.min(1.08, b1)})`; ims[1].style.opacity = clamp(b2 * 2) * l2; ims[1].style.transform = `scale(${.85 + .15 * Math.min(1.08, b2)})`;
+    list.querySelectorAll('.ck').forEach((r, i) => { const pos = order.indexOf(i); const u = e(lerp(tCk0, tCk1, pos / 10), lerp(tCk0, tCk1, pos / 10) + .25); r.style.opacity = u * l2; r.style.transform = `translateX(${(1 - u) * -16}px)`; });
+    // L3
+    const l3 = e(T('6.3', .1), T('6.3', .6)), bad = seg(t, tFlash, tFlash + .08);
+    q(fbOk, l3 * (1 - bad)); q(btn, l3);
+    q(chipOk, l3 * (1 - bad)); q(chipBad, bad);
+    doc.style.opacity = l3; doc.querySelector('.dA').style.opacity = 1 - bad; const dB = doc.querySelector('.dB'); dB.style.opacity = bad; dB.style.transform = `translateY(${(1 - eo(seg(t, tFlash, tFlash + .4))) * 14}px)`;
+    btn.style.transform = `scale(${1 - .07 * bump((t - tClick) / .22)})`;
+    const fi = fbBad.querySelectorAll('img'); fbBad.style.opacity = bad;
+    fi.forEach((im, i) => { const u = t - (tFlash + i * .22); im.style.opacity = clamp(u / .05); im.style.transform = `scale(${1 + 1.1 * (1 - eo(clamp(u / .14))) * (u > 0 ? 1 : 0)}) translateY(${(u > 0 && u < .5) ? Math.sin(u * 60) * 4 * (1 - u / .5) : 0}px)`; });
+    notes.forEach((n, i) => { n.style.opacity = e(T('6.4', .3 + i * .55), T('6.4', .7 + i * .55)); });
+    // the certificate header flips to "verification failed" with the shake
+    const hf = e(tFlash + .05, tFlash + .25); head.querySelector('.hf').style.opacity = hf;
+    const sh = (t > tFlash && t < tFlash + .65) ? Math.sin((t - tFlash) * 70) * 9 * (1 - (t - tFlash) / .65) : 0;
+    bOk.style.transform = fbOk.style.transform = fbBad.style.transform = `translateX(${sh}px)`; head.style.transform += ` translateX(${sh * .6}px)`;
+    const rf = bump(seg(t, tFlash, tFlash + .7)); main.el.style.boxShadow = rf > 0 ? `0 0 0 ${2 + rf * 8}px rgba(255,92,138,${rf * .85})` : 'none';
+    const gf = bump(seg(t, tScan1 - .05, tScan1 + .5)) * l1; if (rf <= 0 && gf > 0) main.el.style.boxShadow = `0 0 0 ${2 + gf * 6}px rgba(0,194,168,${gf * .7})`;
+  });
+  sfx(tScan0, 'brush'); sfx(tScan1, 'success', 1); sfx(T('6.1', 2.9), 'tick', 2); sfx(T('6.1', 3.9), 'tick', 4); sfx(T('6.1', 4.9), 'tick', 6);
+  sfx(T('6.2', .2), 'tick', 3); sfx(T('6.2', 1.35), 'tick', 5); for (let i = 0; i < 10; i += 2) sfx(lerp(tCk0, tCk1, i / 10), 'tick', 1 + i / 2);
+  sfx(tClick, 'click', 3); sfx(tFlash, 'glitch'); sfx(tFlash + .02, 'thud'); sfx(tFlash + .22, 'thud'); sfx(tFlash + .44, 'thud'); sfx(tFlash + .5, 'alert');
+});
+
+// ================================================================== 07 impact: why now, the cost of a default, the formula (illustrative), the two reader views, COP31
+need('i_panel', 'r_card');
+BUILD.push(function ch7() {
+  const c = CHAPTERS[6], A = c.start + .3, B = c.t1 - .7;
+  panel('imp', 1560, 640, '', [[A, { x:960, y:476, op:0, s:.96 }], [A + .7, { op:1, s:1 }], [B - .3, { op:1 }], [B + .15, { op:0 }]], { ph:.2 });
+
+  // ---- 7.1 why now: three facts, each on its own card, in the order they are spoken
+  const w0 = T('7.1', -.1), w1 = E('7.1', .5);
+  const fact = (ico, h, sub, src, colr) => `<div class="tile" style="width:470px;height:372px;border-radius:26px;padding:34px 34px;border-color:${colr};border-width:2px"><div style="font-size:30px;font-weight:700;letter-spacing:.1em;color:${colr};text-transform:uppercase">${ico}</div>
+     <div style="font-size:50px;font-weight:700;letter-spacing:-.03em;line-height:1.08;margin-top:16px">${h}</div><div style="font-size:28px;margin-top:16px;line-height:1.3" class="mute">${sub}</div>${src ? `<div style="margin-top:22px;font-size:24px;font-weight:700;color:var(--amber-t)">Source: ${src}</div>` : ''}</div>`;
+  blk(fact('CBAM', 'Definitive phase has begun', 'default values plus a mark-up apply to importers without verified data', 'European Commission', '#FFC66D'), 'left:215px;top:290px', T('7.1', .3), w1, { sc: .06 });
+  blk(fact('TR-ETS', 'Pilot 2026 to 2027', 'power, cement, steel, aluminium, fertiliser: the same sectors as CBAM', 'ICAP', '#35E8CC'), 'left:725px;top:290px', T('7.1', 4.4), w1, { sc: .06 });
+  blk(fact('Trade', 'The EU is Türkiye’s largest trading partner', '', 'ICAP', '#FF8FAE'), 'left:1235px;top:290px', T('7.1', 8.0), w1, { sc: .06 });
+  sfx(T('7.1', .35), 'pop', 1); sfx(T('7.1', 4.45), 'pop', 3); sfx(T('7.1', 8.05), 'pop', 5);
+
+  // ---- 7.2 a cleaner mill pays the same default plus mark-up (illustrative demo numbers from the app)
+  const g0 = T('7.2', -.1), g1 = E('7.2', .45), DEF = 2.31, DM = DEF * 1.10, ACT = .535;
+  const barH = v => v / DM * 300;
+  blk(`<div class="kk" style="font-size:28px">tCO<span class="sub2">2</span> per tonne of steel</div>`, 'left:560px;top:206px;width:800px;text-align:center', g0, g1);
+  blk(`<span class="chip y" style="font-size:26px">illustrative, demo data</span>`, 'left:1290px;top:196px', g0 + .3, g1, { dy: 0 });
+  const colB = (label, val, hh, colr, left, at) => blk(`<div class="num v" style="position:absolute;left:0;width:340px;text-align:center;font-size:84px;line-height:1;top:0">0.000</div>
+      <div class="bb" style="position:absolute;left:70px;bottom:92px;width:200px;height:0px;border-radius:18px 18px 6px 6px;background:${colr}"></div>
+      <div style="position:absolute;left:0;bottom:0;width:340px;text-align:center;font-size:30px;font-weight:700;line-height:1.15">${label}</div>`, `left:${left}px;top:262px;width:340px;height:470px`, g0, g1, { dy: 0, bl: 0 });
+  const cb1 = colB('Default value<br>+ 10% mark-up', DM, barH(DM), 'linear-gradient(180deg,#FF8FAE,#FF5C8A)', 520, T('7.2', 1.0));
+  const cb2 = colB('Verified actual<br>(demo EAF mill)', ACT, barH(ACT), 'linear-gradient(180deg,#35E8CC,#00C2A8)', 1020, T('7.2', 3.0));
+  blk(`<div class="num" style="font-size:44px;color:var(--amber-t);text-align:center">gap 2.006</div>`, 'left:860px;top:430px;width:200px', T('7.2', 4.3), g1, { dy: 10 });
+  anim(g0, g1, t => { [[cb1, T('7.2', 1.0), DM], [cb2, T('7.2', 3.0), ACT]].forEach(([el, a, v]) => { const p = eo(seg(t, a, a + .9)); el.querySelector('.v').textContent = (v * p).toFixed(3); el.querySelector('.v').style.opacity = clamp(p * 3);
+    el.querySelector('.bb').style.height = barH(v) * p + 'px'; el.querySelector('.v').style.top = (470 - 92 - barH(v) * p - 96) + 'px'; }); });
+  sfx(T('7.2', 1.0), 'tick', 2); sfx(T('7.2', 3.0), 'tick', 6);
+
+  // ---- 7.3 the formula, term by term as it is spoken
+  const f0 = T('7.3', -.1), f1 = E('7.3', .5);
+  const term = (txt, colr, at) => ({ txt, colr, at });
+  const TERMS = [term('tonnes', '#fff', T('7.3', .7)), term(' × ( ', 'rgba(255,255,255,.7)', T('7.3', 1.9)), term('default', '#FF8FAE', T('7.3', 2.5)), term(' + ', 'rgba(255,255,255,.7)', T('7.3', 3.2)), term('mark-up', '#FFC66D', T('7.3', 3.3)),
+                 term(' − ', 'rgba(255,255,255,.7)', T('7.3', 4.3)), term('verified actual', '#35E8CC', T('7.3', 4.6)), term(' ) × ', 'rgba(255,255,255,.7)', T('7.3', 6.2)), term('EU carbon price', '#9D93FF', T('7.3', 6.5))];
+  blk(`<div class="kk" style="font-size:28px;text-align:center">Cost of having no verified figure, per shipment</div>`, 'left:260px;top:204px;width:1400px', f0, f1);
+  const fo = blk(`<div style="font-size:48px;font-weight:700;letter-spacing:-.03em;text-align:center;white-space:nowrap">${TERMS.map((q, i) => `<span class="tm" style="color:${q.colr};opacity:0">${q.txt}</span>`).join('')}</div>`, 'left:210px;top:330px;width:1500px', f0, f1, { dy: 0, bl: 0 });
+  const ex = blk(`<div style="text-align:center;margin-top:0"><div class="mono ex" style="font-size:38px;opacity:0">5,000 t × ( 2.31 × 1.10 − 0.535 ) = <b style="color:var(--amber-t)">10,030</b> tCO<span class="sub2">2</span> to be priced</div></div>`, 'left:210px;top:480px;width:1500px', T('7.3', 5.2), f1, { dy: 12 });
+  blk(`<span class="chip y" style="font-size:32px;padding:6px 28px">illustrative, demo data</span>`, 'left:700px;top:586px', T('7.3', 7.5), f1, { dy: 12 });
+  anim(f0, f1, t => { fo.querySelectorAll('.tm').forEach((el, i) => { el.style.opacity = eo(seg(t, TERMS[i].at, TERMS[i].at + .35)); });
+    const u = eo(seg(t, T('7.3', 5.2), T('7.3', 5.8))); ex.querySelector('.ex').style.opacity = u; });
+  TERMS.forEach((q, i) => { if ([0, 2, 4, 6, 8].includes(i)) sfx(q.at, 'tick', i + 1); });
+
+  // ---- 7.4 who sees the real figure: the importer and the regulator (the app's own screens)
+  const v0 = T('7.4', -.15), v1 = E('7.4', .45), S2 = .68;
+  blk(`<div style="font-size:24px;font-weight:700;color:var(--teal-t);letter-spacing:.06em;margin-bottom:12px;white-space:nowrap">IMPORTER · claims, downloads the PDF</div>${img('i_panel', S2)}`, 'left:205px;top:300px', v0, v1, { sc: .05 });
+  blk(`<div style="font-size:24px;font-weight:700;color:var(--amber-t);letter-spacing:.06em;margin-bottom:12px;white-space:nowrap">REGULATOR · read-only, TR-ETS vs CBAM</div>${img('r_card', S2)}`, 'left:965px;top:300px', v0 + .5, v1, { sc: .05 });
+  blk(`<span class="chip g" style="font-size:30px;padding:8px 30px;text-transform:none;letter-spacing:.01em">one verified figure: 0.5351 t${CO2}/t</span>`, 'left:610px;top:640px', v0 + 1.5, v1, { dy: 12 });
+  sfx(T('7.4', .1), 'switch'); sfx(T('7.4', .8), 'ping', 3);
+
+  // ---- 7.5 COP31
+  const k0 = T('7.5', -.1), k1 = E('7.5', .4);
+  blk(`<div class="kk" style="font-size:30px;text-align:center">Antalya · Türkiye</div><div class="num" style="font-size:230px;line-height:1;text-align:center;letter-spacing:-.04em;margin-top:6px">COP31</div>
+       <div style="font-size:54px;font-weight:700;text-align:center;letter-spacing:-.02em;margin-top:10px">9 to 20 November 2026</div>`, 'left:260px;top:236px;width:1400px', k0, k1);
+  blk(`<div style="font-size:50px;font-weight:700;text-align:center;letter-spacing:-.03em;color:var(--teal-t)">Implementation, not another pledge.</div>`, 'left:260px;top:620px;width:1400px', T('7.5', 3.6), k1, { dy: 16 });
+  sfx(T('7.5', .2), 'chime', 4);
+});
+
+// ================================================================== 08 trust and roadmap: what it is not, what the numbers mean, the honest recall table, tests, roadmap, end card
+BUILD.push(function ch8() {
+  const c = CHAPTERS[7], A = c.start + .3, E8 = T('8.6', -.5);
+  panel('trust', 1560, 640, '', [[A, { x:960, y:476, op:0, s:.96 }], [A + .7, { op:1, s:1 }], [E8 - .2, { op:1 }], [E8 + .35, { op:0, s:1.04 }]], { ph:.3 });
+
+  // ---- 8.1 what this is not
+  const n0 = T('8.1', -.1), n1 = E('8.1', .5);
+  const nope = (txt, at) => blk(`<div style="display:flex;align-items:center;gap:26px"><span style="flex:0 0 74px;width:74px;height:74px;border-radius:37px;background:rgba(255,92,138,.2);border:3px solid var(--rose);color:var(--rose-t);font-size:42px;font-weight:700;text-align:center;line-height:68px">✕</span><span style="font-size:58px;font-weight:700;letter-spacing:-.03em">${txt}</span></div>`, 'left:350px;top:0;width:1300px', at, n1, { sc: .05 });
+  const ns = [['Not accredited CBAM verification', T('8.1', .9), 280], ['No offsets or credits', T('8.1', 3.6), 410], ['No Article 6 corresponding adjustments', T('8.1', 5.0), 540]].map(([s, a, y]) => { const e = nope(s, a); e.style.top = y + 'px'; return e; });
+  blk(`<div style="font-size:34px;text-align:center" class="mute">Designed to support verification, not replace it.</div>`, 'left:260px;top:690px;width:1400px', T('8.1', 5.9), n1, { dy: 12 });
+  sfx(T('8.1', .95), 'thud'); sfx(T('8.1', 3.65), 'thud'); sfx(T('8.1', 5.05), 'thud');
+
+  // ---- 8.2 integrity after data entry, not the truth of the data
+  const i0 = T('8.2', -.1), i1 = E('8.2', .5);
+  blk(`<div class="tile" style="width:500px;height:260px;border-radius:26px;padding:30px;border:2px dashed rgba(255,198,109,.8)"><div style="font-size:30px;font-weight:700;color:var(--amber-t);letter-spacing:.08em">BEFORE THE ENTRY</div><div style="font-size:46px;font-weight:700;letter-spacing:-.02em;line-height:1.1;margin-top:12px">Is the data true?</div><div style="font-size:28px;margin-top:14px" class="mute">AI gate · verifier · two signatures</div></div>`, 'left:330px;top:300px', i0, i1, { sc: .06 });
+  blk(`<div style="width:86px;height:86px;border-radius:43px;background:rgba(11,16,32,.9);border:2px solid rgba(255,255,255,.5);text-align:center;line-height:78px;font-size:38px;font-weight:700">▶</div>`, 'left:874px;top:386px', i0 + .8, i1, { dy: 0 });
+  blk(`<div class="tile" style="width:500px;height:260px;border-radius:26px;padding:30px;border:2px solid var(--teal-t)"><div style="font-size:30px;font-weight:700;color:var(--teal-t);letter-spacing:.08em">AFTER THE ENTRY</div><div style="font-size:46px;font-weight:700;letter-spacing:-.02em;line-height:1.1;margin-top:12px">Is it unchanged?</div><div style="font-size:28px;margin-top:14px" class="mute">guaranteed by the chain</div></div>`, 'left:1010px;top:300px', i0 + 1.5, i1, { sc: .06 });
+  sfx(i0 + .9, 'switch'); sfx(i0 + 1.6, 'lock');
+
+  // ---- 8.3 consistency with Climate TRACE, not measurement
+  const m0 = T('8.3', -.1), m1 = E('8.3', .5);
+  blk(`<div class="tile" style="width:470px;height:230px;border-radius:26px;padding:28px;border:2px solid var(--teal-t)"><div style="font-size:30px;font-weight:700;color:var(--teal-t);letter-spacing:.08em">MODEL</div><div style="font-size:42px;font-weight:700;letter-spacing:-.02em;line-height:1.1;margin-top:12px">expected range for this plant</div></div>`, 'left:250px;top:300px', m0, m1, { sc: .06 });
+  blk(`<div style="width:120px;text-align:center;font-size:90px;font-weight:700;line-height:1">≈</div><div style="font-size:26px;text-align:center;margin-top:6px;font-weight:700" class="mute">consistent</div>`, 'left:850px;top:340px', m0 + .7, m1, { dy: 0 });
+  blk(`<div class="tile" style="width:470px;height:230px;border-radius:26px;padding:28px;border:2px solid var(--amber)"><div style="font-size:30px;font-weight:700;color:var(--amber-t);letter-spacing:.08em">CLIMATE TRACE</div><div style="font-size:42px;font-weight:700;letter-spacing:-.02em;line-height:1.1;margin-top:12px">the same plant's own history</div></div>`, 'left:1050px;top:300px', m0 + 1.0, m1, { sc: .06 });
+  blk(`<div class="tile" style="width:1270px;height:96px;border-radius:22px;border:2px dashed rgba(255,92,138,.8);text-align:center;line-height:92px;font-size:38px;font-weight:700;color:var(--rose-t)">Not real plant emissions: nothing here is a measurement</div>`, 'left:325px;top:600px', m0 + 2.0, m1, { dy: 14 });
+
+  // ---- 8.4 the honest numbers (model card, 173 held-out plants, synthetic under-reports)
+  const r0 = T('8.4', -.1), r1 = E('8.4', .5);
+  blk(`<div class="kk" style="font-size:28px;text-align:center">Synthetic under-reports caught as red · 173 held-out plants</div>`, 'left:260px;top:196px;width:1400px', r0, r1);
+  const cols = [{ h:'Plant with history', x:790, at:T('8.4', .3) }, { h:'New plant, no history', x:1390, at:T('8.4', 5.2) }];
+  cols.forEach(cc => blk(`<div style="font-size:32px;font-weight:700;text-align:center;width:560px;letter-spacing:-.01em">${cc.h}</div>`, `left:${cc.x - 280}px;top:258px`, cc.at, r1, { dy: 10 }));
+  const ROWS = [{ lab:'claim cut to half', y:350, tgt:90, v:[97, 84] }, { lab:'claim cut to 70%', y:500, tgt:60, v:[89, 61] }];
+  const barBox = (v, tgt, x, y, at) => {
+    const ok = v >= tgt, colr = ok ? '#00C2A8' : '#FF5C8A', tx = ok ? '#35E8CC' : '#FF8FAE';
+    return blk(`<div class="num pv" style="position:absolute;left:0;top:0;font-size:78px;line-height:1;color:${tx}">0%</div>
+        <div style="position:absolute;left:0;top:92px;width:520px;height:26px;border-radius:13px;background:rgba(255,255,255,.16)"></div>
+        <div class="fill" style="position:absolute;left:0;top:92px;width:0;height:26px;border-radius:13px;background:${colr}"></div>
+        <div style="position:absolute;left:${520 * tgt / 100 - 2}px;top:82px;width:4px;height:46px;border-radius:2px;background:#fff"></div>
+        <div style="position:absolute;left:${520 * tgt / 100 - 120}px;top:128px;width:240px;text-align:center;font-size:24px;font-weight:700;color:rgba(255,255,255,.85)">target ${tgt}%</div>
+        ${ok ? '' : `<div class="miss" style="position:absolute;left:150px;top:6px;font-size:28px;font-weight:700;color:var(--rose-t);opacity:0">misses the target</div>`}`, `left:${x - 260}px;top:${y}px;width:520px;height:160px`, at, r1, { dy: 12, bl: 0 }); };
+  const boxes = [];
+  ROWS.forEach((rw, ri) => { blk(`<div style="font-size:30px;font-weight:700" class="mute">${rw.lab}</div>`, `left:200px;top:${rw.y + 24}px;width:260px;line-height:1.15`, T('8.4', ri ? 2.4 : 0.3), r1, { dy: 8 });
+    cols.forEach((cc, ci) => boxes.push({ el: barBox(rw.v[ci], rw.tgt, cc.x, rw.y, cc.at + (ri ? 2.1 : 0)), v: rw.v[ci], at: cc.at + (ri ? 2.1 : 0) + .15, ok: rw.v[ci] >= rw.tgt })); });
+  anim(r0, r1, t => boxes.forEach(b => { const p = eo(seg(t, b.at, b.at + 1.2)); b.el.querySelector('.pv').textContent = Math.round(b.v * p) + '%'; b.el.querySelector('.fill').style.width = (520 * b.v / 100 * p) + 'px';
+    const ms = b.el.querySelector('.miss'); if (ms) ms.style.opacity = eo(seg(t, b.at + 1.5, b.at + 2.0)); }));
+  boxes.forEach(b => sfx(b.at + .6, b.ok ? 'chime' : 'alert', 3));
+
+  // ---- 8.5 tests and what comes next
+  const t0 = T('8.5', -.1), t1 = E('8.5', .5);
+  blk(`<div class="tile" style="width:540px;height:400px;border-radius:28px;padding:34px;border:2px solid var(--teal-t)"><div class="num tn" style="font-size:190px;line-height:1;letter-spacing:-.04em">0</div><div style="font-size:42px;font-weight:700;letter-spacing:-.02em;margin-top:8px">contract tests</div><div style="font-size:30px;margin-top:10px" class="mute">100% line, branch and function coverage</div></div>`, 'left:230px;top:268px', t0, t1, { sc: .06 });
+  const rm = (n, h, sub, at, y) => blk(`<div class="tile" style="width:820px;height:118px;border-radius:22px;padding:18px 28px;display:flex;align-items:center;gap:22px;border-width:2px"><span class="num" style="font-size:52px;color:var(--amber-t);flex:0 0 60px">${n}</span><div><div style="font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.1">${h}</div><div style="font-size:24px;margin-top:4px" class="mute">${sub}</div></div></div>`, `left:830px;top:${y}px`, at, t1, { dy: 16 });
+  blk(`<div class="kk" style="font-size:28px">Next</div>`, 'left:830px;top:236px', T('8.5', 2.6), t1, { dy: 8 });
+  rm('1', '2-of-3 attestor quorum', 'today: a single attestor key', T('8.5', 3.2), 290); rm('2', 'Zero-knowledge range proofs', 'SEE below the benchmark, without revealing it', T('8.5', 5.0), 424); rm('3', 'Permissioned Besu network', 'same Solidity, run by exporters, verifiers and the regulator', T('8.5', 6.6), 558);
+  anim(t0, t1, t => { const p = eo(seg(t, T('8.5', .2), T('8.5', 1.4))); const el = document.querySelector('.tn'); if (el) el.textContent = Math.round(178 * p); });
+  sfx(T('8.5', .4), 'count', 0); sfx(T('8.5', 1.5), 'success', 3); sfx(T('8.5', 3.25), 'tick', 2); sfx(T('8.5', 5.05), 'tick', 4); sfx(T('8.5', 6.65), 'tick', 6);
+
+  // ---- 8.6 end card
+  const e0 = T('8.6', -.4);
+  const end = panel('end8', 1500, 620, `<div class="a" style="inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+      <div class="hd" style="font-size:196px;letter-spacing:-.045em;line-height:1">EmbedProof</div>
+      <div style="margin-top:34px;font-size:64px;font-weight:700;letter-spacing:-.03em;line-height:1.12">Check the claim. <span style="color:var(--teal-t)">Block</span> the double sale.</div>
+      <div style="margin-top:42px;display:flex;gap:20px;justify-content:center"><span class="chip g" style="font-size:26px">Track 1 · Carbon Markets &amp; Emissions Transparency</span></div>
+      <div style="margin-top:22px;font-size:28px;color:rgba(255,255,255,.78)">IEEE ClimateChain Global Hackathon 2026 · prototype, fictional companies, demo data</div></div>`,
+    [[e0, { x:960, y:476, op:0, s:1.05 }], [e0 + .8, { op:1, s:1, fl:5 }], [TOTAL, { op:1, s:1.012 }]], { ph:.45 });
+  anim(e0, TOTAL, t => { const u = eo(seg(t, e0 + .1, e0 + .9)); end.body.style.opacity = u; end.body.style.filter = u < 1 ? `blur(${(1 - u) * 16}px)` : 'none'; });
+  sfx(T('8.6', -.2), 'whoosh', 3); sfx(T('8.6', .3), 'chime', 4); sfx(T('8.6', 1.5), 'final');
+});
+
+// ================================================================== the camera shot list: it never rests, it leans in to wherever the action is
+BUILD.push(function cameraShots() {
+  const S = (t, fx, fy, s) => shot(t, fx, fy, 1 + (s - 1) * .55);   // zoom is kept gentle: the pans do most of the moving
+  // 01 the problem: one lane, six beats
+  S(0, 960, 476, 1.0); S(T('1.1', .5), 880, 470, 1.06); S(T('1.1', 3.2), 1080, 480, 1.1);
+  S(T('1.2', .1), 960, 450, 1.14); S(T('1.2', 3.8), 960, 470, 1.2);
+  S(T('1.3', .2), 900, 440, 1.18); S(T('1.3', 2.2), 1000, 470, 1.24);
+  S(T('1.4', .2), 800, 500, 1.14); S(T('1.4', 2.2), 1100, 500, 1.18);
+  S(T('1.5', .1), 1100, 500, 1.2); S(T('1.5', 3.2), 1280, 480, 1.28);
+  S(T('1.6', .1), 840, 580, 1.2); S(E('1.6', .0), 960, 476, 1.0);
+  // 02 one sentence
+  S(T('2.1', -.2), 960, 470, 1.0); S(T('2.1', 1.5), 960, 440, 1.1); S(E('2.1', .5), 960, 440, 1.04);
+  S(T('2.2', .3), 700, 440, 1.28); S(T('2.2', 3.0), 820, 440, 1.2);
+  S(T('2.3', .2), 960, 400, 1.32); S(T('2.3', 4.2), 1000, 440, 1.24); S(T('2.3', 7.4), 1050, 440, 1.26);
+  S(T('2.4', .2), 1280, 450, 1.32); S(T('2.4', 3.4), 1180, 450, 1.24);
+  S(T('2.5', .1), 780, 560, 1.26); S(E('2.5', .0), 960, 476, 1.0);
+  // 03 honest EAF: the app window, zooming on what is being said
+  S(T('3.1', -.4), 960, 494, 1.0); S(T('3.1', .8), 800, 300, 1.26); S(T('3.1', 3.2), 940, 440, 1.2); S(T('3.1', 4.8), 1140, 590, 1.3); S(T('3.1', 7.0), 860, 640, 1.26);
+  S(T('3.2', .0), 960, 494, 1.1); S(T('3.2', 1.0), 800, 420, 1.3); S(T('3.2', 3.4), 1180, 430, 1.28);
+  S(T('3.3', .0), 900, 400, 1.34); S(T('3.3', 2.4), 960, 600, 1.2);
+  S(T('3.4', .0), 1120, 210, 1.26); S(T('3.4', 1.2), 960, 400, 1.18); S(T('3.4', 4.0), 1160, 520, 1.26); S(E('3.4', .0), 960, 494, 1.04);
+  // 04 implausible claim, then the verifier
+  S(T('4.1', -.4), 960, 494, 1.0); S(T('4.1', .8), 800, 300, 1.26); S(T('4.1', 3.2), 940, 440, 1.2); S(T('4.1', 4.4), 1140, 590, 1.3); S(T('4.1', 6.4), 860, 640, 1.26);
+  S(T('4.2', .0), 960, 494, 1.1); S(T('4.2', 1.0), 820, 430, 1.32); S(T('4.2', 3.0), 800, 640, 1.26); S(T('4.2', 5.0), 1180, 430, 1.3);
+  S(T('4.3', .0), 960, 430, 1.16); S(T('4.3', 1.6), 1130, 210, 1.26); S(T('4.3', 3.0), 960, 420, 1.18); S(T('4.3', 5.0), 960, 494, 1.06);
+  S(T('4.4', -.5), 960, 330, 1.1); S(T('4.4', 1.0), 820, 520, 1.22); S(T('4.4', 3.0), 960, 560, 1.16); S(T('4.4', 5.0), 900, 650, 1.28); S(T('4.4', 6.3), 960, 420, 1.2); S(E('4.4', .0), 960, 494, 1.04);
+  // 05 double claim: lean in on the click, punch on the slam
+  S(T('5.1', -.3), 960, 494, 1.0); S(T('5.1', .6), 900, 300, 1.2); S(T('5.1', 2.0), 1050, 460, 1.24); S(T('5.1', 3.6), 760, 660, 1.3); S(T('5.1', 5.0), 960, 480, 1.12);
+  S(T('5.2', -.3), 860, 600, 1.2); S(T('5.2', 1.6), 760, 660, 1.32); S(T('5.3', -.15), 760, 660, 1.34);
+  S(T('5.3', .1), 960, 494, 1.0); S(T('5.3', .9), 960, 494, 1.12); S(T('5.3', 3.0), 960, 494, 1.05);
+  S(T('5.4', .0), 800, 490, 1.0); S(T('5.4', 1.6), 1380, 480, 1.28); S(T('5.4', 4.2), 1300, 500, 1.2);
+  // 06 tamper
+  S(T('6.1', -.4), 960, 494, 1.0); S(T('6.1', .8), 720, 340, 1.24); S(T('6.1', 2.2), 720, 360, 1.34); S(T('6.1', 4.0), 540, 560, 1.28); S(T('6.1', 6.0), 960, 300, 1.12);
+  S(T('6.2', .2), 960, 330, 1.2); S(T('6.2', 1.6), 900, 520, 1.26); S(T('6.2', 3.2), 960, 494, 1.12);
+  S(T('6.3', .4), 760, 560, 1.26); S(T('6.3', 2.2), 740, 560, 1.34); S(T('6.3', 3.4), 960, 600, 1.2);
+  S(T('6.4', .0), 960, 330, 1.24); S(T('6.4', 2.0), 960, 450, 1.18); S(E('6.4', .0), 960, 494, 1.04);
+  // 07 impact
+  S(T('7.1', -.3), 960, 476, 1.0); S(T('7.1', .5), 700, 460, 1.22); S(T('7.1', 4.4), 960, 460, 1.22); S(T('7.1', 8.0), 1220, 460, 1.26);
+  S(T('7.2', .0), 820, 500, 1.18); S(T('7.2', 3.0), 1100, 500, 1.24);
+  S(T('7.3', .0), 960, 420, 1.12); S(T('7.3', 2.6), 900, 430, 1.16); S(T('7.3', 5.0), 1010, 440, 1.16); S(T('7.3', 7.6), 960, 520, 1.1);
+  S(T('7.4', .0), 900, 470, 1.12); S(T('7.4', 2.6), 1030, 470, 1.12);
+  S(T('7.5', .0), 960, 430, 1.1); S(T('7.5', 3.6), 960, 540, 1.2); S(E('7.5', .0), 960, 476, 1.0);
+  // 08 trust and roadmap
+  S(T('8.1', -.3), 960, 476, 1.0); S(T('8.1', .8), 1000, 400, 1.16); S(T('8.1', 4.0), 1000, 560, 1.2);
+  S(T('8.2', .0), 960, 430, 1.18); S(T('8.2', 2.4), 960, 450, 1.26);
+  S(T('8.3', .0), 960, 440, 1.18); S(T('8.3', 2.2), 960, 500, 1.24);
+  S(T('8.4', .0), 800, 500, 1.24); S(T('8.4', 4.4), 960, 500, 1.18); S(T('8.4', 6.0), 1390, 500, 1.26);
+  S(T('8.5', .0), 780, 440, 1.2); S(T('8.5', 3.0), 1080, 470, 1.18); S(T('8.5', 6.2), 1100, 500, 1.2);
+  S(T('8.6', -.5), 960, 476, 1.1); S(T('8.6', .3), 960, 476, 1.0); S(TOTAL, 960, 476, 1.03);
+});
+
+// ================================================================== chapter furniture, captions, render loop, loading
+const wipeP = (() => { const el = document.createElement('div'); el.className = 'glass'; el.id = 'wipe'; el.innerHTML = '<div class="scrim"></div><div class="body"></div>'; root.appendChild(el); el.querySelector('.scrim').style.opacity = .5; return el; })();
+const pipsEl = $('#pips'); CHAPTERS.forEach(() => pipsEl.appendChild(document.createElement('i')));
+const kickEl = $('#kick'), capEl = $('#cap');
+let kickN = -1, capK = -2;
+const subst = s => s.replace(/₂/g, '<span class="sub2">2</span>').replace(/&/g, '&amp;');
+
+function render(t) {
+  if (!window.READY) return;
+  FIELDS.forEach((d, i) => { d.style.transform = `translate(${960 + 480 * Math.sin(t * .35 + i * 2.1) - 650}px,${540 + 320 * Math.cos(t * .28 + i * 1.3) - 650}px)`; });
+  ORBS.forEach((d, i) => { d.style.transform = `translate(${160 + rnd(i + 10) * 1600 + Math.sin(t * (.25 + rnd(i + 30) * .3) + i * 2) * 170}px,${120 + rnd(i + 20) * 800 + Math.cos(t * (.22 + rnd(i + 40) * .25) + i) * 130}px)`; });
+
+  // chapter kicker and pips
+  const ci = CHAPTERS.findIndex(c => t >= c.start && t < c.t1), ch = CHAPTERS[ci >= 0 ? ci : CHAPTERS.length - 1], cs = ch.start + (ch.n === 1 ? 0.3 : .35);
+  if (ch.n !== kickN) { kickN = ch.n; kickEl.innerHTML = `<b>0${ch.n}</b>${ch.name}`; [...pipsEl.children].forEach((p, i) => { p.style.background = i + 1 === ch.n ? 'var(--teal-t)' : i + 1 < ch.n ? 'rgba(255,255,255,.55)' : 'rgba(255,255,255,.22)'; p.style.width = i + 1 === ch.n ? '58px' : '34px'; }); }
+  kickEl.style.opacity = eo(seg(t, cs, cs + .5)) * (1 - eo(seg(t, cs + 3.2, cs + 3.8)));   // the chapter name shows for its first seconds only
+  pipsEl.style.opacity = ch.n === CHAPTERS.length ? 1 - eo(seg(t, T('8.6', -.2), T('8.6', .3))) : 1;
+
+  for (const p of PAN) placePanel(p, t);
+  for (const v of VIS) { if (updateVis(v, t) && v.fn) v.fn(t, v.el); }
+  for (const a of ANIM) a.fn(clamp(t, a.a, a.b));   // out of its window an animation holds its edge state, so render(t) stays a pure function of t
+
+  // frosted dip between chapters
+  let w = 0; for (const c of CHAPTERS) { if (c.n === 1) continue; w = Math.max(w, eo(seg(t, c.start - .5, c.start - .08)) * (1 - eo(seg(t, c.start + .02, c.start + .55)))); }
+  frost(wipeP, w, 24); wipeP.style.zIndex = 40; wipeP.style.transform = 'none';
+
+  // burned-in caption, one line of the script at a time
+  let k = -1; for (let i = 0; i < SCRIPT.length; i++) if (t >= SCRIPT[i].t - .06 && t <= SCRIPT[i].end + .22) k = i;
+  if (k !== capK) { capK = k; if (k >= 0) capEl.innerHTML = subst(SCRIPT[k].cap); }
+  if (k >= 0) { const s = SCRIPT[k]; capEl.style.opacity = eo(seg(t, s.t - .06, s.t + .12)) * (1 - eo(seg(t, s.end + .02, s.end + .22))); } else capEl.style.opacity = 0;
+
+  renderCursor(t);
+  const cm = camAt(t); $('#world').style.transform = `translate(${960 - cm.fx * cm.s}px,${480 - cm.fy * cm.s}px) scale(${cm.s})`;
+}
+window.render = render;
+
+// ------------------------------------------------------------------ load fonts and captures, build the chapters, then draw frame 0
+window.ready = (async () => {
+  await Promise.all([document.fonts.load('700 40px "Inter"'), document.fonts.load('400 40px "Inter"'), document.fonts.load('700 40px "Space Grotesk"'), document.fonts.load('400 30px "JetBrains Mono"'), document.fonts.ready]);
+  await Promise.all(FILES.map(n => new Promise((res, rej) => { const i = new Image(); i.onload = () => { IM[n] = { w: i.naturalWidth / 2, h: i.naturalHeight / 2 }; i.decode().then(res, res); }; i.onerror = () => rej(new Error('missing asset ' + n)); i.src = AS + n + '.png'; })));
+  BUILD.forEach(f => f());
+  CAMK.sort((a, b) => a.t - b.t);
+  window.SFX = SFXL.sort((a, b) => a.t - b.t);
+  await Promise.all([...document.images].map(i => i.decode().catch(() => 0)));
+  window.READY = true;
+  render(0);
+})();
+
+</script></body></html>

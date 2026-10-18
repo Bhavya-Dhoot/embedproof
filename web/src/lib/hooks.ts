@@ -20,6 +20,7 @@ import {
 import { publicClient } from "./client";
 import { attestationAbi, getDeployment } from "./deployments";
 import { CHAIN_ID } from "./env";
+import { holdsRole, ROLE_LABEL, roleMismatchMessage, type ViewRole } from "./roles";
 import { useSigner } from "./signer";
 
 const POLL = CHAIN_ID === 31337 ? 3000 : 8000;
@@ -141,4 +142,14 @@ export function useRoles(): Roles & { address?: Address; loading: boolean } {
     queryFn: () => readRoles(publicClient, dep!, address!, inst.data!),
   });
   return { ...(q.data ?? NO_ROLES), address, loading: q.isLoading };
+}
+
+/** Role gate for a page: `allowed` is false until an account is chosen and its roles are read, and for accounts that lack the role. */
+export function useRoleGate(need: ViewRole): { allowed: boolean; message: string | null; needLabel: string } {
+  const roles = useRoles();
+  return {
+    allowed: !!roles.address && roles.known && holdsRole(roles, need),
+    message: roles.address ? roleMismatchMessage(roles, need) : null,
+    needLabel: ROLE_LABEL[need],
+  };
 }

@@ -20,6 +20,7 @@ describe("certificate PDF (jsPDF + QR)", () => {
     const doc = await buildCertificatePdf({
       batch, allocation, installationName: "Marmara Demir Mini-Mill (fictional)", importerLabel: "Importer A", verifyUrl: url,
       chainLabel: "Local Anvil", cid: "bafkreiexample", explanation: "Declared 0.419 sits inside the expected EAF range.",
+      pqKeyHash: h("ab"), pqAnchored: true,
     });
     const bytes = new Uint8Array(doc.output("arraybuffer"));
     expect(new TextDecoder().decode(bytes.slice(0, 5))).toBe("%PDF-");
@@ -27,5 +28,10 @@ describe("certificate PDF (jsPDF + QR)", () => {
     expect(bytes.length).toBeGreaterThan(8_000); // an embedded PNG QR makes it much larger than a text-only page
     const text = new TextDecoder("latin1").decode(bytes);
     expect(text).toContain("/Subtype /Image");
+    expect(text).toContain("5,000 attested tonnes");
+    expect(text).not.toContain("verified tonnes");
+    expect(text).toContain("ML-DSA PUBLIC KEY HASH");
+    expect(text).toContain("ML-DSA KEY ANCHORED ON-CHAIN");
+    expect(text).toContain("yes, the registry lists this key for the attestor");
   });
 });

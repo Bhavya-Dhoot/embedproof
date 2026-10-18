@@ -1,7 +1,7 @@
 {
   "_comment": [
     "EmbedProof bundle test vector (docs/INTERFACES.md sections 5 and 9).",
-    "Keys are public Anvil test keys. The assessment block is a fixed example, not model output.",
+    "Keys are public Anvil test keys. The assessment block is real frozen-model output plus hasHistory / flags / inputs (round 3).",
     "To check in a browser: canonicalize(document) == canonical; keccak256(utf8(canonical)) == commitment;",
     "viem recoverTypedDataAddress({domain, types, primaryType:'Attestation', message, signature}) == ecdsa.signer,",
     "where `message` is eip712.message with commitment set to the commitment you RECOMPUTED (and the other",
@@ -48,38 +48,83 @@
       "seeTco2PerT": 0.419
     },
     "assessment": {
-      "riskScore": 4,
+      "riskScore": 20,
       "band": "green",
-      "q05": 0.318,
-      "q50": 0.452,
-      "q95": 0.67,
-      "expectedLow": 0.318,
-      "expectedHigh": 0.67,
+      "q05": 0.4034,
+      "q50": 0.488,
+      "q95": 0.6374,
+      "expectedLow": 0.4034,
+      "expectedHigh": 0.6374,
       "seeDeclared": 0.419,
-      "cbamDefault": 1.3,
+      "cbamDefault": 2.31,
       "belowHalfDefault": true,
-      "modelVersionHash": "0xabababababababababababababababababababababababababababababababab",
+      "modelVersionHash": "0x40d9ee13d1c9ee9c52d0eb3749353665238712a72e7d8444bdc51be41b1008c8",
       "shap": [
         {
           "feature": "route",
           "label": "Production route",
           "value": "EAF",
-          "contribution": -0.41
+          "contribution": -0.6199
+        },
+        {
+          "feature": "ctPrior",
+          "label": "Climate TRACE lagged emissions-factor prior (tCO2e/t)",
+          "value": 0.08,
+          "contribution": -0.1208
+        },
+        {
+          "feature": "gridIntensity",
+          "label": "Grid carbon intensity (gCO2/kWh)",
+          "value": 475.73,
+          "contribution": -0.0406
         }
       ],
-      "explanation": "Fixed example assessment for the test vector; not produced by the trained model."
+      "explanation": "Declared 0.419 tCO2/t lies inside the plausible range 0.40-0.64 (median 0.49) for an EAF plant of 300,000 t/yr in TR, given its Climate TRACE lagged prior 0.08 tCO2e/t, and is under half of the CBAM default 2.31; the largest driver of the expected value is production route (-0.62 tCO2/t).",
+      "hasHistory": true,
+      "flags": [],
+      "inputs": {
+        "installation": {
+          "id": "TR-EAF-0001",
+          "route": "EAF",
+          "capacityTpy": 300000,
+          "country": "TR"
+        },
+        "features": {
+          "route": "EAF",
+          "capacityTpy": 300000,
+          "gridGco2PerKwh": 475.73,
+          "ctLaggedPriorEf": 0.08
+        },
+        "prior": {
+          "value": 0.08,
+          "source": "Climate TRACE v5.10.0 asset 1567079 direct emissions factor, mean over 2025-07..2026-06 (12 of 12 months; constant 0.08) for period 2026-09; 2025-08..2026-06 (11 months; constant 0.08) for 2026-10",
+          "sourceAssetId": 1567079
+        },
+        "grid": {
+          "value": 475.73,
+          "source": "Ember yearly electricity data, power-sector CO2 intensity, TUR 2025 (CC BY 4.0); data/fixtures/grid_intensity_ember_annual.csv",
+          "observationYear": 2025,
+          "country": "TUR"
+        },
+        "dataVersion": {
+          "source": "Climate TRACE v5.10.0 iron-and-steel sources CSV (CC BY 4.0), Ember yearly electricity data (CC BY 4.0)",
+          "snapshotSha256": "744172e7f9ab88b1deb2d59c1ad6a58816c7024dedf9db92d2defa117a3634f7",
+          "gridFixtureSha256": "9286f7ccc749a5a8f97ff6134855401ae361df7b7a92d1bcbc9cfe99d40f62ba"
+        },
+        "artefactSha256": "0x40d9ee13d1c9ee9c52d0eb3749353665238712a72e7d8444bdc51be41b1008c8"
+      }
     },
     "chainId": 31337,
     "attestationContract": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
     "salt": "0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
     "issuedAt": "2026-10-18T12:00:00Z"
   },
-  "canonical": "{\"assessment\":{\"band\":\"green\",\"belowHalfDefault\":true,\"cbamDefault\":1.3,\"expectedHigh\":0.67,\"expectedLow\":0.318,\"explanation\":\"Fixed example assessment for the test vector; not produced by the trained model.\",\"modelVersionHash\":\"0xabababababababababababababababababababababababababababababababab\",\"q05\":0.318,\"q50\":0.452,\"q95\":0.67,\"riskScore\":4,\"seeDeclared\":0.419,\"shap\":[{\"contribution\":-0.41,\"feature\":\"route\",\"label\":\"Production route\",\"value\":\"EAF\"}]},\"attestationContract\":\"0x5FbDB2315678afecb367f032d93F642f64180aa3\",\"chainId\":31337,\"issuedAt\":\"2026-10-18T12:00:00Z\",\"report\":{\"cnCode\":\"72083900\",\"directEmissionsTco2\":1150,\"electricityMwh\":2250,\"gridFactorTco2PerMwh\":0.42,\"indirectEmissionsTco2\":945,\"installationId\":\"TR-EAF-0001\",\"period\":\"2026-09\",\"productionTonnes\":5000,\"route\":\"EAF\",\"schema\":\"embedproof.report.v1\",\"seeTco2PerT\":0.419},\"salt\":\"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f\",\"schema\":\"embedproof.attestation.v1\"}",
-  "commitment": "0xbe2944928f5e030c98b534ef8e81c9f919418f1ac9334043ab5fbb4547ee323b",
+  "canonical": "{\"assessment\":{\"band\":\"green\",\"belowHalfDefault\":true,\"cbamDefault\":2.31,\"expectedHigh\":0.6374,\"expectedLow\":0.4034,\"explanation\":\"Declared 0.419 tCO2/t lies inside the plausible range 0.40-0.64 (median 0.49) for an EAF plant of 300,000 t/yr in TR, given its Climate TRACE lagged prior 0.08 tCO2e/t, and is under half of the CBAM default 2.31; the largest driver of the expected value is production route (-0.62 tCO2/t).\",\"flags\":[],\"hasHistory\":true,\"inputs\":{\"artefactSha256\":\"0x40d9ee13d1c9ee9c52d0eb3749353665238712a72e7d8444bdc51be41b1008c8\",\"dataVersion\":{\"gridFixtureSha256\":\"9286f7ccc749a5a8f97ff6134855401ae361df7b7a92d1bcbc9cfe99d40f62ba\",\"snapshotSha256\":\"744172e7f9ab88b1deb2d59c1ad6a58816c7024dedf9db92d2defa117a3634f7\",\"source\":\"Climate TRACE v5.10.0 iron-and-steel sources CSV (CC BY 4.0), Ember yearly electricity data (CC BY 4.0)\"},\"features\":{\"capacityTpy\":300000,\"ctLaggedPriorEf\":0.08,\"gridGco2PerKwh\":475.73,\"route\":\"EAF\"},\"grid\":{\"country\":\"TUR\",\"observationYear\":2025,\"source\":\"Ember yearly electricity data, power-sector CO2 intensity, TUR 2025 (CC BY 4.0); data/fixtures/grid_intensity_ember_annual.csv\",\"value\":475.73},\"installation\":{\"capacityTpy\":300000,\"country\":\"TR\",\"id\":\"TR-EAF-0001\",\"route\":\"EAF\"},\"prior\":{\"source\":\"Climate TRACE v5.10.0 asset 1567079 direct emissions factor, mean over 2025-07..2026-06 (12 of 12 months; constant 0.08) for period 2026-09; 2025-08..2026-06 (11 months; constant 0.08) for 2026-10\",\"sourceAssetId\":1567079,\"value\":0.08}},\"modelVersionHash\":\"0x40d9ee13d1c9ee9c52d0eb3749353665238712a72e7d8444bdc51be41b1008c8\",\"q05\":0.4034,\"q50\":0.488,\"q95\":0.6374,\"riskScore\":20,\"seeDeclared\":0.419,\"shap\":[{\"contribution\":-0.6199,\"feature\":\"route\",\"label\":\"Production route\",\"value\":\"EAF\"},{\"contribution\":-0.1208,\"feature\":\"ctPrior\",\"label\":\"Climate TRACE lagged emissions-factor prior (tCO2e/t)\",\"value\":0.08},{\"contribution\":-0.0406,\"feature\":\"gridIntensity\",\"label\":\"Grid carbon intensity (gCO2/kWh)\",\"value\":475.73}]},\"attestationContract\":\"0x5FbDB2315678afecb367f032d93F642f64180aa3\",\"chainId\":31337,\"issuedAt\":\"2026-10-18T12:00:00Z\",\"report\":{\"cnCode\":\"72083900\",\"directEmissionsTco2\":1150,\"electricityMwh\":2250,\"gridFactorTco2PerMwh\":0.42,\"indirectEmissionsTco2\":945,\"installationId\":\"TR-EAF-0001\",\"period\":\"2026-09\",\"productionTonnes\":5000,\"route\":\"EAF\",\"schema\":\"embedproof.report.v1\",\"seeTco2PerT\":0.419},\"salt\":\"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f\",\"schema\":\"embedproof.attestation.v1\"}",
+  "commitment": "0xec233afaf2c9e817637e7d8991e98537a7838bf53492fc7ff3be7075069618f9",
   "ecdsa": {
     "scheme": "eip712-embedproof-attestation-v1",
     "signer": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-    "signature": "0x8b6ae846343e82d1a90c091eedfc40c83e7dfc5f2589ccd62606570c3da5e6d154c8cde50cb2214ac5616f7c9502bd9bad15f179c42f58dd4ff16aae3efd74ab1c"
+    "signature": "0x367fbe3154a78ca2d36c58ca78122338ebd4121264cabd7d44c9f8b7e94571a31df940f9f4cd2f5f9b727443fa4fe2a4828eabad2efb14b2fec03414107474f01c"
   },
   "eip712": {
     "domain": {
@@ -132,28 +177,28 @@
     "message": {
       "installationId": "0x54522d4541462d30303031000000000000000000000000000000000000000000",
       "period": 202609,
-      "commitment": "0xbe2944928f5e030c98b534ef8e81c9f919418f1ac9334043ab5fbb4547ee323b",
+      "commitment": "0xec233afaf2c9e817637e7d8991e98537a7838bf53492fc7ff3be7075069618f9",
       "seeDeclared": 4190,
       "verifiedTonnes": 5000,
-      "riskScore": 4,
-      "modelVersionHash": "0xabababababababababababababababababababababababababababababababab",
+      "riskScore": 20,
+      "modelVersionHash": "0x40d9ee13d1c9ee9c52d0eb3749353665238712a72e7d8444bdc51be41b1008c8",
       "algId": 1,
-      "pqSigHash": "0x7b9ee59afbdeca336d6b5196eb668bad5cdae6abb41df6c66ba25e20800c5138"
+      "pqSigHash": "0xbcb18b04007c24400f73995ea15bc6d46018b523fee72757c7659a5a5229a69d"
     },
-    "digest": "0x8345afb3cfc11a5270432a53e5441d470f92738ddf24d4bc9c83b21650799171"
+    "digest": "0x722e4dee8cd7136cd117cf7549fd5a1ee09e3f1c2e5606d14e7d52c579a98995"
   },
   "mldsa": {
     "scheme": "ML-DSA-44",
     "backend": "pqclean",
-    "publicKey": "Efi7YNPGIIFUrw743Lq6d//a4XDMbkzVLkgY/1FAdscKpKcUqnXzfR8LOCmVx+6ltxMAfzXOMwkoUub4VuN3rThnxKd6hZazWXwYdJAeZPQoKqGv95b5Fcj2rK8HSqBljEXgeh1jXxbXu/kCIaKriicFYxNwNjdSHxqdXaUQBGy6vS6aiukoft3MCPKrCpWc03R8nlACQYXhBUXMA+rQrGj/vThWqK+6tlb+DikAUjMTw056cjg4Q56Tvy6qQz6dLqJKDKp1oMGesSwwQ3vBgsgpmljLP6xGrOKTKNNcVHn5k3qm6ufZ16EEc+qg/96kK9qF/nLDRjJgOD6vJtSdOj39l0XBA4TKJCZmQscq5llmUeKY0Qscbc44VXHVeq7PDuFhLfh1aDPkMkQkglHwx5anX07z1wdfpQknYVA/ggVVngozRLktIrXvB5xE4Cut5DHPIWP5PMmtwtp5XaWCYD2QpQbVUHIpEhjNP47TyR98a3uZX15LZZlN0gSeRSFsNlTFgR4Qxw9g9ND3c1ZQnN1F0xtkyTaiF5ld1bBuNwxog2mf6gDrb2rId/P0P2H7+dVdpNNFUjpGtubDNMaVU7gQf0v/fbrh1UyscWKFtBFYc2oGNNFuFn8N82Fgqun7DQdUX3lwS9sgjvPxA/HWNjdpzqWfEZ3eqlPFEDCj1ZnFaHW1wEAac9zG7ydXx06BLfaDFMPIWHbHCTFSJGCuvBzygrIpk6OpwtPRXJpiSvgr9dPSo7uUJYLvXGrulcFzHbsWnF9B70EqPxgBy1jRQeQkzUZ90mQZdmFMo61K6JDtmjWJqF8w2q2AwXQg/zpAOPggwF+mQGIeCpn5FbKoJimzBicCBVTzwpwLM0h1KyrQCPbZwIL9l+kgKlwQ6bkwg7BMtjBjl32tN6rYFhSRgE6BiP1whQaCKxfCIzGITHyJP/u2V12ruG69lbs9l6ivZHbxRtTn6KaD8T12qO4vgpHrKwjnxE9kKzAjB27zHjgPihIDzAFOvx5seG/lYnzSFuqCSpdOyPF+kNCZ06hm39BQxLaheML0D+vgBJb0ai1erhnnhbUfeSBcG3hVBTxtRQqU3j1+46E+ZMMRjZzlMvMcEsv9OddwsbhyAvuJQlN19UCEmep66z5P3qEGWxwKCIa0WIbu7IZ1PdEc0JoQiyuZ05HV83NMFOJhPpErSQoMwNwyINBVshCdTPvCO2C32BodZWlh7HF01RitcQfTfT8XQAMQxPPAqJ/zjyniwE/gQGpkV71a7z/G4XfyZuwJMHtKWGZZGDzst7Oa1wU42SbijJ+TJPfc+Lew0V3RnZDJ+SM+RsK+gajU13ubducgh8wIIAa5HyTpMcGNB0JG9ziP22D9xgPTRvUwCmyLuPLKutl9X/bU016rRLn7DsYFI3pROLb8ks+wWUwor/PeCScuhghAFuZr1Aw4l/Lm7fAsaGuoBF7YfaTejnfzU4WbC0uTKnzLrgItJsADSVt5ajMmsIwoT30t0X/rbG2THaIfekSFTsaD2sFSlF3muoqptatRkrP4EBEfbNJBsgxpYxtG1E+IgLc70TST2A0BSQ5USALVs6Kab4wVy6b0EglgrDXQz5yymD8JN/j8sQ+162D50/OfIHvAG6zCZ1WvEDFEKb30815AGc3t6kEkW3AcBWR75IdrIepwuxo2hK5UXP4TbKEbZrzLgqHc61hWZikVMq7tZ/tMNTawz++ra4VBX+i26nxvsY7pEfgIMx0OvQ==",
-    "signature": "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"
+    "publicKey": "8TI4f32+XqUC9y0967nySr+GpNHRsSfIpcoiG9B90WMGk1jIlFEpnqHxf3ppyA42YW48ZsNfAJgyZT6gE6DJRq8w97z5zDEc367XdsVkxZOxrk/96gxgZdPWR2CwE4Dm3a12AZS4iccTXOOb4TIIev1PGi7ZHKIttWLUaIVxaszqqYu4kkctD3YVmuyoYq2rqmf++M7eHLL+TZcH4WkGj14kGw7lD70uDI5z0bpif6b0G9mcsgC1JE+VYR1XuOOjSJklVN7MWUwXhWzpv7npJ2W0I5eUAL4ChXOSzp/6u0fI14B5hr5jsx9jnb+JeAKN4VZq11IiaKmCoT0l9XQTAvDLKfvBgdx7gxaDbglK62j0IrEgek6NJGyBy/FmvmqbrHwlsYXjROM63+79ZNaQZEk4OwzkE1TErIGa3cMYDYHMnt/n8Ibhgkbo+rfX1uOhQWnDyxjiZjc1IJ8TgNnGvLv/ro3XV/fCw1FIhqonavuPhb0gEBrFpFtYQPK9ZtzdLmWA44bIx8mYuk7+GtfRc+qtXY4uJhRA3SCKZqBLe2CeyRguXr6/iQDFuUPpnR4GVdvHR3iGbOmoiFBzpQvMRExDINH+6YOgCyhNaSzKq5sjre8DyYqY6x7uyuzQYvFyGn1SMM8ULUsw9NnkZfAEWm0z89hVDMW45V9YGV2i42/fD2ATBRrTS1uVrem/Nd+7XDiWmNjzue030gd2AJp07dUmrBGEcSbf1QY2oR6m/zAmy8QUhYutPEb50TJkuOcAoXZ2mHWQ8WJgGxKjq7EH6LyzKGt6dn2WO47hVIffV2KzWFpuof23EhJDk4ER/IS7mVB0RKBvQzIMHT0vQBoKrfnBZ6OAR8F7PDaFELCA/xml0PyjoeQS9eLjJiEQ+Kpvc0PACGqCGB4uKrXbYSrglIljB4KNnnm90IJcsnD3z8TSueDZVbBhSCL+TVPJ4Io0+DWC1/z4+o/3KF/RwIjjZDvZuRsXAk6iCT0nXX+/EaqoBw4RwFXX8AZ7oyOQbElfMnQ0yzOyc9wkjyDfrQXFMyD7M5PKosQTl6d9LHTmZspmc76U5EI3c8NSRO6qlY9jT6xk+rjEvP1svpkc2kTReNSyMBUxtnnPIMUjyCLQywqQRoJw7qPzl82RUQqOwcKBinh6oY3hwpkrlMfaXd+9eSw7OlU1OqNUbZInLAffIePWkPkA0m0T8zZSgQiSRVSGesYNLZqwpQBqZPVT8VJoAndsy1rx7OiZL/QSgho5+yq2Bi0fNOHW0NKggfJUfmXswAo7mTKxTsqdXO2d/iyxzUm0l84O+OhpGoKAEb2YMfWYPsJ+4m25nB8YkD6obCbRbD5JadtkhniFNKScKk4qZ4wBsPQnskhlP0rTJauJL3ER/KMgezkDV+5W0hskgD9E/46TYXkaomrHtvZfsMN3Bpi51bI5WnvZ4vOjQLYsEjABdsVabPX7GBbTrX3n1++SefhsKSquGeQIwlji2G5dVgF6GPgxsjC6XuDzBuoHt5sCbCO1XMN5TAgue/9aBuwdBe+GCY0zaFJUHKZne0A7KjmRXbCu4mxVYsAixPvento/E8YSGagDEkpafD+l+YHDCMlhJPzgRPzUXHxgGE3L218SJSMzZ64SL86jPA5GIjuhRL+G0f5HJmuFjo+ZWcKMYdc5S7iIgy5sBZkvJO0Lki6k9ven6wmLlJfVheGwFnr3ZtT0UlWfLOGHZEfjgts/zBksb0VjaeOG98NWTJYoKw==",
+    "signature": "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"
   },
-  "pqSigHash": "0x7b9ee59afbdeca336d6b5196eb668bad5cdae6abb41df6c66ba25e20800c5138",
-  "pqKeyHash": "0xdc1bfd2b731ffbc57af8815b913cd52cf2e3183a909924ac11b4c23ef9cf6d02",
+  "pqSigHash": "0xbcb18b04007c24400f73995ea15bc6d46018b523fee72757c7659a5a5229a69d",
+  "pqKeyHash": "0xb93ed3fac009203f8869a3832e11c80c154bbb16711d4c1a9b53c01186093172",
   "aesKeyB64url": "ZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1-f4CBgoM",
-  "bundleJson": "{\"schema\":\"embedproof.bundle.v1\",\"algId\":1,\"batchHint\":{\"chainId\":31337,\"installationId\":\"TR-EAF-0001\",\"period\":202609},\"commitment\":\"0xbe2944928f5e030c98b534ef8e81c9f919418f1ac9334043ab5fbb4547ee323b\",\"ecdsa\":{\"scheme\":\"eip712-embedproof-attestation-v1\",\"signer\":\"0x70997970C51812dc3A010C7d01b50e0d17dc79C8\",\"signature\":\"0x8b6ae846343e82d1a90c091eedfc40c83e7dfc5f2589ccd62606570c3da5e6d154c8cde50cb2214ac5616f7c9502bd9bad15f179c42f58dd4ff16aae3efd74ab1c\"},\"mldsa\":{\"scheme\":\"ML-DSA-44\",\"backend\":\"pqclean\",\"publicKey\":\"Efi7YNPGIIFUrw743Lq6d//a4XDMbkzVLkgY/1FAdscKpKcUqnXzfR8LOCmVx+6ltxMAfzXOMwkoUub4VuN3rThnxKd6hZazWXwYdJAeZPQoKqGv95b5Fcj2rK8HSqBljEXgeh1jXxbXu/kCIaKriicFYxNwNjdSHxqdXaUQBGy6vS6aiukoft3MCPKrCpWc03R8nlACQYXhBUXMA+rQrGj/vThWqK+6tlb+DikAUjMTw056cjg4Q56Tvy6qQz6dLqJKDKp1oMGesSwwQ3vBgsgpmljLP6xGrOKTKNNcVHn5k3qm6ufZ16EEc+qg/96kK9qF/nLDRjJgOD6vJtSdOj39l0XBA4TKJCZmQscq5llmUeKY0Qscbc44VXHVeq7PDuFhLfh1aDPkMkQkglHwx5anX07z1wdfpQknYVA/ggVVngozRLktIrXvB5xE4Cut5DHPIWP5PMmtwtp5XaWCYD2QpQbVUHIpEhjNP47TyR98a3uZX15LZZlN0gSeRSFsNlTFgR4Qxw9g9ND3c1ZQnN1F0xtkyTaiF5ld1bBuNwxog2mf6gDrb2rId/P0P2H7+dVdpNNFUjpGtubDNMaVU7gQf0v/fbrh1UyscWKFtBFYc2oGNNFuFn8N82Fgqun7DQdUX3lwS9sgjvPxA/HWNjdpzqWfEZ3eqlPFEDCj1ZnFaHW1wEAac9zG7ydXx06BLfaDFMPIWHbHCTFSJGCuvBzygrIpk6OpwtPRXJpiSvgr9dPSo7uUJYLvXGrulcFzHbsWnF9B70EqPxgBy1jRQeQkzUZ90mQZdmFMo61K6JDtmjWJqF8w2q2AwXQg/zpAOPggwF+mQGIeCpn5FbKoJimzBicCBVTzwpwLM0h1KyrQCPbZwIL9l+kgKlwQ6bkwg7BMtjBjl32tN6rYFhSRgE6BiP1whQaCKxfCIzGITHyJP/u2V12ruG69lbs9l6ivZHbxRtTn6KaD8T12qO4vgpHrKwjnxE9kKzAjB27zHjgPihIDzAFOvx5seG/lYnzSFuqCSpdOyPF+kNCZ06hm39BQxLaheML0D+vgBJb0ai1erhnnhbUfeSBcG3hVBTxtRQqU3j1+46E+ZMMRjZzlMvMcEsv9OddwsbhyAvuJQlN19UCEmep66z5P3qEGWxwKCIa0WIbu7IZ1PdEc0JoQiyuZ05HV83NMFOJhPpErSQoMwNwyINBVshCdTPvCO2C32BodZWlh7HF01RitcQfTfT8XQAMQxPPAqJ/zjyniwE/gQGpkV71a7z/G4XfyZuwJMHtKWGZZGDzst7Oa1wU42SbijJ+TJPfc+Lew0V3RnZDJ+SM+RsK+gajU13ubducgh8wIIAa5HyTpMcGNB0JG9ziP22D9xgPTRvUwCmyLuPLKutl9X/bU016rRLn7DsYFI3pROLb8ks+wWUwor/PeCScuhghAFuZr1Aw4l/Lm7fAsaGuoBF7YfaTejnfzU4WbC0uTKnzLrgItJsADSVt5ajMmsIwoT30t0X/rbG2THaIfekSFTsaD2sFSlF3muoqptatRkrP4EBEfbNJBsgxpYxtG1E+IgLc70TST2A0BSQ5USALVs6Kab4wVy6b0EglgrDXQz5yymD8JN/j8sQ+162D50/OfIHvAG6zCZ1WvEDFEKb30815AGc3t6kEkW3AcBWR75IdrIepwuxo2hK5UXP4TbKEbZrzLgqHc61hWZikVMq7tZ/tMNTawz++ra4VBX+i26nxvsY7pEfgIMx0OvQ==\",\"signature\":\"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\"},\"encryption\":{\"alg\":\"AES-256-GCM\",\"iv\":\"AAECAwQFBgcICQoL\",\"aad\":\"commitment\",\"ciphertext\":\"5IlZP84osprwdvC8tKDzkIt2U/QPOfJCtXeMZXHAY4LVWqOjZUturMa0hoxjgzJq7jStxAfPS2H232/qpw99hbN2meVYo19r6oP53wzDBviwdm6UYqbf6/FQMA83b96ghuFNWrvA5hLX2ANOBrzjaMfm49gD0+gotMr/ItYxFA35ybDAtQZYN9SLkUfI24KV8MKJr8goU2VShItrK0LLclWTqlDQwLCQEzl6Gsks4Orkq3hiZILz1tQUZp7NCd/2giXWYBWpfyH9HVtrdYjgYIccdJV2K1a65lPw1jnha61rvu267itzap/sgHe0YBJ4xBsefSFCuyvfIU34vS/JBz86c7ZKgMhlBAMnfRZHTKSRgGJ1ucfewk1En+ERAMXGIOL2CvLKZ51SmDiOfwTLNiadQ3taO0F5xi+EASec16TiwnRDUaJMbAlTmndDNlItHhuOz3aamL4c/3SUllZ9Y0NgpUP4soOsuvqa+lc2ed0ddA5k0HyWkKkqdrhtYQqJkIIT89n8W3yKwupCHP+DtzElqN9hV1txtTiDuNmNnA94KvAYdqcVGNTxWSz4vAFfPGyiAV65mwbSYxBwXFOHJFzAhW8jHAUiBp1ChTA6jVEL4fYDF7auaqJW1I0Akp/lsbMDbdKgIug3KgheZ7wDEkvxQYZqIyNL71W7SCjHB8uM+U8uROIVAoFBy33CqJ7AggJ71Wzv/iSIKCVYe1zGZldlmbr2FjxvZsUKoDmeTIR3mzRWqVmqiUeWcIQZhbi1afaLDCZk/jpFsXGMIuKoj12MmvA49TrXW1A1p/eHKQuKP/ltiw8ilLOTgDom0NnZyicRlXcI8x/+RoJ6I9zjdsDHQDpRCOm19WcLJ2GHzXv8XDhBlmmvpQD6xJc1q3mHeTwoS2AYFe/hb+WbyHm6/jRAr2nN4IJJvg0onrBJYdRIPHe+RnvznVdjyTvvNx3gQp1s9aZdeS1qp00dc0sUGdFGthguLeqK18HHPX6mH19kIsm7ZSOxV5HjZ0nEKy3B1739uIh7RRzo4nx/JMSQT0zcdGq07nsFMGfIE+LZOJPzeTR+OZUDtTG5Qyl8jdTFAG/DF9YiYd0nF444iOwSis1IPjj2+wrtLZUzGHfqmuNBJMxn9hK2XHIA2JxkW/L3RuKrskgihJ6i2A8rfz2EuobcJsHW2ehw/kKRn73vtmh+w/Wk4yXGAUpFlJj7avt/7RIYvTHEHQJemjfanINAbDTOWGDG+dYULjMQkYQLlG5ZP94YgDU/nHdgpE9WDHL1CCutUysCc+iNlyh+PlbqsVgMywk=\"}}",
-  "cid": "bafkreiantxesoocqfk7x7o4hef4qe3vjnmxpos4oeud4zevi53dtadan7y",
-  "cidDigest": "0x0d9dc92738502abf7fbb872179026ea96b2ef74b8e2507cc92a8eec7300c0dfe",
+  "bundleJson": "{\"schema\":\"embedproof.bundle.v1\",\"algId\":1,\"batchHint\":{\"chainId\":31337,\"installationId\":\"TR-EAF-0001\",\"period\":202609},\"commitment\":\"0xec233afaf2c9e817637e7d8991e98537a7838bf53492fc7ff3be7075069618f9\",\"ecdsa\":{\"scheme\":\"eip712-embedproof-attestation-v1\",\"signer\":\"0x70997970C51812dc3A010C7d01b50e0d17dc79C8\",\"signature\":\"0x367fbe3154a78ca2d36c58ca78122338ebd4121264cabd7d44c9f8b7e94571a31df940f9f4cd2f5f9b727443fa4fe2a4828eabad2efb14b2fec03414107474f01c\"},\"mldsa\":{\"scheme\":\"ML-DSA-44\",\"backend\":\"pqclean\",\"publicKey\":\"8TI4f32+XqUC9y0967nySr+GpNHRsSfIpcoiG9B90WMGk1jIlFEpnqHxf3ppyA42YW48ZsNfAJgyZT6gE6DJRq8w97z5zDEc367XdsVkxZOxrk/96gxgZdPWR2CwE4Dm3a12AZS4iccTXOOb4TIIev1PGi7ZHKIttWLUaIVxaszqqYu4kkctD3YVmuyoYq2rqmf++M7eHLL+TZcH4WkGj14kGw7lD70uDI5z0bpif6b0G9mcsgC1JE+VYR1XuOOjSJklVN7MWUwXhWzpv7npJ2W0I5eUAL4ChXOSzp/6u0fI14B5hr5jsx9jnb+JeAKN4VZq11IiaKmCoT0l9XQTAvDLKfvBgdx7gxaDbglK62j0IrEgek6NJGyBy/FmvmqbrHwlsYXjROM63+79ZNaQZEk4OwzkE1TErIGa3cMYDYHMnt/n8Ibhgkbo+rfX1uOhQWnDyxjiZjc1IJ8TgNnGvLv/ro3XV/fCw1FIhqonavuPhb0gEBrFpFtYQPK9ZtzdLmWA44bIx8mYuk7+GtfRc+qtXY4uJhRA3SCKZqBLe2CeyRguXr6/iQDFuUPpnR4GVdvHR3iGbOmoiFBzpQvMRExDINH+6YOgCyhNaSzKq5sjre8DyYqY6x7uyuzQYvFyGn1SMM8ULUsw9NnkZfAEWm0z89hVDMW45V9YGV2i42/fD2ATBRrTS1uVrem/Nd+7XDiWmNjzue030gd2AJp07dUmrBGEcSbf1QY2oR6m/zAmy8QUhYutPEb50TJkuOcAoXZ2mHWQ8WJgGxKjq7EH6LyzKGt6dn2WO47hVIffV2KzWFpuof23EhJDk4ER/IS7mVB0RKBvQzIMHT0vQBoKrfnBZ6OAR8F7PDaFELCA/xml0PyjoeQS9eLjJiEQ+Kpvc0PACGqCGB4uKrXbYSrglIljB4KNnnm90IJcsnD3z8TSueDZVbBhSCL+TVPJ4Io0+DWC1/z4+o/3KF/RwIjjZDvZuRsXAk6iCT0nXX+/EaqoBw4RwFXX8AZ7oyOQbElfMnQ0yzOyc9wkjyDfrQXFMyD7M5PKosQTl6d9LHTmZspmc76U5EI3c8NSRO6qlY9jT6xk+rjEvP1svpkc2kTReNSyMBUxtnnPIMUjyCLQywqQRoJw7qPzl82RUQqOwcKBinh6oY3hwpkrlMfaXd+9eSw7OlU1OqNUbZInLAffIePWkPkA0m0T8zZSgQiSRVSGesYNLZqwpQBqZPVT8VJoAndsy1rx7OiZL/QSgho5+yq2Bi0fNOHW0NKggfJUfmXswAo7mTKxTsqdXO2d/iyxzUm0l84O+OhpGoKAEb2YMfWYPsJ+4m25nB8YkD6obCbRbD5JadtkhniFNKScKk4qZ4wBsPQnskhlP0rTJauJL3ER/KMgezkDV+5W0hskgD9E/46TYXkaomrHtvZfsMN3Bpi51bI5WnvZ4vOjQLYsEjABdsVabPX7GBbTrX3n1++SefhsKSquGeQIwlji2G5dVgF6GPgxsjC6XuDzBuoHt5sCbCO1XMN5TAgue/9aBuwdBe+GCY0zaFJUHKZne0A7KjmRXbCu4mxVYsAixPvento/E8YSGagDEkpafD+l+YHDCMlhJPzgRPzUXHxgGE3L218SJSMzZ64SL86jPA5GIjuhRL+G0f5HJmuFjo+ZWcKMYdc5S7iIgy5sBZkvJO0Lki6k9ven6wmLlJfVheGwFnr3ZtT0UlWfLOGHZEfjgts/zBksb0VjaeOG98NWTJYoKw==\",\"signature\":\"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\"},\"encryption\":{\"alg\":\"AES-256-GCM\",\"iv\":\"AAECAwQFBgcICQoL\",\"aad\":\"commitment\",\"ciphertext\":\"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\"}}",
+  "cid": "bafkreidkcjk75gqbt2ctpsepjcebutgwoighan4qflu4vshzac5if3cep4",
+  "cidDigest": "0x6a1255fe9a019e8537c88f48881a4cd6720c7037902ae9cac8f900ba82ec447f",
   "verifyFragment": "#k=ZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1-f4CBgoM",
   "tampered": {
     "description": "productionTonnes 5000 -> 5001 (one digit)",
@@ -161,22 +206,67 @@
       "assessment": {
         "band": "green",
         "belowHalfDefault": true,
-        "cbamDefault": 1.3,
-        "expectedHigh": 0.67,
-        "expectedLow": 0.318,
-        "explanation": "Fixed example assessment for the test vector; not produced by the trained model.",
-        "modelVersionHash": "0xabababababababababababababababababababababababababababababababab",
-        "q05": 0.318,
-        "q50": 0.452,
-        "q95": 0.67,
-        "riskScore": 4,
+        "cbamDefault": 2.31,
+        "expectedHigh": 0.6374,
+        "expectedLow": 0.4034,
+        "explanation": "Declared 0.419 tCO2/t lies inside the plausible range 0.40-0.64 (median 0.49) for an EAF plant of 300,000 t/yr in TR, given its Climate TRACE lagged prior 0.08 tCO2e/t, and is under half of the CBAM default 2.31; the largest driver of the expected value is production route (-0.62 tCO2/t).",
+        "flags": [],
+        "hasHistory": true,
+        "inputs": {
+          "artefactSha256": "0x40d9ee13d1c9ee9c52d0eb3749353665238712a72e7d8444bdc51be41b1008c8",
+          "dataVersion": {
+            "gridFixtureSha256": "9286f7ccc749a5a8f97ff6134855401ae361df7b7a92d1bcbc9cfe99d40f62ba",
+            "snapshotSha256": "744172e7f9ab88b1deb2d59c1ad6a58816c7024dedf9db92d2defa117a3634f7",
+            "source": "Climate TRACE v5.10.0 iron-and-steel sources CSV (CC BY 4.0), Ember yearly electricity data (CC BY 4.0)"
+          },
+          "features": {
+            "capacityTpy": 300000,
+            "ctLaggedPriorEf": 0.08,
+            "gridGco2PerKwh": 475.73,
+            "route": "EAF"
+          },
+          "grid": {
+            "country": "TUR",
+            "observationYear": 2025,
+            "source": "Ember yearly electricity data, power-sector CO2 intensity, TUR 2025 (CC BY 4.0); data/fixtures/grid_intensity_ember_annual.csv",
+            "value": 475.73
+          },
+          "installation": {
+            "capacityTpy": 300000,
+            "country": "TR",
+            "id": "TR-EAF-0001",
+            "route": "EAF"
+          },
+          "prior": {
+            "source": "Climate TRACE v5.10.0 asset 1567079 direct emissions factor, mean over 2025-07..2026-06 (12 of 12 months; constant 0.08) for period 2026-09; 2025-08..2026-06 (11 months; constant 0.08) for 2026-10",
+            "sourceAssetId": 1567079,
+            "value": 0.08
+          }
+        },
+        "modelVersionHash": "0x40d9ee13d1c9ee9c52d0eb3749353665238712a72e7d8444bdc51be41b1008c8",
+        "q05": 0.4034,
+        "q50": 0.488,
+        "q95": 0.6374,
+        "riskScore": 20,
         "seeDeclared": 0.419,
         "shap": [
           {
-            "contribution": -0.41,
+            "contribution": -0.6199,
             "feature": "route",
             "label": "Production route",
             "value": "EAF"
+          },
+          {
+            "contribution": -0.1208,
+            "feature": "ctPrior",
+            "label": "Climate TRACE lagged emissions-factor prior (tCO2e/t)",
+            "value": 0.08
+          },
+          {
+            "contribution": -0.0406,
+            "feature": "gridIntensity",
+            "label": "Grid carbon intensity (gCO2/kWh)",
+            "value": 475.73
           }
         ]
       },
@@ -199,9 +289,9 @@
       "salt": "0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
       "schema": "embedproof.attestation.v1"
     },
-    "canonical": "{\"assessment\":{\"band\":\"green\",\"belowHalfDefault\":true,\"cbamDefault\":1.3,\"expectedHigh\":0.67,\"expectedLow\":0.318,\"explanation\":\"Fixed example assessment for the test vector; not produced by the trained model.\",\"modelVersionHash\":\"0xabababababababababababababababababababababababababababababababab\",\"q05\":0.318,\"q50\":0.452,\"q95\":0.67,\"riskScore\":4,\"seeDeclared\":0.419,\"shap\":[{\"contribution\":-0.41,\"feature\":\"route\",\"label\":\"Production route\",\"value\":\"EAF\"}]},\"attestationContract\":\"0x5FbDB2315678afecb367f032d93F642f64180aa3\",\"chainId\":31337,\"issuedAt\":\"2026-10-18T12:00:00Z\",\"report\":{\"cnCode\":\"72083900\",\"directEmissionsTco2\":1150,\"electricityMwh\":2250,\"gridFactorTco2PerMwh\":0.42,\"indirectEmissionsTco2\":945,\"installationId\":\"TR-EAF-0001\",\"period\":\"2026-09\",\"productionTonnes\":5001,\"route\":\"EAF\",\"schema\":\"embedproof.report.v1\",\"seeTco2PerT\":0.419},\"salt\":\"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f\",\"schema\":\"embedproof.attestation.v1\"}",
-    "commitment": "0xfd27ecfdd9ef18ef6c3033a161038b0f7c17d8e3816943e4a7d93b928fcedd76",
-    "recoveredSigner": "0x4e75bD7c3B0513221b6f5A7e2CA8F7d29a7D1F6A",
+    "canonical": "{\"assessment\":{\"band\":\"green\",\"belowHalfDefault\":true,\"cbamDefault\":2.31,\"expectedHigh\":0.6374,\"expectedLow\":0.4034,\"explanation\":\"Declared 0.419 tCO2/t lies inside the plausible range 0.40-0.64 (median 0.49) for an EAF plant of 300,000 t/yr in TR, given its Climate TRACE lagged prior 0.08 tCO2e/t, and is under half of the CBAM default 2.31; the largest driver of the expected value is production route (-0.62 tCO2/t).\",\"flags\":[],\"hasHistory\":true,\"inputs\":{\"artefactSha256\":\"0x40d9ee13d1c9ee9c52d0eb3749353665238712a72e7d8444bdc51be41b1008c8\",\"dataVersion\":{\"gridFixtureSha256\":\"9286f7ccc749a5a8f97ff6134855401ae361df7b7a92d1bcbc9cfe99d40f62ba\",\"snapshotSha256\":\"744172e7f9ab88b1deb2d59c1ad6a58816c7024dedf9db92d2defa117a3634f7\",\"source\":\"Climate TRACE v5.10.0 iron-and-steel sources CSV (CC BY 4.0), Ember yearly electricity data (CC BY 4.0)\"},\"features\":{\"capacityTpy\":300000,\"ctLaggedPriorEf\":0.08,\"gridGco2PerKwh\":475.73,\"route\":\"EAF\"},\"grid\":{\"country\":\"TUR\",\"observationYear\":2025,\"source\":\"Ember yearly electricity data, power-sector CO2 intensity, TUR 2025 (CC BY 4.0); data/fixtures/grid_intensity_ember_annual.csv\",\"value\":475.73},\"installation\":{\"capacityTpy\":300000,\"country\":\"TR\",\"id\":\"TR-EAF-0001\",\"route\":\"EAF\"},\"prior\":{\"source\":\"Climate TRACE v5.10.0 asset 1567079 direct emissions factor, mean over 2025-07..2026-06 (12 of 12 months; constant 0.08) for period 2026-09; 2025-08..2026-06 (11 months; constant 0.08) for 2026-10\",\"sourceAssetId\":1567079,\"value\":0.08}},\"modelVersionHash\":\"0x40d9ee13d1c9ee9c52d0eb3749353665238712a72e7d8444bdc51be41b1008c8\",\"q05\":0.4034,\"q50\":0.488,\"q95\":0.6374,\"riskScore\":20,\"seeDeclared\":0.419,\"shap\":[{\"contribution\":-0.6199,\"feature\":\"route\",\"label\":\"Production route\",\"value\":\"EAF\"},{\"contribution\":-0.1208,\"feature\":\"ctPrior\",\"label\":\"Climate TRACE lagged emissions-factor prior (tCO2e/t)\",\"value\":0.08},{\"contribution\":-0.0406,\"feature\":\"gridIntensity\",\"label\":\"Grid carbon intensity (gCO2/kWh)\",\"value\":475.73}]},\"attestationContract\":\"0x5FbDB2315678afecb367f032d93F642f64180aa3\",\"chainId\":31337,\"issuedAt\":\"2026-10-18T12:00:00Z\",\"report\":{\"cnCode\":\"72083900\",\"directEmissionsTco2\":1150,\"electricityMwh\":2250,\"gridFactorTco2PerMwh\":0.42,\"indirectEmissionsTco2\":945,\"installationId\":\"TR-EAF-0001\",\"period\":\"2026-09\",\"productionTonnes\":5001,\"route\":\"EAF\",\"schema\":\"embedproof.report.v1\",\"seeTco2PerT\":0.419},\"salt\":\"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f\",\"schema\":\"embedproof.attestation.v1\"}",
+    "commitment": "0x7e076172ee6de6c1e8ad11bd9d05092d1172a6b1fa0854625eea123deeaf4070",
+    "recoveredSigner": "0x282AfF6DF87dad57bb7dCCdc7BeB864197B97a5f",
     "expect": {
       "commitmentMatches": false,
       "ecdsaValid": false,

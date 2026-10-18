@@ -285,6 +285,9 @@ textarea.inp { min-height: 120px; resize: vertical; }
   text-transform: uppercase;
   border: 1px solid currentColor;
   white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .chip-green { color: var(--color-teal-text); background: rgb(0 194 168 / 0.16); }
 .chip-amber { color: var(--color-amber-text); background: rgb(255 181 71 / 0.15); }

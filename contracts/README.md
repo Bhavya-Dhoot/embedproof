@@ -14,7 +14,7 @@ amended by section 9, v1.1 security amendments A-F).
 
 ```bash
 git submodule update --init --recursive      # forge-std, openzeppelin-contracts(-upgradeable) in lib/
-export PATH="/c/Users/DELL/.foundry/bin:$PATH"   # Git Bash on this machine; Foundry is not on PATH
+export PATH="$HOME/.foundry/bin:$PATH"   # if foundryup did not add Foundry to PATH
 cd contracts
 ```
 
@@ -22,7 +22,7 @@ cd contracts
 
 ```bash
 forge build
-forge test                      # 140 tests: unit, fuzz (512 runs), stateful invariants, gas budgets
+forge test                      # 185 tests: unit, fuzz (512 runs), stateful invariants, gas budgets
 forge test --match-path test/Gas.t.sol -vv      # prints measured gas
 forge coverage --report summary --no-match-test "test_Gas_" --no-match-coverage '(^|/)(test|script)/'
 ```
@@ -34,10 +34,10 @@ also matches `src/EmissionsAttestation.sol` ("Attes**test**ation") and silently 
 Gas (optimizer on, `isolate = true`: each test call is its own transaction, every account and slot cold).
 The budgets are asserted on the receipt basis (`gasUsed` = 21,000 intrinsic + calldata + execution):
 
-| Call | Receipt `gasUsed` (forge / Anvil) | Budget |
+| Call | Receipt `gasUsed` (forge, one isolated tx) | Budget |
 | --- | --- | --- |
-| `attest()` green, fresh period (EIP-712) | 228,019 / 228,031 | 250,000 |
-| `allocate()` first allocation on a batch | 115,471 / 115,471 | 120,000 |
+| `attest()` green, fresh period (EIP-712) | 227,997 | 250,000 |
+| `allocate()` first allocation on a batch | 117,952 | 120,000 |
 
 ## Deploy
 
@@ -108,7 +108,12 @@ The timelock has no admin: `ADMIN` is its proposer and executor, and upgrades ta
   current key (0 if none). Every anchored key stays valid history: `isAttestorPqKey(attestor, hash)` is true until
   `revokeAttestorPqKey` (ADMIN; `AttestorPqKeyRevoked`; also clears the current key if it was current). Storage is
   appended after the original state. `Deploy.s.sol` calls `setAttestorPqKey` when `ATTESTOR_PQ_KEY_HASH` is set.
-- `remainingTonnes` is `verifiedTonnes - allocatedTonnes` regardless of status (0 for an unknown batch).
+- The allocation cap is per (installationId, period), not per batch id: the allocator keys its running total by
+  `keccak256(abi.encode(installationId, period))`, read from the batch through the additive attestation view
+  `allocData(batchId)` (= `allocInfo` plus `period`). A batch that is revoked and resubmitted for the same period
+  therefore inherits what was already allocated and cannot be allocated twice. `allocatedTonnes(batchId)` returns that
+  period total and `remainingTonnes(batchId)` is `max(0, verifiedTonnes - allocatedTonnes(batchId))` regardless of
+  status (0 for an unknown batch); a resubmission with fewer tonnes than already allocated reports 0, not an underflow.
   `attestedAt` is the submission time. `approveModel` is idempotent. `revokeModel` blocks new attestations
   (`ModelNotApproved`) but leaves existing batches and their recorded model hash intact; revoking a hash that is not
   currently approved reverts `ModelNotApproved`; re-approving reuses the original index (revocation frees no slot).

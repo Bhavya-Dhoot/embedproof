@@ -201,7 +201,7 @@ Deployment output — `deployments/<chainId>.json`:
 ABIs — `deployments/abi/InstallationRegistry.json`, `EmissionsAttestation.json`, `ConsignmentAllocator.json`:
 plain JSON ABI arrays (the `abi` field of the forge artifact).
 
-## 4. Report schema (FR-A1, mirrors the CBAM communication template)
+## 4. Report schema (FR-A1; field-by-field position against the CBAM operator report in docs/STANDARDS.md)
 
 ```json
 {
@@ -356,3 +356,32 @@ Registry: `setOperator(bytes32 id, address newOperator)` (ADMIN; emits `Operator
 **H. Attestor hardening.** Body-size cap enforced while streaming (chunked bodies included); generic 502 bodies (details only in logs; revert data parsed only from `exc.data`); rate limits on `/disclosure`, `/verify`, `/bundle`, `GET /reasons` too (IPv6 keyed by /64); cache `importers_of`; reject integers beyond 2^53 before float conversion; reject periods later than the current UTC month; `fieldsMatch` uses strict types/formats (ints are ints, `period` must fullmatch `YYYY-MM`, `chainId` int, no bool coercion).
 
 Known and accepted (documented, not fixed): consignment ids are global (FR-C6 literal) so another registered operator can grief an id; cnCode is not bound to the batch; admin can grant roles instantly (only upgrades and the risk threshold are timelocked).
+
+## 10. Round-3 amendments (judge and spec audit)
+
+**I. Allocation cap per installation-period.** `ConsignmentAllocator` keys the running total by
+`keccak256(abi.encode(installationId, period))`, not by batch. A revoked batch's allocations keep
+counting, so a resubmission for the same installation-period cannot reset the cap.
+`remaining(batchId) = verifiedTonnes − periodClaimed`, floored at 0. External signatures are unchanged.
+
+**J. Capacity check.** The attestor returns 422 when `productionTonnes > capacity (t/yr) ÷ 12 × 1.2`,
+using the nameplate capacity read on-chain from the registry.
+
+**K. Assessment fields (additive).** `hasHistory: bool`; `flags: [{code, message}]` with codes
+`GRID_FACTOR_BELOW_EMBER` (declared factor < 0.8 × Ember country-year) and
+`ELECTRICITY_OUTSIDE_ROUTE_NORM` (MWh/t outside 0.5×–2× Climate TRACE's route assumption; a coarse
+band, not a regulatory norm); `inputs: {…, artefactSha256}`, the exact scorer inputs. Flags never
+change the score.
+
+**L. Rescore.** `python -m attestor.rescore "<certificate URL>"` re-runs the scorer on
+`assessment.inputs`. It checks sha256(artefact) == on-chain `modelVersionHash`, the recomputed score ==
+on-chain `riskScore`, and that the commitment recomputes.
+
+**M. Demo runner (testnet and local only).** It is enabled by `DEMO_RUNNER=1` and runs only on
+chains 31337 and 84532, using server-held demo keys (`DEMO_EXPORTER_KEY`, `DEMO_VERIFIER_KEY`) and
+importer addresses (`DEMO_IMPORTER_A`, `DEMO_IMPORTER_B`).
+`GET /demo/status → {enabled, chainId}`.
+`POST /demo/run/{green|red|double-claim} → {scenario, chainId, batchId, certificatePath, steps:[{label, ok, expected, txHash, detail}]}`.
+Errors: 404 when disabled, 409 while a run is in progress, 429 with `Retry-After`.
+The over-allocation in `double-claim` is sent with a fixed gas limit, so it is mined with status 0
+and has an explorer link.

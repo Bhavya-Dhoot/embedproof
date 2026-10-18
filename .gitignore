@@ -7,7 +7,6 @@ node_modules/
 out/
 contracts/out/
 contracts/cache/
-contracts/broadcast/*/31337/
 attestor/var/
 .env
 *.log
@@ -15,3 +14,5 @@ attestor/var/
 var/
 brag-output/work/
 .claude/
+contracts/broadcast/
+brag-output/demo-4min.mp4

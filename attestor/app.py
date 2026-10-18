@@ -13,10 +13,12 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, StrictInt, StrictStr
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from .assess import Assessor
 from .bundle import BundleError, digest_from_cid
 from .canonical import from_hex
 from .chain import Chain, ChainError, ChainRevert, TxPending
 from .config import REPO_ROOT, Config
+from .demo_runner import SCENARIOS, DemoRunner
 from .ipfs import IpfsError, IpfsStore
 from .limits import BodyLimitMiddleware, client_key
 from .ratelimit import RateLimiter
@@ -53,15 +55,20 @@ def build_attestor(cfg: Config) -> Attestor:
     """Production wiring. Fails loudly if the model, deployments or PQ keys cannot be loaded."""
     if str(REPO_ROOT) not in sys.path:
         sys.path.insert(0, str(REPO_ROOT))
-    from model.scorer import Scorer  # noqa: PLC0415  (owned by the model build)
+    from model.scorer import DEFAULT_ARTEFACT, Scorer  # noqa: PLC0415  (owned by the model build)
 
-    scorer = Scorer.load()
+    # The installations file maps plants to their Climate TRACE prior (admin-maintained, INSTALLATIONS_FILE). A plant
+    # without an entry is scored on the no-history branch.
+    scorer = Scorer.load(demo_installations_path=cfg.installations_file)
+    assessor = Assessor(DEFAULT_ARTEFACT, cfg.installations_file)
+    if assessor.artefact_sha256 != scorer.model_version_hash:
+        raise RuntimeError(f"scorer hash {scorer.model_version_hash} != sha256 of {DEFAULT_ARTEFACT} ({assessor.artefact_sha256})")
     chain = Chain(cfg)
     mldsa = MLDSASigner.load_or_create(cfg.keys_dir)
     attestor = Attestor(
         chain=chain, scorer=scorer, store=Store(cfg.db_path),
         ipfs=IpfsStore(cfg.ipfs_dir, cfg.pinata_jwt, cfg.ipfs_gateway), mldsa=mldsa,
-        attestor_key=cfg.attestor_private_key)
+        attestor_key=cfg.attestor_private_key, assessor=assessor)
     log.info("attestor %s on chain %s | model %s | ML-DSA backend %s | ipfs %s",
              chain.attestor_address, chain.chain_id, scorer.model_version_hash, mldsa.backend, attestor.ipfs.mode)
     if chain.connected():
@@ -81,9 +88,16 @@ def create_app(attestor: Attestor | None = None, cfg: Config | None = None) -> F
     cfg = cfg or Config.from_env()
     limiter = RateLimiter(cfg.rate_burst, cfg.rate_per_sec)
 
+    demo_limiter = RateLimiter(burst=1, per_sec=1.0 / (cfg.demo.cooldown_seconds if cfg.demo else 30.0))
+
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         app.state.attestor = attestor or build_attestor(cfg)
+        app.state.demo_runner = DemoRunner(attestor=app.state.attestor, cfg=cfg.demo) if cfg.demo else None
+        if cfg.demo:
+            log.warning("DEMO RUNNER ENABLED on chain %s: POST /demo/run/* signs with DEMO-ONLY keys from the environment "
+                        "for anyone who can reach this service. Those accounts must hold nothing of value.",
+                        app.state.attestor.chain.chain_id)
         yield
 
     app = FastAPI(title="EmbedProof attestor", version="1.0", lifespan=lifespan)
@@ -186,6 +200,27 @@ def create_app(attestor: Attestor | None = None, cfg: Config | None = None) -> F
     @app.post("/disclosure/{batch_id}", dependencies=[Depends(limit("disclosure"))])
     def disclosure(batch_id: int, body: DisclosureRequest, a: Attestor = Depends(svc)):
         return a.disclosure(batch_id, body.address, body.message, body.signature)
+
+    # ---- hosted demo runner (DEMO_RUNNER=1 only; judges without a wallet)
+    @app.get("/demo/status")
+    def demo_status(request: Request, a: Attestor = Depends(svc)):
+        return {"enabled": request.app.state.demo_runner is not None, "chainId": a.chain.chain_id}
+
+    @app.post("/demo/run/{scenario}")
+    def demo_run(scenario: str, request: Request):
+        runner = request.app.state.demo_runner
+        if runner is None or scenario not in SCENARIOS:
+            raise ServiceError(404, "demo runner is not enabled" if runner is None else f"unknown scenario {scenario!r}")
+        if not runner.lock.acquire(blocking=False):  # one global run at a time
+            raise ServiceError(409, "a demo run is already in progress")
+        try:
+            allowed, retry = demo_limiter.check(client_key(client_ip(request)))
+            if not allowed:
+                raise StarletteHTTPException(429, f"demo cooldown: one run per {cfg.demo.cooldown_seconds:g} s per client",
+                                             headers={"Retry-After": str(max(1, int(retry + 0.999)))})
+            return runner.run(scenario)
+        finally:
+            runner.lock.release()
 
     @app.post("/reasons", dependencies=[Depends(limit("reasons"))])
     def post_reason(body: ReasonRequest, a: Attestor = Depends(svc)):

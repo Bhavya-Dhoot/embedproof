@@ -13,20 +13,20 @@ export const FALLBACK_IMPORTERS: { label: string; address: Address }[] = [
   { label: "Importer B", address: "0x976EA74026E726554dB657fA54763abd0C3a0aa9" },
 ];
 
-/** Built-in copies of the demo reports; the generated data/demo_reports/*.json override these when present. */
+/** Built-in copies of the shipped demo reports (data/demo_reports/*.json, which override these when present). */
 export const FALLBACK_DEMO_REPORTS: Record<"honest_eaf" | "implausible_bof", Report> = {
   honest_eaf: {
     schema: "embedproof.report.v1",
     installationId: "TR-EAF-0001",
     period: "2026-09",
     route: "EAF",
-    cnCode: "72083900",
+    cnCode: "72142000",
     productionTonnes: 5000,
-    directEmissionsTco2: 1150.0,
-    electricityMwh: 2250.0,
-    gridFactorTco2PerMwh: 0.42,
-    indirectEmissionsTco2: 945.0,
-    seeTco2PerT: 0.419,
+    directEmissionsTco2: 1200.0,
+    electricityMwh: 3100.0,
+    gridFactorTco2PerMwh: 0.476,
+    indirectEmissionsTco2: 1475.6,
+    seeTco2PerT: 0.535,
   },
   implausible_bof: {
     schema: "embedproof.report.v1",
@@ -35,16 +35,13 @@ export const FALLBACK_DEMO_REPORTS: Record<"honest_eaf" | "implausible_bof", Rep
     route: "BF-BOF",
     cnCode: "72083900",
     productionTonnes: 250000,
-    directEmissionsTco2: 124900.0,
-    electricityMwh: 30000.0,
-    gridFactorTco2PerMwh: 0.42,
-    indirectEmissionsTco2: 12600.0,
-    seeTco2PerT: 0.55,
+    directEmissionsTco2: 90000.0,
+    electricityMwh: 105000.0,
+    gridFactorTco2PerMwh: 0.476,
+    indirectEmissionsTco2: 49980.0,
+    seeTco2PerT: 0.56,
   },
 };
-
-/** One-shipment illustration used in the importer view; labelled demo data wherever shown. */
-export const CBAM_DEFAULTS_NOTE = "Demo data only - not accredited CBAM verification.";
 
 /** docs/INTERFACES.md section 1 public addresses -> friendly names (lower-case keys). */
 export const ADDRESS_LABELS: Record<string, string> = Object.fromEntries(

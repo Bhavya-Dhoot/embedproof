@@ -71,6 +71,45 @@
   },
   {
     "type": "function",
+    "name": "allocData",
+    "inputs": [
+      {
+        "name": "batchId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "status",
+        "type": "uint8",
+        "internalType": "enum Status"
+      },
+      {
+        "name": "verifiedTonnes",
+        "type": "uint64",
+        "internalType": "uint64"
+      },
+      {
+        "name": "installationId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "attestor",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "period",
+        "type": "uint32",
+        "internalType": "uint32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "allocInfo",
     "inputs": [
       {

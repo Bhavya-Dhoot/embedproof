@@ -48,7 +48,8 @@ def test_eip712_attestation_signature():
     m = e["message"]
     assert m["commitment"] == VECTOR["commitment"] and m["pqSigHash"] == VECTOR["pqSigHash"]
     assert m["installationId"] == "0x" + b"TR-EAF-0001".ljust(32, b"\x00").hex() and m["period"] == 202609
-    assert (m["seeDeclared"], m["verifiedTonnes"], m["riskScore"], m["algId"]) == (4190, 5000, 4, 1)
+    assert (m["seeDeclared"], m["verifiedTonnes"], m["riskScore"], m["algId"]) == (
+        4190, 5000, VECTOR["document"]["assessment"]["riskScore"], 1)
     assert m["modelVersionHash"] == VECTOR["document"]["assessment"]["modelVersionHash"]
     # the digest, recomputed by hand (eth_abi + keccak) and via eth_account, and the signature over it
     by_hand = manual_digest({k: (bytes.fromhex(v[2:]) if isinstance(v, str) else v) for k, v in m.items()},
@@ -120,3 +121,27 @@ def test_tampered_case():
     assert signer != VECTOR["ecdsa"]["signer"] and signer == t["recoveredSigner"]
     diff = [k for k in VECTOR["document"]["report"] if VECTOR["document"]["report"][k] != t["document"]["report"][k]]
     assert diff == ["productionTonnes"]
+
+
+def test_assessment_carries_history_flags_and_the_recorded_inputs():
+    a = VECTOR["document"]["assessment"]
+    assert a["hasHistory"] is True and a["flags"] == [] and "latencyMs" not in a
+    i = a["inputs"]
+    assert i["artefactSha256"] == a["modelVersionHash"] and len(i["artefactSha256"]) == 66
+    assert i["features"] == {"route": "EAF", "capacityTpy": 300000, "gridGco2PerKwh": 475.73, "ctLaggedPriorEf": 0.08}
+    assert i["prior"]["sourceAssetId"] == 1567079 and i["prior"]["value"] == 0.08
+    assert i["grid"]["observationYear"] == 2025 and i["installation"]["id"] == "TR-EAF-0001"
+    assert i["dataVersion"]["source"].startswith("Climate TRACE v5.10.0")
+
+
+def test_the_recorded_inputs_reproduce_the_signed_score_with_the_frozen_model():
+    """What `python -m attestor.rescore` does, on the vector document."""
+    from attestor.rescore import rescore_document
+
+    from .conftest import ARTEFACT
+
+    a = VECTOR["document"]["assessment"]
+    out = rescore_document(VECTOR["document"], ARTEFACT)
+    assert (out["riskScore"], out["band"], out["q05"], out["q50"], out["q95"]) == (
+        a["riskScore"], a["band"], a["q05"], a["q50"], a["q95"])
+    assert out["modelVersionHash"] == a["modelVersionHash"]

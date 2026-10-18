@@ -3,29 +3,32 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
+import { DemoRunnerSection } from "@/components/DemoRunner";
 import { Chip, Glass, Spinner, cx } from "@/components/ui";
 import { ChainPill } from "@/components/Header";
-import { CHAIN_LABEL, DEMO_MODE } from "@/lib/env";
+import { DEMO_MODE } from "@/lib/env";
 import { useAttestorHealth, useChainStatus, useDeployment } from "@/lib/hooks";
 import { shortAddr, shortHex } from "@/lib/report";
+import { sampleTarget, useSampleCert } from "@/lib/sampleCert";
 import { useSigner } from "@/lib/signer";
 import type { PersonaKey } from "@/lib/demoAccounts";
 
+/** The four flows, in the order a certificate lives them. The same list is used everywhere on the site. */
 const FLOWS: { n: number; title: string; who: string; body: string; href: string; persona: PersonaKey; cta: string }[] = [
   {
     n: 1,
     title: "Attest",
     who: "Exporter",
-    body: "The mill submits its monthly report. An AI model checks the claim against what a plant like this can physically emit, then it is signed twice, classically and post-quantum, and anchored on-chain.",
+    body: "The mill submits its monthly report. An AI model compares it with the plant's own emissions history, its route and the grid. The attestor signs it with two keys (ECDSA and ML-DSA-44) and anchors it on-chain.",
     href: "/exporter",
     persona: "exporterA",
     cta: "Submit a report",
   },
   {
     n: 2,
-    title: "Verify signatures",
+    title: "Review",
     who: "Verifier",
-    body: "Red flags never pass silently. A human verifier unseals the report, reads the AI's reasons, then co-signs or overrides, with a written reason pinned to the batch.",
+    body: "Amber claims are attested with a visible flag. Red claims need a human verifier, who unseals the report, reads the model's reasons, and co-signs or overrides with a written reason.",
     href: "/verifier",
     persona: "verifier",
     cta: "Open the queue",
@@ -34,19 +37,19 @@ const FLOWS: { n: number; title: string; who: string; body: string; href: string
     n: 3,
     title: "Allocate",
     who: "Exporter",
-    body: "Tonnes of a verified batch are assigned to consignments. The contract refuses to hand out more tonnes than were verified: a double claim simply reverts.",
+    body: "The mill assigns attested tonnes to consignments. The contract refuses to allocate more than were attested, so the same tonnes cannot be allocated twice on-chain.",
     href: "/exporter#allocate",
     persona: "exporterA",
     cta: "Allocate tonnes",
   },
   {
     n: 4,
-    title: "Verify publicly",
+    title: "Verify",
     who: "Anyone, no wallet",
-    body: "Scan the QR on a certificate. Both signatures are re-checked in your browser. Change one digit of the report and watch every check fail.",
-    href: "/verify/1",
+    body: "Open a certificate link or scan its QR code. Signatures and fingerprints are checked in your browser against the chain. Change one digit of the report and the checks fail.",
+    href: "/verify",
     persona: "importerA",
-    cta: "Open a certificate",
+    cta: "Verify a certificate",
   },
 ];
 
@@ -59,65 +62,70 @@ function Stat({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-function LiveStatus() {
+/** Chain, contracts, attestor and model hashes: useful to engineers, noise for everyone else, so it lives behind a disclosure. */
+function TechnicalStatus() {
   const dep = useDeployment();
   const chain = useChainStatus();
   const health = useAttestorHealth();
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Live chain status">
-      <Stat label="Chain">
-        <div className="flex items-center gap-2">
+    <details className="tile">
+      <summary className="cursor-pointer p-4 font-bold">Technical status</summary>
+      <div className="grid gap-3 p-4 pt-0 sm:grid-cols-2 lg:grid-cols-4" aria-label="Live chain status">
+        <Stat label="Chain">
           <ChainPill />
-        </div>
-        {chain.isError && <span className="mt-1 block text-sm font-normal text-[var(--color-rose-text)]">RPC unreachable</span>}
-      </Stat>
-      <Stat label="Contracts">
-        {dep ? (
-          <span className="mono !text-sm" title={dep.attestation}>
-            registry {shortAddr(dep.registry)}
-          </span>
-        ) : (
-          <span className="text-[var(--color-amber-text)]">not deployed: run make demo</span>
-        )}
-        {dep && chain.data && (
-          <span className="mt-1 block text-sm font-normal text-white/80">
-            <span className="num">{chain.data.batchCount}</span> batch{chain.data.batchCount === 1 ? "" : "es"} on-chain
-          </span>
-        )}
-      </Stat>
-      <Stat label="Attestor">
-        {health.isLoading ? (
-          <Spinner label="checking" />
-        ) : health.data ? (
-          <>
-            <span className="text-[var(--color-teal-text)]">online</span>
-            <span className="mt-1 block text-sm font-normal text-white/80">
-              PQ backend {health.data.pqBackend} · IPFS {health.data.ipfsMode}
+          {chain.isError && <span className="mt-1 block text-sm font-normal text-[var(--color-rose-text)]">RPC unreachable</span>}
+        </Stat>
+        <Stat label="Contracts">
+          {dep ? (
+            <span className="mono !text-sm" title={dep.attestation}>
+              registry {shortAddr(dep.registry)}
             </span>
-          </>
-        ) : (
-          <span className="text-[var(--color-rose-text)]">offline</span>
-        )}
-      </Stat>
-      <Stat label="Model version">
-        {health.data?.modelVersionHash ? (
-          <span className="mono !text-sm" title={health.data.modelVersionHash}>
-            {shortHex(health.data.modelVersionHash, 8, 6)}
-          </span>
-        ) : (
-          <span className="text-white/75">n/a</span>
-        )}
-      </Stat>
-    </div>
+          ) : (
+            <span className="text-[var(--color-amber-text)]">not deployed: run make demo</span>
+          )}
+          {dep && chain.data && (
+            <span className="mt-1 block text-sm font-normal text-white/80">
+              <span className="num">{chain.data.batchCount}</span> batch{chain.data.batchCount === 1 ? "" : "es"} on-chain
+            </span>
+          )}
+        </Stat>
+        <Stat label="Attestor">
+          {health.isLoading ? (
+            <Spinner label="checking" />
+          ) : health.data ? (
+            <>
+              <span className="text-[var(--color-teal-text)]">online</span>
+              <span className="mt-1 block text-sm font-normal text-white/80">
+                ML-DSA backend {health.data.pqBackend}, bundle store {health.data.ipfsMode}
+              </span>
+            </>
+          ) : (
+            <span className="text-[var(--color-rose-text)]">offline</span>
+          )}
+        </Stat>
+        <Stat label="Model version">
+          {health.data?.modelVersionHash ? (
+            <span className="mono !text-sm" title={health.data.modelVersionHash}>
+              {shortHex(health.data.modelVersionHash, 8, 6)}
+            </span>
+          ) : (
+            <span className="text-white/75">n/a</span>
+          )}
+        </Stat>
+      </div>
+    </details>
   );
 }
 
 function FlowCard({ f }: { f: (typeof FLOWS)[number] }) {
   const s = useSigner();
   const router = useRouter();
+  const sample = sampleTarget(useSampleCert());
+  const href = f.n === 4 ? sample.href : f.href;
+  const cta = f.n === 4 && !sample.hasCert ? "Create a certificate first" : f.cta;
   const go = () => {
-    if (DEMO_MODE) s.selectPersona(f.persona);
-    router.push(f.href);
+    if (DEMO_MODE) s.selectPersona(f.n === 4 && !sample.hasCert ? "exporterA" : f.persona);
+    router.push(href);
   };
   return (
     <li className="flow-card tile flex flex-col gap-3 p-5">
@@ -130,61 +138,62 @@ function FlowCard({ f }: { f: (typeof FLOWS)[number] }) {
       <h3 className="text-xl font-bold">{f.title}</h3>
       <p className="flex-1 text-sm leading-relaxed text-[var(--color-mute)]">{f.body}</p>
       <button type="button" className={cx("btn btn-sm", f.n === 1 ? "btn-primary" : "btn-ghost")} onClick={go}>
-        {f.cta} →
+        {cta} →
       </button>
     </li>
   );
 }
 
 export default function Home() {
+  const sample = sampleTarget(useSampleCert());
   return (
     <div className="flex flex-col gap-8 sm:gap-10">
       <Glass className="!rounded-[36px]">
         <div className="flex flex-col gap-6">
-          <div className="flex flex-wrap gap-2">
-            <Chip tone="green">IEEE ClimateChain 2026 · Track 1</Chip>
-            <Chip>Prototype</Chip>
-            <Chip>{CHAIN_LABEL}</Chip>
+          <div>
+            <Chip tone="green">ClimateChain 2026 · Prototype</Chip>
           </div>
-          <h1 className="max-w-4xl text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl">
-            A steel mill&apos;s CO₂ claim you can <span className="text-[var(--color-teal-text)]">check</span>, and a tonne it can&apos;t sell{" "}
-            <span className="text-[var(--color-rose-text)]">twice</span>.
+          <h1 className="max-w-5xl text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl">
+            A CO₂ claim you can <span className="text-[var(--color-teal-text)]">check</span>, and tonnes that cannot be allocated twice.
           </h1>
-          <p className="max-w-3xl text-lg text-[var(--color-mute)] sm:text-xl">
-            EmbedProof turns a CO₂-per-tonne figure into a tamper-evident, quantum-safe certificate. AI checks the claim, two signatures seal it, and a smart contract
-            makes double-claiming impossible.
-          </p>
+          <p className="max-w-2xl text-lg text-[var(--color-mute)]">EmbedProof turns a steel mill&apos;s CO₂ figure into a signed, checkable certificate and records who holds each attested tonne.</p>
           <div className="flex flex-wrap gap-3">
             <Link href="/exporter" className="btn btn-primary">
               Start the demo
             </Link>
-            <Link href="/verify/1" className="btn btn-ghost">
-              Verify a certificate
-            </Link>
-            <Link href="/regulator" className="btn btn-ghost">
-              Regulator view
+            <Link href={sample.href} className="btn btn-ghost">
+              {sample.hasCert ? "See a sample certificate" : "Create a certificate first"}
             </Link>
           </div>
-          <LiveStatus />
         </div>
       </Glass>
 
+      <DemoRunnerSection />
+
       <Glass>
-        <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-teal-text)]">Four flows</p>
-            <h2 className="text-2xl font-bold sm:text-3xl">Attest → Verify signatures → Allocate → Verify publicly</h2>
-          </div>
-          {DEMO_MODE && <p className="hint max-w-sm">Each button switches to the right demo persona for you.</p>}
-        </div>
-        <ol className="flow-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <h2 className="mb-5 text-2xl font-bold sm:text-3xl">Attest, review, allocate, verify</h2>
+        <ol className="flow-grid m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
           {FLOWS.map((f) => (
             <FlowCard key={f.n} f={f} />
           ))}
         </ol>
-        <p className="mt-5 text-sm text-[var(--color-mute)]">
-          What the chain stores is a 32-byte fingerprint of the report, never the report itself. The report stays encrypted; only the certificate link (the QR code) carries the key.
-        </p>
+        {DEMO_MODE && <p className="hint mt-4">Each button switches to the right demo persona for you.</p>}
+      </Glass>
+
+      <Glass>
+        <div className="flex flex-col gap-5">
+          <div className="tile p-5 sm:p-6">
+            <h2 className="mb-2 text-xl font-bold sm:text-2xl">Why a blockchain, not a database?</h2>
+            <p className="max-w-3xl leading-relaxed">
+              A Turkish mill, its EU importers, an accredited verifier and a regulator don&apos;t share an IT system or trust one operator. The allocation ledger has to be one none of them
+              controls: the contract enforces allocated ≤ attested tonnes for everyone at once, and the record outlives any one company&apos;s server; CBAM records are kept for years.
+            </p>
+          </div>
+          <p className="text-sm text-[var(--color-mute)]">
+            The chain stores a 32-byte fingerprint of each report, never the report. The report stays encrypted; only the certificate link (the QR code) carries the key.
+          </p>
+          <TechnicalStatus />
+        </div>
       </Glass>
     </div>
   );

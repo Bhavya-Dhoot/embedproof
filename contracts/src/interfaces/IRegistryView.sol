@@ -21,8 +21,10 @@ interface IRegistryView {
 
 /// @notice Minimal view of EmissionsAttestation that the allocator calls into.
 interface IAttestationView {
-    function allocInfo(uint256 batchId)
+    /// @dev `allocInfo` plus the batch's period, so the allocator can key its running total by
+    ///      (installationId, period) instead of by batch id.
+    function allocData(uint256 batchId)
         external
         view
-        returns (Status status, uint64 verifiedTonnes, bytes32 installationId, address attestor);
+        returns (Status status, uint64 verifiedTonnes, bytes32 installationId, address attestor, uint32 period);
 }

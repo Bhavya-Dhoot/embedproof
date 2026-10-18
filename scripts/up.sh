@@ -22,7 +22,7 @@ MODEL_VERSION_HASH=$(tr -d ' \r\n' < model/artefacts/model_version.txt)
   forge script script/Deploy.s.sol:Deploy --rpc-url "$RPC_URL" --private-key "$ANVIL_KEY0" --broadcast >../var/deploy.log 2>&1) \
   || { echo "deploy failed - see var/deploy.log"; tail -20 var/deploy.log; exit 1; }
 
-$PY -m uvicorn attestor.app:app --host 127.0.0.1 --port 8000 > var/attestor.log 2>&1 &
+DEMO_RUNNER=1 $PY -m uvicorn attestor.app:app --host 127.0.0.1 --port 8000 > var/attestor.log 2>&1 &
 echo $! > var/attestor.pid
 for _ in $(seq 1 150); do curl -sf http://127.0.0.1:8000/health >/dev/null 2>&1 && break; sleep 0.2; done
 curl -sf http://127.0.0.1:8000/health || { echo "attestor failed - see var/attestor.log"; tail -30 var/attestor.log; exit 1; }

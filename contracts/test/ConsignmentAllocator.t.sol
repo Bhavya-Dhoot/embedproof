@@ -6,7 +6,7 @@ import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.s
 import {Base} from "./Base.t.sol";
 import {MockAttestation} from "./mocks/MockAttestation.sol";
 import {ConsignmentAllocator} from "../src/ConsignmentAllocator.sol";
-import {IConsignmentAllocator, Allocation, Status} from "../src/interfaces/IEmbedProof.sol";
+import {IConsignmentAllocator, Allocation, Status, AttestInput, Sector, Route} from "../src/interfaces/IEmbedProof.sol";
 
 /// @dev FR-C5 (cap, DoubleClaimBlocked), FR-C6 (consignment id uniqueness) and the double-claim and
 ///      front-running rows of the PRD section 9 STRIDE table.
@@ -487,6 +487,119 @@ contract ConsignmentAllocatorTest is Base {
         vm.expectRevert(abi.encodeWithSelector(IConsignmentAllocator.NotBatchOperator.selector, id, exporterA));
         vm.prank(exporterA);
         allocator.allocate(id, C1, importerA, CN, 1);
+    }
+
+    // ------------------------ per (installation, period) cap: double-count fix
+
+    function test_DoubleCount_RevokeThenResubmit_CannotPushPeriodTotalPastNewTonnes() public {
+        uint256 first = _greenBatch(5000);
+        _allocate(first, C1, importerA, 3000);
+
+        vm.prank(admin);
+        attestation.revokeBatch(first, REASON);
+        uint256 second = _attest(EAF_ID, PERIOD, 10, 5000); // same installation + period, fresh batch id
+        assertEq(second, 2);
+
+        // The new batch does NOT get a fresh 5000 t: the 3000 t already allocated still count.
+        assertEq(allocator.allocatedTonnes(second), 3000, "period total is shared with the revoked batch");
+        assertEq(allocator.allocatedTonnes(first), 3000);
+        assertEq(allocator.remainingTonnes(second), 2000);
+
+        vm.expectRevert(abi.encodeWithSelector(IConsignmentAllocator.DoubleClaimBlocked.selector, second, uint64(2001), uint64(2000)));
+        vm.prank(exporterA);
+        allocator.allocate(second, C2, importerB, CN, 2001);
+
+        _allocate(second, C2, importerB, 2000); // exactly up to the cap
+        assertEq(allocator.allocatedTonnes(second), 5000, "sum over the period equals the new batch's tonnes");
+        assertEq(allocator.remainingTonnes(second), 0);
+        vm.expectRevert(abi.encodeWithSelector(IConsignmentAllocator.DoubleClaimBlocked.selector, second, uint64(1), uint64(0)));
+        vm.prank(exporterA);
+        allocator.allocate(second, C3, importerB, CN, 1);
+        // both consignments still point at the batch they were drawn from
+        assertEq(allocator.getAllocation(C1).batchId, first);
+        assertEq(allocator.getAllocation(C2).batchId, second);
+    }
+
+    function test_DoubleCount_ResubmissionWithFewerTonnesThanAllocated_RemainingIsZero() public {
+        uint256 first = _greenBatch(5000);
+        _allocate(first, C1, importerA, 4000);
+        vm.prank(admin);
+        attestation.revokeBatch(first, REASON);
+
+        uint256 second = _attest(EAF_ID, PERIOD, 10, 1000); // fewer tonnes than the 4000 already allocated
+        assertEq(allocator.allocatedTonnes(second), 4000);
+        assertEq(allocator.remainingTonnes(second), 0, "floored at zero, no underflow");
+
+        vm.expectRevert(abi.encodeWithSelector(IConsignmentAllocator.DoubleClaimBlocked.selector, second, uint64(1), uint64(0)));
+        vm.prank(exporterA);
+        allocator.allocate(second, C2, importerB, CN, 1);
+        assertEq(allocator.allocatedTonnes(second), 4000, "nothing was added");
+    }
+
+    function test_DoubleCount_RevokedBatchViewsReportThePeriodTotalToo() public {
+        uint256 first = _greenBatch(5000);
+        _allocate(first, C1, importerA, 1200);
+        vm.prank(admin);
+        attestation.revokeBatch(first, REASON);
+        // the revoked batch itself reports total and remaining for its period
+        assertEq(allocator.allocatedTonnes(first), 1200);
+        assertEq(allocator.remainingTonnes(first), 3800);
+        // ... but can no longer allocate
+        vm.expectRevert(abi.encodeWithSelector(IConsignmentAllocator.BatchNotAttested.selector, first));
+        vm.prank(exporterA);
+        allocator.allocate(first, C2, importerA, CN, 1);
+    }
+
+    function test_DoubleCount_ResubmissionAfterVerifierApprovalOfPendingBatch() public {
+        // Red batch: approved by the verifier, partially allocated, revoked by the admin, resubmitted.
+        uint256 first = _redBatch(250_000);
+        _verify(first, true);
+        vm.prank(exporterB);
+        allocator.allocate(first, C1, importerA, CN, 100_000);
+        vm.prank(admin);
+        attestation.revokeBatch(first, REASON);
+
+        uint256 second = _attest(BOF_ID, PERIOD, 90, 150_000); // pending again
+        assertEq(allocator.remainingTonnes(second), 50_000, "pending batch reports tonnes net of the period total");
+        _verify(second, true);
+        vm.expectRevert(abi.encodeWithSelector(IConsignmentAllocator.DoubleClaimBlocked.selector, second, uint64(50_001), uint64(50_000)));
+        vm.prank(exporterB);
+        allocator.allocate(second, C2, importerA, CN, 50_001);
+        vm.prank(exporterB);
+        allocator.allocate(second, C2, importerA, CN, 50_000);
+    }
+
+    function test_DoubleCount_DifferentInstallationOrPeriodDoNotShareATotal() public {
+        uint256 eaf = _attest(EAF_ID, PERIOD, 10, 100);
+        uint256 bof = _attest(BOF_ID, PERIOD, 10, 100); // same period, other installation
+        uint256 eafNext = _attest(EAF_ID, PERIOD + 1, 10, 100); // same installation, other period
+        _allocate(eaf, C1, importerA, 100);
+        assertEq(allocator.allocatedTonnes(bof), 0);
+        assertEq(allocator.allocatedTonnes(eafNext), 0);
+        assertEq(allocator.remainingTonnes(bof), 100);
+        assertEq(allocator.remainingTonnes(eafNext), 100);
+        vm.prank(exporterB);
+        allocator.allocate(bof, C2, importerA, CN, 100);
+        _allocate(eafNext, C3, importerA, 100);
+    }
+
+    function test_DoubleCount_UnknownBatchHasNoTotal() public view {
+        assertEq(allocator.allocatedTonnes(99), 0);
+        assertEq(allocator.remainingTonnes(99), 0);
+    }
+
+    function test_DoubleCount_UnknownBatchDoesNotAliasInstallationZeroPeriodZero() public {
+        // An unknown batch reads as (installationId 0, period 0); that must not pick up the total of a real
+        // installation that happens to use id 0 and period 0.
+        vm.prank(admin);
+        registry.registerInstallation(bytes32(0), "TR", Sector.STEEL, Route.EAF, 1_000, exporterA);
+        AttestInput memory a = _input(bytes32(0), 0, 10, 100);
+        vm.prank(attestor);
+        uint256 id = attestation.attest(a, CID);
+        _allocate(id, C1, importerA, 50);
+        assertEq(allocator.allocatedTonnes(id), 50);
+        assertEq(allocator.allocatedTonnes(id + 1), 0, "unknown batch");
+        assertEq(allocator.remainingTonnes(id + 1), 0, "unknown batch");
     }
 
     // -------------------------------------------------------------- fuzzing

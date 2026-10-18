@@ -16,14 +16,25 @@
 ## Verified (by the orchestrator, not only by agents)
 | Check | Result |
 | --- | --- |
-| `forge test` | 178 passed |
+| `forge test` | 185 passed (round 3: per-period cap, revoke-and-resubmit invariants) |
 | `forge coverage` (src) | 100% lines, statements, branches, functions |
-| Gas, receipt | attest 228,019 ≤ 250k; first allocate 115,243 ≤ 120k |
-| `pytest model/tests attestor/tests` | 341 passed |
-| `pnpm test` / lint (web) | 33 passed (4 opt-in live skipped) / clean |
-| `make demo` | 5/5 scenarios + 13 hardening/replay probes, 23 s |
+| Gas, receipt | attest 227,997 ≤ 250k; first allocate 117,952 ≤ 120k |
+| `pytest model/tests attestor/tests` | 479 passed (model 51, attestor 428) |
+| `pnpm test` / lint / typecheck / `next build` (web) | 70 passed (4 opt-in live skipped) / clean / clean / 9 pages built |
+| `make demo` | 5/5 scenarios + 13 hardening/replay probes + rescore PASS, 32.9 s wall |
 | Browser click-through | (a) green attest, (b) red → verifier reject with reason, (c) DoubleClaimBlocked panel + importer claim, (d) tamper flips ECDSA + ML-DSA; amber attest; mobile 375 px and tablet nav |
-| Fresh clone keeps model hash | `20b809be…` byte-identical (`.gitattributes`) |
+| Fresh clone keeps model hash | `40d9ee13…` byte-identical (`.gitattributes`); re-run on the round-3 commit |
+
+## Round 3 (judge panel 73/100 + PRD audit 95 met / 36 partial / 5 missing)
+- Allocation cap keyed by (installation, period): closes revoke-and-resubmit double counting.
+- Attestor: capacity bound on attested tonnes; grid-factor and electricity-norm flags (informational);
+  assessment carries exact scorer inputs; `attestor.rescore` CLI; hosted demo runner (testnet/local only);
+  report JSON Schema; Pinata success-path tests.
+- Model: Türkiye slice (n = 4 plants, not powered); artefact unchanged.
+- Web: CBAM impact panel (no assumed price), verdict banner, proves / does-not-prove box, reason-hash
+  check, sample-certificate links, demo runner UI, role banners, copy pass removing overclaims.
+- Docs: STANDARDS.md (honest CBAM field mapping), README impact table, why-blockchain, related work,
+  scale arithmetic, PQ key lifecycle, privacy as built.
 
 ## Deltas from the PRD
 - Detection targets met with plant history (0.97 at 0.5×, 0.89 at 0.7×); without history 0.84 at 0.5× misses; DRI-EAF weak. Metrics measure consistency with Climate TRACE, stated in the model card.
