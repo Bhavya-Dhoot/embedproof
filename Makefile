@@ -51,9 +51,9 @@ train:
 	$$PY -m model.train
 
 # Base Sepolia: needs RPC_URL, a funded PRIVATE_KEY and the real role holders
-# (ATTESTOR, VERIFIER, REGULATOR addresses; ATTESTOR_PQ_KEY_HASH from `python -m attestor.keys`).
+# (ATTESTOR, VERIFIER, REGULATOR addresses). The attestor PQ key is anchored after it is deployed (docs/DEPLOY.md).
 deploy-testnet:
 	source scripts/env.sh
-	: "$${RPC_URL:?set RPC_URL}" "$${PRIVATE_KEY:?set PRIVATE_KEY}" "$${ATTESTOR:?set ATTESTOR}" "$${VERIFIER:?set VERIFIER}" "$${REGULATOR:?set REGULATOR}" "$${ATTESTOR_PQ_KEY_HASH:?set ATTESTOR_PQ_KEY_HASH}"
+	: "$${RPC_URL:?set RPC_URL}" "$${PRIVATE_KEY:?set PRIVATE_KEY}" "$${ATTESTOR:?set ATTESTOR}" "$${VERIFIER:?set VERIFIER}" "$${REGULATOR:?set REGULATOR}"
 	cd contracts && MODEL_VERSION_HASH=$$(tr -d ' \r\n' < ../model/artefacts/model_version.txt) \
-	  forge script script/Deploy.s.sol:Deploy --rpc-url "$$RPC_URL" --private-key "$$PRIVATE_KEY" --broadcast --verify
+	  forge script script/Deploy.s.sol:Deploy --rpc-url "$$RPC_URL" --private-key "$$PRIVATE_KEY" --broadcast $${ETHERSCAN_API_KEY:+--verify --etherscan-api-key $$ETHERSCAN_API_KEY}
