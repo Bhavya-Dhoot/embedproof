@@ -5,6 +5,7 @@
 #   make web     Next.js UI on http://localhost:3000 (demo personas, needs `make up`)
 #   make test    contract, model and attestor tests
 SHELL := bash
+.SHELLFLAGS := -e -o pipefail -c
 .ONESHELL:
 .PHONY: setup demo up down web test test-contracts test-py coverage train deploy-testnet
 
@@ -13,7 +14,8 @@ setup:
 	command -v forge >/dev/null || { echo "Install Foundry first: https://book.getfoundry.sh/getting-started/installation"; exit 1; }
 	git submodule update --init
 	[ -d .venv ] || uv venv --python 3.11 .venv || python3.11 -m venv .venv
-	uv pip install --python $$PY -r requirements.txt || $$PY -m pip install -r requirements.txt
+	source scripts/env.sh  # re-resolve PY now that .venv exists
+	uv pip install --python "$$PY" -r requirements.txt || "$$PY" -m pip install -r requirements.txt
 	cd contracts && forge build && cd ..
 	$$PY contracts/script/export_abi.py
 	cd web && pnpm install
