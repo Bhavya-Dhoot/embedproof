@@ -12,6 +12,8 @@ marketplace, it issues no offsets, it does not touch Article 6 corresponding adj
 is **not** accredited CBAM verification under Reg. (EU) 2023/956. It is designed to support those
 processes, not replace them.
 
+[![EmbedProof launch video](brag-output/brag.jpg)](brag-output/brag.mp4)
+
 ## The four demo flows
 
 | # | Scenario | What you see |
